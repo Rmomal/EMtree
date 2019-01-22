@@ -3,15 +3,15 @@
 EMtree
 ======
 
-The goal of EMtree is to Infers Ecological Interaction Networks from Abundance Data, Uses averages over spanning trees within a Poisson log-Normal Model. Involves plotting funcitonalities.
+> EMtree infers interaction networks from abundance data. It uses averages over spanning trees within a Poisson log-Normal Model, and involves plotting funcitonalities.
 
 Installation
 ------------
 
-You can install the released version of EMtree from [CRAN](https://CRAN.R-project.org) with:
+You can install the development version of EMtree with:
 
 ``` r
-install.packages("EMtree")
+devtools::install_github("Rmomal/EMtree")
 ```
 
 Example
