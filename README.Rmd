@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 ```
 # EMtree
 
-> EMtree infers interaction networks from abundance data. It uses averages over spanning trees within a Poisson log-Normal Model, and involves plotting funcitonalities.
+> EMtree infers interaction networks from abundance data. It uses averages over spanning trees within a Poisson log-Normal Model ([PLNmodels](https://github.com/jchiquet/PLNmodels>)), and involves plotting funcitonalities (using `ggraph` and `tydigraph`).
 
 ## Installation
 
@@ -24,26 +24,40 @@ You can install the development version of EMtree with:
 devtools::install_github("Rmomal/EMtree")
 ```
 
-## Example
+## Example with Fatala river fishes
 
-This is a basic example which shows you how to solve a common problem:
+This is a basic example which shows you how to infer a network, using Barans95 data from the `ade4` package.
 
-```{r example}
-## basic example code
+### Data
+
+
+```{r fish_data , message=FALSE}
+library(ade4)
+library(tidyverse)
+data(baran95)
+counts = as.matrix(baran95$fau)
+covar = as_tibble(baran95$plan)
+
+n = nrow(counts)
+p = ncol(counts)
+```
+```{r}
+head(counts)
+head(covar)
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
-
-```{r cars}
-summary(cars)
+### Fit PLN model
+ This creates a `PLNmodels` object
+```{r}
+library(PLNmodels)
+model<-PLN(counts ~ covar$site)
 ```
 
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date.
+### Run EMtree function
 
-You can also embed plots, for example:
-
-```{r pressure, echo = FALSE}
-plot(pressure)
+```{r,eval=FALSE}
+outputs<-EMtree(model,  maxIter = 10)
 ```
 
-In that case, don't forget to commit and push the resulting figure files, so they display on GitHub!
+### Graphics
+
