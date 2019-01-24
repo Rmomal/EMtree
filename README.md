@@ -79,14 +79,14 @@ model<-PLN(counts ~ covar$site)
 ``` r
 library(EMtree)
 output<-EMtree(model,  maxIter = 5)
-#> [1] "Convergence took3.15secs and 5 iterations.\nLikelihood difference =1.11159469127713\nBetas difference =2.81291998560967e-05"
+#> [1] "Convergence took2.05secs and 5 iterations.\nLikelihood difference =2.02238709334779e-06\nBetas difference =1.18688514187363e-11"
 str(output)
 #> List of 5
-#>  $ beta     : num [1:33, 1:33] 0.00 1.67e-04 6.25e-05 1.04e-03 2.13e-04 ...
-#>  $ logpY    : num [1:5] 127 156 161 164 165
-#>  $ ProbaCond: num [1:33, 1:33] 0.00 3.45e-06 6.53e-05 2.59e-02 1.44e-04 ...
+#>  $ beta     : num [1:33, 1:33] 0.00 7.09e-06 5.36e-05 1.10e-03 7.31e-05 ...
+#>  $ logpY    : num [1:5] 133 153 157 158 158
+#>  $ ProbaCond: num [1:33, 1:33] 0.00 1.64e-07 6.15e-05 3.00e-02 5.16e-05 ...
 #>  $ maxIter  : num 5
-#>  $ times    : 'difftime' num 3.146812915802
+#>  $ times    : 'difftime' num 2.05359601974487
 #>   ..- attr(*, "units")= chr "secs"
 ```
 
@@ -97,9 +97,9 @@ library(parallel)
 resample_output<-ResampleEMtree(counts, "covar$site", B=2, maxIter=2,cond.tol=1e-8, cores=1)
 str(resample_output)
 #> List of 3
-#>  $ Pmat   : num [1:2, 1:528] 0.000191 0.000459 0.000916 0.015444 0.04092 ...
+#>  $ Pmat   : num [1:2, 1:528] 4.74e-05 4.58e-04 4.59e-03 1.54e-02 3.87e-02 ...
 #>  $ maxIter: num [1:2] 2 2
-#>  $ times  : 'difftime' num [1:2] 1.1677520275116 0.190233945846558
+#>  $ times  : 'difftime' num [1:2] 1.11130309104919 0.167003154754639
 #>   ..- attr(*, "units")= chr "secs"
 ```
 
@@ -139,7 +139,7 @@ x<- 1*(output$ProbaCond>2/p)
 draw_network(x,"Site", pal="dodgerblue3")
 ```
 
-<img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-5-1.png" style="display: block; margin: auto;" />
 
 #### From `ResampleEMtree` output
 
@@ -149,7 +149,7 @@ df<-freq_selec(resample_output$Pmat,p=p,f=f)
 draw_network(df,"Site")
 ```
 
-<img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-6-1.png" style="display: block; margin: auto;" />
 
 #### Facet for plotting several models in one shot
 
@@ -158,4 +158,4 @@ compar_graphs(compare_output,alpha=TRUE)
 #> Using `nicely` as default layout
 ```
 
-<img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-7-1.png" style="display: block; margin: auto;" />
