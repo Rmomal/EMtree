@@ -47,7 +47,7 @@ head(covar)
 ```
 
 ### Fit PLN model
- This creates a `PLNmodels` object
+This creates a `PLNmodels` object
 ```{r}
 library(PLNmodels)
 model<-PLN(counts ~ covar$site)
@@ -55,9 +55,56 @@ model<-PLN(counts ~ covar$site)
 
 ### Run EMtree function
 
-```{r,eval=FALSE}
-outputs<-EMtree(model,  maxIter = 10)
+```{r output}
+library(EMtree)
+output<-EMtree(model,  maxIter = 5)
+str(output)
+```
+### Foster robustness with resampling :
+
+
+```{r, cache=TRUE}
+library(parallel)
+resample_output<-ResampleEMtree(counts, "covar$site", B=2, maxIter=2,cond.tol=1e-8, cores=1)
+str(resample_output)
 ```
 
+### Several models with resampling :
+
+
+```{r, cache=TRUE}
+library(parallel)
+compare_output<-ComparEMtree(counts, c("covar$site","covar$date"), B=2, maxIter=2,cond.tol=1e-8, cores=1,
+                             f=0.8,seed=1)
+str(compare_output)
+```
 ### Graphics
+#### From `EMtree` output
+
+Simple network:
+
+```{r, fig.height=5, fig.width=5}
+library(ggraph)
+library(tidygraph)
+library(viridis)
+seed<-200
+
+x<- 1*(output$ProbaCond>2/p)
+draw_network(x,"Site", pal="dodgerblue3")
+
+```
+
+#### From `ResampleEMtree` output
+
+```{r, fig.height=5, fig.width=5}
+f<-0.8
+df<-freq_selec(resample_output$Pmat,p=p,f=f)
+draw_network(df,"Site")
+
+```
+
+#### Facet for plotting several models in one shot
+```{r, fig.height=4, fig.width=9}
+compar_graphs(compare_output,alpha=TRUE)
+```
 

@@ -77,7 +77,85 @@ model<-PLN(counts ~ covar$site)
 ### Run EMtree function
 
 ``` r
-outputs<-EMtree(model,  maxIter = 10)
+library(EMtree)
+output<-EMtree(model,  maxIter = 5)
+#> [1] "Convergence took3.15secs and 5 iterations.\nLikelihood difference =1.11159469127713\nBetas difference =2.81291998560967e-05"
+str(output)
+#> List of 5
+#>  $ beta     : num [1:33, 1:33] 0.00 1.67e-04 6.25e-05 1.04e-03 2.13e-04 ...
+#>  $ logpY    : num [1:5] 127 156 161 164 165
+#>  $ ProbaCond: num [1:33, 1:33] 0.00 3.45e-06 6.53e-05 2.59e-02 1.44e-04 ...
+#>  $ maxIter  : num 5
+#>  $ times    : 'difftime' num 3.146812915802
+#>   ..- attr(*, "units")= chr "secs"
+```
+
+### Foster robustness with resampling :
+
+``` r
+library(parallel)
+resample_output<-ResampleEMtree(counts, "covar$site", B=2, maxIter=2,cond.tol=1e-8, cores=1)
+str(resample_output)
+#> List of 3
+#>  $ Pmat   : num [1:2, 1:528] 0.000191 0.000459 0.000916 0.015444 0.04092 ...
+#>  $ maxIter: num [1:2] 2 2
+#>  $ times  : 'difftime' num [1:2] 1.1677520275116 0.190233945846558
+#>   ..- attr(*, "units")= chr "secs"
+```
+
+### Several models with resampling :
+
+``` r
+library(parallel)
+compare_output<-ComparEMtree(counts, c("covar$site","covar$date"), B=2, maxIter=2,cond.tol=1e-8, cores=1,
+                             f=0.8,seed=1)
+str(compare_output)
+#> Classes 'tbl_df', 'tbl' and 'data.frame':    4356 obs. of  4 variables:
+#>  $ key    : chr  "1" "1" "1" "1" ...
+#>  $ rowname: chr  "1" "2" "3" "4" ...
+#>  $ models : chr  "null" "null" "null" "null" ...
+#>  $ value  : num  0 0 0 0 0 0 0 0 0 0 ...
 ```
 
 ### Graphics
+
+#### From `EMtree` output
+
+Simple network:
+
+``` r
+library(ggraph)
+library(tidygraph)
+#> 
+#> Attaching package: 'tidygraph'
+#> The following object is masked from 'package:stats':
+#> 
+#>     filter
+library(viridis)
+#> Loading required package: viridisLite
+seed<-200
+
+x<- 1*(output$ProbaCond>2/p)
+draw_network(x,"Site", pal="dodgerblue3")
+```
+
+<img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" />
+
+#### From `ResampleEMtree` output
+
+``` r
+f<-0.8
+df<-freq_selec(resample_output$Pmat,p=p,f=f)
+draw_network(df,"Site")
+```
+
+<img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
+
+#### Facet for plotting several models in one shot
+
+``` r
+compar_graphs(compare_output,alpha=TRUE)
+#> Using `nicely` as default layout
+```
+
+<img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" />
