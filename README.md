@@ -8,7 +8,7 @@ EMtree
 Installation
 ------------
 
-You can install the development version of EMtree with:
+You can install the development version of EMtree:
 
 ``` r
 devtools::install_github("Rmomal/EMtree")
@@ -79,14 +79,14 @@ model<-PLN(counts ~ covar$site)
 ``` r
 library(EMtree)
 output<-EMtree(model,  maxIter = 5)
-#> [1] "Convergence took3.15secs and 5 iterations.\nLikelihood difference =0.470015505371663\nBetas difference =6.37694786993763e-06"
+#> [1] "Convergence took3.2secs and 5 iterations.\nLikelihood difference =0.706652886623658\nBetas difference =9.49871549076967e-06"
 str(output)
 #> List of 5
-#>  $ beta     : num [1:33, 1:33] 0.00 1.08e-04 4.55e-05 8.97e-04 1.32e-04 ...
-#>  $ logpY    : num [1:5] 176 201 206 207 207
-#>  $ ProbaCond: num [1:33, 1:33] 0.00 4.10e-07 1.67e-05 1.57e-02 3.04e-05 ...
+#>  $ beta     : num [1:33, 1:33] 0.00 3.60e-07 8.16e-05 1.09e-03 4.91e-05 ...
+#>  $ logpY    : num [1:5] 133 152 156 158 158
+#>  $ ProbaCond: num [1:33, 1:33] 0.00 8.65e-09 9.65e-05 3.05e-02 3.53e-05 ...
 #>  $ maxIter  : num 5
-#>  $ times    : 'difftime' num 3.15302991867065
+#>  $ times    : 'difftime' num 3.19587802886963
 #>   ..- attr(*, "units")= chr "secs"
 ```
 
