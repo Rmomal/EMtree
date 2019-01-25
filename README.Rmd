@@ -103,7 +103,7 @@ draw_network(df,"Site")
 ```
 
 #### Facet for plotting several models in one shot
-```{r, fig.height=3.5, fig.width=9}
+```{r, fig.height=3.5, fig.width=10}
 compar_graphs(compare_output,alpha=TRUE)
 ```
 
