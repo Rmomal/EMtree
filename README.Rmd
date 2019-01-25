@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 
 ## Installation
 
-You can install the development version of EMtree with:
+You can install the development version of EMtree:
 
 ``` r
 devtools::install_github("Rmomal/EMtree")

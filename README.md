@@ -79,14 +79,14 @@ model<-PLN(counts ~ covar$site)
 ``` r
 library(EMtree)
 output<-EMtree(model,  maxIter = 5)
-#> [1] "Convergence took3.19secs and 5 iterations.\nLikelihood difference =0.584235863939085\nBetas difference =8.9269522243536e-06"
+#> [1] "Convergence took3.15secs and 5 iterations.\nLikelihood difference =0.470015505371663\nBetas difference =6.37694786993763e-06"
 str(output)
 #> List of 5
-#>  $ beta     : num [1:33, 1:33] 0 0.00026 0.000198 0.00087 0.000276 ...
-#>  $ logpY    : num [1:5] 167 192 197 199 199
-#>  $ ProbaCond: num [1:33, 1:33] 0.00 1.10e-06 7.96e-05 1.66e-02 6.86e-05 ...
+#>  $ beta     : num [1:33, 1:33] 0.00 1.08e-04 4.55e-05 8.97e-04 1.32e-04 ...
+#>  $ logpY    : num [1:5] 176 201 206 207 207
+#>  $ ProbaCond: num [1:33, 1:33] 0.00 4.10e-07 1.67e-05 1.57e-02 3.04e-05 ...
 #>  $ maxIter  : num 5
-#>  $ times    : 'difftime' num 3.1913001537323
+#>  $ times    : 'difftime' num 3.15302991867065
 #>   ..- attr(*, "units")= chr "secs"
 ```
 
