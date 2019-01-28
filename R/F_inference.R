@@ -125,8 +125,8 @@ FitBetaStatic <- function(beta.init, psi, maxIter, eps1 = 1e-6,eps2=1e-4, optim_
   logpY = logpY[1:iter]
   P = EdgeProba(beta.old*psi)
   if(verbatim){
-    print(paste0("Convergence took",round(time,2), attr(time, "units")," and ",
-                 iter," iterations.\nLikelihood difference =", diff.loglik, "\nBetas difference =",beta.diff))
+    cat("Convergence took",round(time,2), attr(time, "units")," and ",
+                 iter," iterations.\nLikelihood difference =", diff.loglik, "\nBetas difference =",beta.diff)
   }
   return(list(beta=beta, logpY=logpY,ProbaCond=P,maxIter=iter, times=time))
 }

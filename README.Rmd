@@ -3,20 +3,7 @@ output: github_document
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-```{r echo=FALSE}
-library(htmltools)
-knitr::opts_chunk$set(
-  fig.align = "center"
-)
-knitr::knit_hooks$set(imgcenter = function(before, options, envir){
-  if (before) {
-    HTML("<p align='center'>")
-  } else {
-    HTML("</p>")
-  }
-})
-```    
- 
+  
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
@@ -69,7 +56,7 @@ model<-PLN(counts ~ covar$site)
 
 ```{r output}
 library(EMtree)
-output<-EMtree(model,  maxIter = 5)
+output<-EMtree(model,  maxIter = 15)
 str(output)
 ```
 ### Foster robustness with resampling :
@@ -86,8 +73,8 @@ str(resample_output)
 
 ```{r, cache=TRUE}
 library(parallel)
-compare_output<-ComparEMtree(counts, c("covar$site","covar$date"), B=2, maxIter=2,cond.tol=1e-8, cores=1,
-                             f=0.8,seed=1)
+compare_output<-ComparEMtree(counts, c("covar$site","covar$date"), B=2, maxIter=2,cond.tol=1e-8,
+                             cores=1,f=0.8,seed=1)
 str(compare_output)
 ```
 ### Graphics
@@ -95,7 +82,7 @@ str(compare_output)
 
 Simple network:
 
-```{r, fig.asp=1, fig.width=4, fig.fullwidth=FALSE}
+```{r, fig.asp=1, fig.width=4.5, fig.fullwidth=FALSE, message=FALSE}
 library(ggraph)
 library(tidygraph)
 library(viridis)
@@ -108,7 +95,7 @@ draw_network(x,"Site", pal="dodgerblue3")
 
 #### From `ResampleEMtree` output
 
-```{r, fig.height=4, fig.width=4, imgcenter = TRUE}
+```{r, fig.height=4.5, fig.width=4.5}
 f<-0.8
 df<-freq_selec(resample_output$Pmat,p=p,f=f)
 draw_network(df,"Site")
@@ -117,7 +104,7 @@ draw_network(df,"Site")
 
 #### Facet for plotting several models in one shot
 
-```{r, fig.height=3.5, fig.width=10,imgcenter = TRUE}
+```{r, fig.height=3.5, fig.width=10}
 compar_graphs(compare_output,alpha=TRUE)
 ```
 

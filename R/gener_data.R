@@ -26,13 +26,3 @@ data_from_scratch<-function(type, p=20, r=5, covar,prob=log(p)/p,dens=log(p)/p, 
 }
 
 
-##############
-# INFERENCES
-##############
-EMtree<-function(Y=data,covariates){
-  PLN = PLN(Y ~ -1+covariates)                  # run PLN
-  Sigma<-PLN$model_par$Sigma
-  corVEM<-cov2cor(Sigma)
-  inf_treeggm<-TreeGGM(corVEM,"FALSE",FALSE)$P  # run EM
-  return(inf_treeggm)
-}
