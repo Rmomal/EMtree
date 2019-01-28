@@ -3,6 +3,20 @@ output: github_document
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+```{r echo=FALSE}
+library(htmltools)
+knitr::opts_chunk$set(
+  fig.align = "center"
+)
+knitr::knit_hooks$set(imgcenter = function(before, options, envir){
+  if (before) {
+    HTML("<p align='center'>")
+  } else {
+    HTML("</p>")
+  }
+})
+```    
+ 
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
@@ -94,7 +108,7 @@ draw_network(x,"Site", pal="dodgerblue3")
 
 #### From `ResampleEMtree` output
 
-```{r, fig.height=4, fig.width=4, fig.align="center"}
+```{r, fig.height=4, fig.width=4, imgcenter = TRUE}
 f<-0.8
 df<-freq_selec(resample_output$Pmat,p=p,f=f)
 draw_network(df,"Site")
@@ -103,7 +117,7 @@ draw_network(df,"Site")
 
 #### Facet for plotting several models in one shot
 
-```{r, fig.height=3.5, fig.width=10}
+```{r, fig.height=3.5, fig.width=10,imgcenter = TRUE}
 compar_graphs(compare_output,alpha=TRUE)
 ```
 
