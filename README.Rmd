@@ -82,7 +82,7 @@ str(compare_output)
 
 Simple network:
 
-```{r, fig.asp=1, fig.width=5, fig.fullwidth=FALSE}
+```{r, fig.asp=1, fig.width=4, fig.fullwidth=FALSE}
 library(ggraph)
 library(tidygraph)
 library(viridis)
@@ -95,7 +95,7 @@ draw_network(x,"Site", pal="dodgerblue3")
 
 #### From `ResampleEMtree` output
 
-```{r, fig.height=5, fig.width=5}
+```{r, fig.height=4, fig.width=4}
 f<-0.8
 df<-freq_selec(resample_output$Pmat,p=p,f=f)
 draw_network(df,"Site")
