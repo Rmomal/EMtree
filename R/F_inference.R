@@ -1,20 +1,76 @@
 
 #########################################################################
-
-F_NegLikelihood <- function(beta.vec, log.psi, P){
-  options(warn=-1)
-  return( suppressWarnings(-sum(F_Sym2Vec(P) * (log(beta.vec) + F_Sym2Vec(log.psi))) + log(SumTree(F_Vec2Sym(beta.vec)))))
+##############
+# test fonction perso
+optimRML<-function(init,log.psi, P,eps=1e-6){
+  diff=2
+  gamma.old=init
+  while(diff>eps){
+    #browser()
+    betaPsi<-F_Vec2Sym(exp(gamma.old))*exp(log.psi)
+    betaPsi[which(betaPsi<1e-16)]=1e-16
+    M = Kirshner(betaPsi)$Q
+    lambda = SetLambda(P, M)
+    gamma = F_Sym2Vec(log(P/(M+lambda)))
+    diff=max(abs(exp(gamma.old)-exp(gamma)))
+    if(is.nan(diff)) browser()
+    gamma.old=gamma
+    if(sum(length(which(eigen(Laplacian(F_Vec2Sym(exp(gamma)))[-1,-1])$values<0)))!=0) browser() # le résultat est-il défini positif ?
+    negLik<-(-sum(F_Sym2Vec(P)*(gamma.old+F_Sym2Vec(log.psi)))) + log(SumTree(F_Vec2Sym(exp(gamma.old))))
+    cat("\ndiff= ", diff," // neglik= ", negLik," // sum(exp(gamma))",sum(exp(gamma)))
+  }
+  return(gamma)
 }
 
+##############
+# programme original
+F_NegLikelihood <- function(beta.vec, log.psi, P){
+  res<-(-sum(F_Sym2Vec(P) * (log(beta.vec) + F_Sym2Vec(log.psi))) + log(SumTree(F_Vec2Sym(beta.vec))))
+  return( res)
+}
 # the derivative of F_NegLikelihood
 F_NegGradient <- function(beta.vec, log.psi, P){
   M = Kirshner(F_Vec2Sym(beta.vec)*exp(log.psi))$Q
   lambda = SetLambda(P, M)
   return(- F_Sym2Vec(P)/beta.vec + F_Sym2Vec(M) + rep(lambda, length(beta.vec)))
 }
+##############
+# changement de variable log
+F_NegLikelihood_Trans <- function(gamma, log.psi, P){
+  if(sum(exp(gamma))>2){
+    lambda=1e4
+    saveRDS(F_Vec2Sym(exp(gamma)),"beta_negLik.rds")
+#    print(paste0("Neglik :",sum(exp(gamma))))
+  }else{
+    M = Kirshner(F_Vec2Sym(exp(gamma))*exp(log.psi))$Q
+    lambda = SetLambda(P, M)
+    saveRDS(M,"M_negLik.rds")
+    saveRDS(F_Vec2Sym(exp(gamma)),"beta_negLik.rds")
+#    print(paste0("Neglik :",sum(exp(gamma))," // ",sum(P/(M+lambda))," // ", lambda))
+
+  }
+  # if(sum(exp(gamma))>2) gamma = log(P/(M+lambda))
+  res<-(-sum(F_Sym2Vec(P) * (log(exp(gamma))+ F_Sym2Vec(log.psi))) )+
+    log(SumTree(F_Vec2Sym(exp(gamma))))+lambda*(sum(exp(gamma))-0.5)
+  # if(is.nan(res)){
+  #   browser()
+  # }
+  return( res)
+}
+F_NegGradient_Trans <- function(gamma, log.psi, P){
+  M = Kirshner(F_Vec2Sym(exp(gamma))*exp(log.psi))$Q
+  lambda = SetLambda(P, M)
+  saveRDS(P,"P.rds")
+  saveRDS(M,"M_gradient.rds")
+  saveRDS(F_Vec2Sym(exp(gamma)),"beta_gradient.rds")
+#  print(paste0("Gradient :",sum(exp(gamma))," // ",sum(P/(M+lambda))," // ", lambda))
+  # cat( "\nval lambda: ",lambda," sum gamma:",sum(gamma)," sum expGamma:", sum(exp(gamma)))
+  return(- F_Sym2Vec(P)+ exp(gamma)*(F_Sym2Vec(M) + lambda))
+}
 #########################################################################
 SetLambda <- function(P, M, eps = 1e-6){
   # F.x has to be increasing. The target value is 0
+  #browser()
   F.x <- function(x){
     if(x!=0){
       1 - sum(P / (x+M))
@@ -22,31 +78,15 @@ SetLambda <- function(P, M, eps = 1e-6){
       1 - (2*sum(P[upper.tri(P)] / M[upper.tri(M)]))
     }
   }
-  # suite=TRUE
-  # if(F.x(1e-16) >0){
-  #   F.x <- function(x){0.99 - sum(P / (x+M))}
-  #   if(F.x(1e-16) >0){
-  #     suite=FALSE
-  #     x=NA
-  #     browser()
-  #     cat("ECHEC GRADIENT DESCENT : F.X(1e-16) positive at value",F.x(1e-16)," \n")
-  #   }
-  # }
-  # if(suite){
   x.min = ifelse(F.x(0) >0,-20,1e-4);
   while(F.x(x.min)>0){x.min = x.min -x.min/2}
   x.max = 10
   while(F.x(x.max)<0){x.max = x.max * 2}
   x = (x.max+x.min)/2
-
-
   f.min = F.x(x.min)
   f.max = F.x(x.max)
   f = F.x(x)
-  # x.list = exp(seq(log(x.min), log(x.max), length.out=50))
-  # plot(x.list, sapply(x.list, function(l){F.x(l)}), type='l', log='xy'); abline(h=0)
-  # points(c(x.min, x, x.max), c(f.min, f, f.max), col=c(1, 2, 1))
-  # browser()
+
   while(abs(x.max-x.min) > eps){
     if(f > 0) {
       x.max = x
@@ -57,12 +97,9 @@ SetLambda <- function(P, M, eps = 1e-6){
     }
     x = (x.max+x.min)/2;
     f = F.x(x)
-
-    # points(c(x.min, x, x.max), c(f.min, f, f.max), col=c(1, 2, 1))
-    # cat(x.min, x, x.max, '/', f.min, f, f.max, '\n')
   }
-  # cat("lambda : ", x,"F.x(lambda) : ",f,"\n")
-  #x }
+  # print( 1 - sum(P / (x+M)))
+  if(abs( 1 - sum(P / (x+M)))>2) browser()
   return(x)
 }
 
@@ -92,41 +129,52 @@ F_AlphaN <- function(CorY, n, cond.tol=1e-10){
 FitBetaStatic <- function(beta.init, psi, maxIter, eps1 = 1e-6,eps2=1e-4, optim_method, verbatim){
   options(nwarnings = 1)
   beta.tol = 1e-4
-  beta.min = 1e-30
+  beta.min = 1e-16
   beta.old = beta.init / sum(beta.init)
   log.psi = log(psi)
   iter = 0
   logpY = rep(0, maxIter)
   beta.diff = diff.loglik = 2 * eps2
-
+  cat("\nLikelihoods: ")
   T1<-Sys.time()
   while (((beta.diff > eps1) || (diff.loglik>eps2) ) && iter < maxIter ){
     iter = iter+1
 
+  #  print("CALCUL P")
     P = EdgeProba(beta.old*psi)
-    beta =  tryCatch(F_Vec2Sym(
-      optim(F_Sym2Vec(beta.old), F_NegLikelihood, gr=F_NegGradient,method="BFGS",
-            log.psi, P)$par),
-      warning = function(w) {print("Negative weights during optimization process" )}
-    )
 
-    #browser()
+    init=F_Sym2Vec(beta.old)
+    long=length(F_Sym2Vec(beta.old))
+
+    gamma = optim(log(init), F_NegLikelihood_Trans, gr=F_NegGradient_Trans,method='BFGS', log.psi, P)$par
+    #gamma = cma_es(log(init), F_NegLikelihood_Trans,  log.psi, P, lower=rep(1e-30,long), upper=rep(1,long),
+    #             control=list(sigma=1e-4))$par
+
+    #gamma=optimRML(log(init), log.psi, P, 1e-6)
+
+    beta=exp(gamma)
+
     beta[which(beta< beta.min)] = beta.min
-    diag(beta) = 0
-    logpY[iter] = -F_NegLikelihood(F_Sym2Vec(beta),log.psi,P)
+    beta=F_Vec2Sym(beta)
 
+
+    diag(beta) =0
+
+    logpY[iter] = -F_NegLikelihood(F_Sym2Vec(beta),log.psi,P)
+    cat(logpY[iter],", ")
     beta.diff = max(abs(beta.old-beta))
     beta.old = beta
 
     if(iter > 1){diff.loglik =  abs(logpY[iter]-logpY[iter-1])}else{diff.loglik=1}
 
   }
+
   time<-difftime(Sys.time(),T1)
   logpY = logpY[1:iter]
   P = EdgeProba(beta.old*psi)
   if(verbatim){
-    cat("Convergence took",round(time,2), attr(time, "units")," and ",
-                 iter," iterations.\nLikelihood difference =", diff.loglik, "\nBetas difference =",beta.diff)
+    cat("\nConvergence took",round(time,2), attr(time, "units")," and ",
+        iter," iterations.\nLikelihood difference =", diff.loglik, "\nBetas difference =",beta.diff)
   }
   return(list(beta=beta, logpY=logpY,ProbaCond=P,maxIter=iter, times=time))
 }
@@ -192,7 +240,8 @@ ResampleEMtree <- function(counts, vec_covar, O=NULL, v=0.8, B=1e2, maxIter, con
   formula<-as.formula(string)
   X = as.matrix(lm(formula, x=T)$x)
 
-  obj<-mclapply(1:B,function(b){
+  obj<-lapply(1:B,function(b){
+
     set.seed(b)
     sample = sample(1:n, V, replace = F)
     counts.sample = counts[sample,]
@@ -207,7 +256,7 @@ ResampleEMtree <- function(counts, vec_covar, O=NULL, v=0.8, B=1e2, maxIter, con
                  verbatim=FALSE)[c("ProbaCond","maxIter","times")]
 
     return(inf)
-  },mc.cores=cores)
+  })
 
   Pmat<-do.call(rbind,lapply(obj,function(x){F_Sym2Vec(x$ProbaCond)}))
   summaryiter = do.call(c,lapply(obj,function(x){x$maxIter}))
@@ -236,7 +285,9 @@ ResampleEMtree <- function(counts, vec_covar, O=NULL, v=0.8, B=1e2, maxIter, con
 ComparEMtree <- function(counts, vec_covar, O=NULL, v=0.8, B=1e2, maxIter, cond.tol=1e-14,cores=3,f,seed){
   p=ncol(counts)
   p1<-ResampleEMtree(counts, "1", O=O, v=v, B=B, maxIter, cond.tol=cond.tol,cores=cores)$Pmat
+
   p2<-ResampleEMtree(counts, vec_covar[1], O=O, v=v, B=B, maxIter, cond.tol=cond.tol,cores=cores)$Pmat
+
   p3<-ResampleEMtree(counts, vec_covar[2], O=O, v=v, B=B, maxIter, cond.tol=cond.tol,cores=cores)$Pmat
   p4<-ResampleEMtree(counts, vec_covar, O=O, v=v, B=B, maxIter, cond.tol=cond.tol,cores=cores)$Pmat
   Stab.sel=list(p1,p2,p3,p4)
@@ -270,7 +321,7 @@ ComparEMtree <- function(counts, vec_covar, O=NULL, v=0.8, B=1e2, maxIter, cond.
 #'
 #' @examples
 freq_selec<-function(list,p,f){
- return(F_Vec2Sym(1*colMeans(1*(list>2/p))>f))
+  return(F_Vec2Sym(1*colMeans(1*(list>2/p))>f))
 }
 
 

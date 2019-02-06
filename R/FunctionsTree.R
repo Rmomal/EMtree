@@ -9,7 +9,8 @@ Laplacian <- function(W){
 # Summing over trees (Matrix-tree thm)
 SumTree <- function(W){
    # W = squared weight matrix
-   return(det(Laplacian(W)[-1, -1]))
+
+   return(det(Laplacian(W)[-1,-1]))
 }
 
 ######################################################################################
@@ -29,6 +30,7 @@ Kirshner <- function(W){
    if(!isSymmetric(W)){cat('Pb: W non symmetric!')}
    p = nrow(W)
    L = Laplacian(W)[-1, -1]
+   if(!is.finite(sum(L))) browser()
    Leigen = eigen(L); Q = (Leigen$vectors) %*% diag(1/Leigen$values) %*% t(Leigen$vectors)
    # Q = chol2inv(chol(L));
    # Q = solve(L[-1, -1]);
@@ -69,7 +71,7 @@ EdgeProba <- function(W){
    #   W=W+diag(rep(cst,ncol(W)));
    #   cst=1.1*cst
    #  }
-  #  browser()
+  # browser()
    sapply(1:(p-1),
           function(j){
             sapply((j+1):p,

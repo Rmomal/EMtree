@@ -78,17 +78,20 @@ model<-PLN(counts ~ covar$site)
 
 ``` r
 library(EMtree)
-output<-EMtree(model,  maxIter = 15)
-#> Convergence took 4.22 secs  and  9  iterations.
-#> Likelihood difference = 1.055661e-06 
-#> Betas difference = 6.181843e-12
+set.seed(3)
+output<-EMtree(model,  maxIter = 10)
+#> 
+#> Likelihoods: 143.8132 , 174.9103 , 174.9103 , 
+#> Convergence took 0.48 secs  and  3  iterations.
+#> Likelihood difference = 8.425616e-10 
+#> Betas difference = 1.040834e-17
 str(output)
 #> List of 5
-#>  $ beta     : num [1:33, 1:33] 0.00 3.24e-10 2.22e-05 9.53e-04 5.90e-05 ...
-#>  $ logpY    : num [1:9] 181 198 198 198 198 ...
-#>  $ ProbaCond: num [1:33, 1:33] 0.00 1.45e-12 9.24e-06 1.94e-02 1.47e-05 ...
-#>  $ maxIter  : num 9
-#>  $ times    : 'difftime' num 4.21761608123779
+#>  $ beta     : num [1:33, 1:33] 0.00 1.72e-05 2.06e-05 1.26e-03 2.32e-05 ...
+#>  $ logpY    : num [1:3] 144 175 175
+#>  $ ProbaCond: num [1:33, 1:33] 0.00 1.78e-07 9.16e-06 1.70e-02 5.45e-06 ...
+#>  $ maxIter  : num 3
+#>  $ times    : 'difftime' num 0.48029088973999
 #>   ..- attr(*, "units")= chr "secs"
 ```
 
@@ -96,12 +99,23 @@ str(output)
 
 ``` r
 library(parallel)
-resample_output<-ResampleEMtree(counts, "covar$site", B=2, maxIter=2,cond.tol=1e-8, cores=1)
+resample_output<-ResampleEMtree(counts, "covar$site", B=10, maxIter=5,cond.tol=1e-8, cores=1)
+#> 
+#> Likelihoods: 80.19172 , 121.5799 , 121.5799 , 
+#> Likelihoods: 105.1488 , 137.5108 , 137.5108 , 
+#> Likelihoods: 113.2303 , 147.5407 , 147.5407 , 
+#> Likelihoods: 158.5792 , 185.8034 , 188.0448 , 188.0448 , 
+#> Likelihoods: 181.7004 , 210.2109 , 210.2109 , 
+#> Likelihoods: 92.62868 , 131.0666 , 131.0666 , 
+#> Likelihoods: 160.1685 , 188.3853 , 188.3853 , 
+#> Likelihoods: 109.8129 , 147.1823 , 147.1823 , 
+#> Likelihoods: 126.737 , 160.7707 , 160.7707 , 
+#> Likelihoods: 56.45274 , 101.3752 , 101.3752 ,
 str(resample_output)
 #> List of 3
-#>  $ Pmat   : num [1:2, 1:528] 4.74e-05 4.58e-04 4.59e-03 1.54e-02 3.87e-02 ...
-#>  $ maxIter: num [1:2] 2 2
-#>  $ times  : 'difftime' num [1:2] 1.11130309104919 0.167003154754639
+#>  $ Pmat   : num [1:10, 1:528] 5.19e-05 4.52e-06 1.07e-06 2.36e-06 2.37e-07 ...
+#>  $ maxIter: num [1:10] 3 3 3 4 3 3 3 3 3 3
+#>  $ times  : 'difftime' num [1:10] 0.377939939498901 0.433708906173706 0.345791101455688 0.463144063949585 ...
 #>   ..- attr(*, "units")= chr "secs"
 ```
 
@@ -109,14 +123,11 @@ str(resample_output)
 
 ``` r
 library(parallel)
-compare_output<-ComparEMtree(counts, c("covar$site","covar$date"), B=2, maxIter=2,cond.tol=1e-8,
+compare_output<-ComparEMtree(counts, c("covar$site","covar$date"), B=5, maxIter=5,cond.tol=1e-8,
                              cores=1,f=0.8,seed=1)
+
+
 str(compare_output)
-#> Classes 'tbl_df', 'tbl' and 'data.frame':    4356 obs. of  4 variables:
-#>  $ key    : chr  "1" "1" "1" "1" ...
-#>  $ rowname: chr  "1" "2" "3" "4" ...
-#>  $ models : chr  "null" "null" "null" "null" ...
-#>  $ value  : num  0 0 0 0 0 0 0 0 0 0 ...
 ```
 
 ### Graphics
@@ -151,7 +162,4 @@ draw_network(df,"Site")
 
 ``` r
 compar_graphs(compare_output,alpha=TRUE)
-#> Using `nicely` as default layout
 ```
-
-<img src="man/figures/README-unnamed-chunk-7-1.png" style="display: block; margin: auto;" />
