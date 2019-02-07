@@ -81,10 +81,10 @@ library(EMtree)
 set.seed(3)
 output<-EMtree(model,  maxIter = 40, plot=TRUE)
 #> 
-#> Likelihoods: 109.3301 , 152.0645 , 167.3161 , 174.6878 , 178.8627 , 181.5125 , 183.2325 , 184.3332 , 185.0525 , 185.5438 , 185.8848 , 186.1163 , 186.2671 , 186.3619 , 186.42 , 186.4551 , 186.4761 , 186.4886 , 186.4961 , 186.5006 , 186.5034 , 186.505 , 186.506 , 186.5066 , 186.507 , 186.5073 , 186.5074 , 186.5075 , 
-#> Convergence took 1.22 secs  and  28  iterations.
-#> Likelihood difference = 9.499981e-05 
-#> Betas difference = 8.979049e-08
+#> Likelihoods: 189.8975 , 224.547 , 236.2677 , 241.6514 , 244.6262 , 246.3645 , 247.4053 , 248.054 , 248.4588 , 248.6996 , 248.8347 , 248.9077 , 248.9462 , 248.9665 , 248.9772 , 248.9828 , 248.9859 , 248.9876 , 248.9885 , 248.989 , 248.9893 , 248.9894 , 248.9895 , 
+#> Convergence took 1.12 secs  and  23  iterations.
+#> Likelihood difference = 9.35071e-05 
+#> Betas difference = 8.837998e-08
 ```
 
 <img src="man/figures/README-output-1.png" style="display: block; margin: auto;" />
@@ -92,11 +92,11 @@ output<-EMtree(model,  maxIter = 40, plot=TRUE)
 ``` r
 str(output)
 #> List of 5
-#>  $ beta     : num [1:33, 1:33] 0.00 6.84e-13 3.54e-13 1.01e-12 7.81e-13 ...
-#>  $ logpY    : num [1:28] 109 152 167 175 179 ...
+#>  $ beta     : num [1:33, 1:33] 0.00 6.65e-13 3.51e-13 1.01e-12 8.10e-13 ...
+#>  $ logpY    : num [1:23] 190 225 236 242 245 ...
 #>  $ ProbaCond: num [1:33, 1:33] 0e+00 1e-10 1e-10 1e-10 1e-10 ...
-#>  $ maxIter  : num 28
-#>  $ times    : 'difftime' num 1.22025990486145
+#>  $ maxIter  : num 23
+#>  $ times    : 'difftime' num 1.12359404563904
 #>   ..- attr(*, "units")= chr "secs"
 ```
 
@@ -174,7 +174,7 @@ library(ggraph)
 library(tidygraph)
 library(viridis)
 
-
+set.seed(200)
 x<- 1*(output$ProbaCond>2/p)
 draw_network(x,"Site", pal="dodgerblue3")
 ```
@@ -184,7 +184,6 @@ draw_network(x,"Site", pal="dodgerblue3")
 #### From `ResampleEMtree` output
 
 ``` r
-
 f<-0.8
 df<-freq_selec(resample_output$Pmat,p=p,f=f)
 draw_network(df,"Site")
@@ -195,7 +194,6 @@ draw_network(df,"Site")
 #### Facet for plotting several models in one shot
 
 ``` r
-
 compar_graphs(compare_output,alpha=TRUE)
 #> Using `nicely` as default layout
 ```

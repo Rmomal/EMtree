@@ -89,7 +89,7 @@ library(ggraph)
 library(tidygraph)
 library(viridis)
 
-
+set.seed(200)
 x<- 1*(output$ProbaCond>2/p)
 draw_network(x,"Site", pal="dodgerblue3")
 
@@ -98,7 +98,6 @@ draw_network(x,"Site", pal="dodgerblue3")
 #### From `ResampleEMtree` output
 
 ```{r, fig.height=4.5, fig.width=4.5}
-
 f<-0.8
 df<-freq_selec(resample_output$Pmat,p=p,f=f)
 draw_network(df,"Site")
@@ -108,7 +107,7 @@ draw_network(df,"Site")
 #### Facet for plotting several models in one shot
 
 ```{r, fig.height=3.5, fig.width=10}
-
 compar_graphs(compare_output,alpha=TRUE)
+
 ```
 

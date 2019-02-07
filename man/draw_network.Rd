@@ -4,7 +4,7 @@
 \alias{draw_network}
 \title{Title}
 \usage{
-draw_network(df, adj_covar, pal = NULL)
+draw_network(df, adj_covar, pal = NULL, seed = 200)
 }
 \arguments{
 \item{pal}{}

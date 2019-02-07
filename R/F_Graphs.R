@@ -10,7 +10,8 @@
 #' @export
 #'
 #' @examples
-draw_network<-function(df,adj_covar, pal=NULL){
+draw_network<-function(df,adj_covar, pal=NULL,seed=200){
+  set.seed(seed)
   res<- as_tbl_graph(df, directed=FALSE) %>%
     activate(nodes) %>%
     mutate( keyplayer = node_is_keyplayer(k=3), model=adj_covar, name=1:p,
@@ -46,12 +47,13 @@ draw_network<-function(df,adj_covar, pal=NULL){
 #' @export
 #'
 #' @examples
-compar_graphs<-function(allNets, alpha=TRUE){
+compar_graphs<-function(allNets, alpha=TRUE,seed=200){
   nbmod<-length(unique(allNets$models))
 
   spliT<-data.frame(allNets) %>%
     split(allNets$models) %>%
     tibble(P=map(.,function(x){
+      set.seed(seed)
       model<-x$models[1]
      # browser()
       res<- as_tbl_graph(x, directed=FALSE) %>%

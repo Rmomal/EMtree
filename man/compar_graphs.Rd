@@ -4,7 +4,7 @@
 \alias{compar_graphs}
 \title{Title}
 \usage{
-compar_graphs(allNets, alpha = TRUE)
+compar_graphs(allNets, alpha = TRUE, seed = 200)
 }
 \arguments{
 \item{alpha}{}
