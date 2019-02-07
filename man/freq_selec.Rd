@@ -4,7 +4,7 @@
 \alias{freq_selec}
 \title{Title}
 \usage{
-freq_selec(list, p, f)
+freq_selec(Pmat, p, f)
 }
 \arguments{
 \item{f}{}

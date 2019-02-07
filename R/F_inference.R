@@ -3,23 +3,30 @@
 ##############
 # test fonction perso
 optimRML<-function(init,log.psi, P,eps=1e-6){
-  diff=2
+
   gamma.old=init
-  while(diff>eps){
-    #browser()
-    betaPsi<-F_Vec2Sym(exp(gamma.old))*exp(log.psi)
-    betaPsi[which(betaPsi<1e-16)]=1e-16
-    M = Kirshner(betaPsi)$Q
-    lambda = SetLambda(P, M)
-    gamma = F_Sym2Vec(log(P/(M+lambda)))
-    diff=max(abs(exp(gamma.old)-exp(gamma)))
-    if(is.nan(diff)) browser()
-    gamma.old=gamma
-    if(sum(length(which(eigen(Laplacian(F_Vec2Sym(exp(gamma)))[-1,-1])$values<0)))!=0) browser() # le résultat est-il défini positif ?
-    negLik<-(-sum(F_Sym2Vec(P)*(gamma.old+F_Sym2Vec(log.psi)))) + log(SumTree(F_Vec2Sym(exp(gamma.old))))
-    cat("\ndiff= ", diff," // neglik= ", negLik," // sum(exp(gamma))",sum(exp(gamma)))
-  }
-  return(gamma)
+  P.vec=F_Sym2Vec(P)
+  # while(diff>eps){
+  #browser()
+  # betaPsi<-F_Vec2Sym(exp(gamma.old))*exp(log.psi)
+  # betaPsi[which(betaPsi<1e-16)]=1e-16
+  M.vec = F_Sym2Vec(Kirshner(F_Vec2Sym(exp(gamma.old)))$Q)
+  lambda = SetLambda(P, F_Vec2Sym(M.vec))
+  # browser()
+  gamma.vec =log(P.vec/(M.vec+lambda))
+  # browser()
+  # gamma.vec=gamma.vec-mean(gamma.vec)
+  # gamma.vec[which(gamma.vec<(-30))]=-30
+  # gamma.vec[which(gamma.vec>30)]=30
+
+  if(sum(is.nan(gamma.vec))!=0) browser()
+  gamma.old=gamma.vec
+
+  if(sum(length(which(eigen(Laplacian(F_Vec2Sym(exp(gamma.vec)))[-1,-1])$values<0)))!=0) browser() # le résultat est-il défini positif ?
+  # negLik<-(-sum(F_Sym2Vec(P)*(gamma.old+F_Sym2Vec(log.psi)))) + log(SumTree(F_Vec2Sym(exp(gamma.old))))
+  #cat("\nneglik= ", negLik," // sum(exp(gamma))",sum(exp(gamma.vec)),"\n")
+  #}
+  return((gamma.vec))
 }
 
 ##############
@@ -40,21 +47,21 @@ F_NegLikelihood_Trans <- function(gamma, log.psi, P){
   if(sum(exp(gamma))>2){
     lambda=1e4
     saveRDS(F_Vec2Sym(exp(gamma)),"beta_negLik.rds")
-#    print(paste0("Neglik :",sum(exp(gamma))))
+    print(paste0("Neglik :",sum(exp(gamma))))
   }else{
     M = Kirshner(F_Vec2Sym(exp(gamma))*exp(log.psi))$Q
     lambda = SetLambda(P, M)
     saveRDS(M,"M_negLik.rds")
     saveRDS(F_Vec2Sym(exp(gamma)),"beta_negLik.rds")
-#    print(paste0("Neglik :",sum(exp(gamma))," // ",sum(P/(M+lambda))," // ", lambda))
+    print(paste0("Neglik :",sum(exp(gamma))," // ",sum(P/(M+lambda))," // ", lambda))
 
   }
   # if(sum(exp(gamma))>2) gamma = log(P/(M+lambda))
   res<-(-sum(F_Sym2Vec(P) * (log(exp(gamma))+ F_Sym2Vec(log.psi))) )+
     log(SumTree(F_Vec2Sym(exp(gamma))))+lambda*(sum(exp(gamma))-0.5)
-  # if(is.nan(res)){
-  #   browser()
-  # }
+  if(is.nan(res)){
+    browser()
+  }
   return( res)
 }
 F_NegGradient_Trans <- function(gamma, log.psi, P){
@@ -63,7 +70,7 @@ F_NegGradient_Trans <- function(gamma, log.psi, P){
   saveRDS(P,"P.rds")
   saveRDS(M,"M_gradient.rds")
   saveRDS(F_Vec2Sym(exp(gamma)),"beta_gradient.rds")
-#  print(paste0("Gradient :",sum(exp(gamma))," // ",sum(P/(M+lambda))," // ", lambda))
+  print(paste0("Gradient :",sum(exp(gamma))," // ",sum(P/(M+lambda))," // ", lambda))
   # cat( "\nval lambda: ",lambda," sum gamma:",sum(gamma)," sum expGamma:", sum(exp(gamma)))
   return(- F_Sym2Vec(P)+ exp(gamma)*(F_Sym2Vec(M) + lambda))
 }
@@ -126,7 +133,7 @@ F_AlphaN <- function(CorY, n, cond.tol=1e-10){
 }
 
 #########################################################################
-FitBetaStatic <- function(beta.init, psi, maxIter, eps1 = 1e-6,eps2=1e-4, optim_method, verbatim){
+FitBetaStatic <- function(beta.init, psi, maxIter, eps1 = 1e-6,eps2=1e-4, optim_method, verbatim,plot){
   options(nwarnings = 1)
   beta.tol = 1e-4
   beta.min = 1e-16
@@ -140,17 +147,17 @@ FitBetaStatic <- function(beta.init, psi, maxIter, eps1 = 1e-6,eps2=1e-4, optim_
   while (((beta.diff > eps1) || (diff.loglik>eps2) ) && iter < maxIter ){
     iter = iter+1
 
-  #  print("CALCUL P")
+    #print("CALCUL P")
     P = EdgeProba(beta.old*psi)
 
     init=F_Sym2Vec(beta.old)
     long=length(F_Sym2Vec(beta.old))
 
-    gamma = optim(log(init), F_NegLikelihood_Trans, gr=F_NegGradient_Trans,method='BFGS', log.psi, P)$par
+    # gamma = optim(log(init), F_NegLikelihood_Trans, gr=F_NegGradient_Trans,method='BFGS', log.psi, P)$par
     #gamma = cma_es(log(init), F_NegLikelihood_Trans,  log.psi, P, lower=rep(1e-30,long), upper=rep(1,long),
     #             control=list(sigma=1e-4))$par
 
-    #gamma=optimRML(log(init), log.psi, P, 1e-6)
+    gamma=optimRML(log(init), log.psi, P, 1e-6)
 
     beta=exp(gamma)
 
@@ -171,11 +178,14 @@ FitBetaStatic <- function(beta.init, psi, maxIter, eps1 = 1e-6,eps2=1e-4, optim_
 
   time<-difftime(Sys.time(),T1)
   logpY = logpY[1:iter]
+  g<-tibble(p=logpY) %>% rowid_to_column() %>%
+    ggplot(aes(rowid,p))+geom_point()+geom_line()+theme_minimal()+labs(x="Iter",y="Likelihood")
   P = EdgeProba(beta.old*psi)
   if(verbatim){
     cat("\nConvergence took",round(time,2), attr(time, "units")," and ",
         iter," iterations.\nLikelihood difference =", diff.loglik, "\nBetas difference =",beta.diff)
   }
+  if(plot) print(g)
   return(list(beta=beta, logpY=logpY,ProbaCond=P,maxIter=iter, times=time))
 }
 
@@ -192,7 +202,7 @@ FitBetaStatic <- function(beta.init, psi, maxIter, eps1 = 1e-6,eps2=1e-4, optim_
 #' @export
 #'
 #' @examples
-EMtree<-function(PLNobject,  maxIter, cond.tol=1e-10, optim_method, verbatim=TRUE){
+EMtree<-function(PLNobject,  maxIter, cond.tol=1e-10, optim_method, verbatim=TRUE, plot=FALSE){
   CorY=cov2cor(PLNobject$model_par$Sigma)
   p = ncol(CorY)
   n=PLNobject$n
@@ -201,7 +211,7 @@ EMtree<-function(PLNobject,  maxIter, cond.tol=1e-10, optim_method, verbatim=TRU
   beta.unif = matrix(1, p, p); diag(beta.unif) = 0; beta.unif = beta.unif / sum(beta.unif)
 
   FitEM = FitBetaStatic(beta.init=beta.unif, psi=psi, maxIter = maxIter, optim_method=optim_method,
-                        verbatim=verbatim)
+                        verbatim=verbatim, plot=plot)
 
   return(FitEM)
 }
@@ -240,7 +250,7 @@ ResampleEMtree <- function(counts, vec_covar, O=NULL, v=0.8, B=1e2, maxIter, con
   formula<-as.formula(string)
   X = as.matrix(lm(formula, x=T)$x)
 
-  obj<-lapply(1:B,function(b){
+  obj<-mclapply(1:B,function(b){
 
     set.seed(b)
     sample = sample(1:n, V, replace = F)
@@ -253,12 +263,13 @@ ResampleEMtree <- function(counts, vec_covar, O=NULL, v=0.8, B=1e2, maxIter, con
     )
 
     inf<-EMtree( PLN.sample, maxIter=maxIter, cond.tol=cond.tol,
-                 verbatim=FALSE)[c("ProbaCond","maxIter","times")]
+                 verbatim=FALSE,plot=FALSE)[c("ProbaCond","maxIter","times")]
 
     return(inf)
-  })
+  }, mc.cores=cores)
 
   Pmat<-do.call(rbind,lapply(obj,function(x){F_Sym2Vec(x$ProbaCond)}))
+
   summaryiter = do.call(c,lapply(obj,function(x){x$maxIter}))
   times<-do.call(c,lapply(obj,function(x){x$time}))
 
@@ -282,19 +293,24 @@ ResampleEMtree <- function(counts, vec_covar, O=NULL, v=0.8, B=1e2, maxIter, con
 #' @export
 #'
 #' @examples
-ComparEMtree <- function(counts, vec_covar, O=NULL, v=0.8, B=1e2, maxIter, cond.tol=1e-14,cores=3,f,seed){
+ComparEMtree <- function(counts, vec_covar, O=NULL, v=0.8, B=1e2, maxIter, cond.tol=1e-14,cores=3,f){
   p=ncol(counts)
+  split<-strsplit(vec_covar,"\\$")
+  models =c("null",split[[1]][2],split[[2]][2],paste(lapply(split, function(x){x[2]}), collapse=" + "))
+  cat("\nmodel ",models[1],": \n")
   p1<-ResampleEMtree(counts, "1", O=O, v=v, B=B, maxIter, cond.tol=cond.tol,cores=cores)$Pmat
-
+  cat("\nmodel ",models[2],": \n")
   p2<-ResampleEMtree(counts, vec_covar[1], O=O, v=v, B=B, maxIter, cond.tol=cond.tol,cores=cores)$Pmat
 
+  cat("\nmodel ",models[3],": \n")
   p3<-ResampleEMtree(counts, vec_covar[2], O=O, v=v, B=B, maxIter, cond.tol=cond.tol,cores=cores)$Pmat
+  cat("\nmodel ",models[4],": \n")
   p4<-ResampleEMtree(counts, vec_covar, O=O, v=v, B=B, maxIter, cond.tol=cond.tol,cores=cores)$Pmat
+
   Stab.sel=list(p1,p2,p3,p4)
 
   mat<-data.frame(freq_selec_list(Stab.sel,1,p,f))
-  set.seed(seed)
-  allNets<-tibble(P = list(mat), models =c("null",vec_covar[1],vec_covar[2],paste(vec_covar, collapse=" + ")) )  %>%
+  allNets<-tibble(P = list(mat), models =models )  %>%
     mutate(P=map( seq_along(P), function(x) {
       df<-freq_selec_list(Stab.sel,x,p,f)
       df[lower.tri(df, diag = TRUE)]<-0
@@ -320,16 +336,14 @@ ComparEMtree <- function(counts, vec_covar, O=NULL, v=0.8, B=1e2, maxIter, cond.
 #' @export
 #'
 #' @examples
-freq_selec<-function(list,p,f){
-  return(F_Vec2Sym(1*colMeans(1*(list>2/p))>f))
+freq_selec<-function(Pmat,p,f){
+  return(F_Vec2Sym(1*colMeans(1*(Pmat>2/p))>f))
 }
 
-
-
-
-freq_selec_list<-function(list,x,p,f){
-  return(F_Vec2Sym( 1*(colMeans( 1*(list[[x]]>2/p))>f)))
+freq_selec_list<-function(list_Pmat,x,p,f){
+  return(F_Vec2Sym( 1*(colMeans( 1*(list_Pmat[[x]]>2/p))>f)))
 }
+
 select_edges<-function(data,p=p){
   1*(data$ProbaCond>2/p)
 }

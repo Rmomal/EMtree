@@ -5,7 +5,7 @@
 \title{Title}
 \usage{
 EMtree(PLNobject, maxIter, cond.tol = 1e-10, optim_method,
-  verbatim = TRUE)
+  verbatim = TRUE, plot = FALSE)
 }
 \arguments{
 \item{verbatim}{}

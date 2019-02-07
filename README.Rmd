@@ -57,7 +57,7 @@ model<-PLN(counts ~ covar$site)
 ```{r output}
 library(EMtree)
 set.seed(3)
-output<-EMtree(model,  maxIter = 10)
+output<-EMtree(model,  maxIter = 40, plot=TRUE)
 str(output)
 ```
 ### Foster robustness with resampling :
@@ -65,17 +65,16 @@ str(output)
 
 ```{r, cache=TRUE}
 library(parallel)
-resample_output<-ResampleEMtree(counts, "covar$site", B=10, maxIter=5,cond.tol=1e-8, cores=1)
+resample_output<-ResampleEMtree(counts, "covar$site", B=5, maxIter=5,cond.tol=1e-8, cores=1)
 str(resample_output)
 ```
 
 ### Several models with resampling :
 
 
-```{r, cache=TRUE,eval=FALSE}
+```{r, cache=TRUE}
 library(parallel)
-compare_output<-ComparEMtree(counts, c("covar$site","covar$date"), B=5, maxIter=5,cond.tol=1e-8,
-                             cores=1,f=0.8,seed=1)
+compare_output<-ComparEMtree(counts, c("covar$site","covar$date"), B=5, maxIter=5,cond.tol=1e-8,cores=1,f=0.8)
 
 
 str(compare_output)
@@ -89,7 +88,7 @@ Simple network:
 library(ggraph)
 library(tidygraph)
 library(viridis)
-seed<-200
+
 
 x<- 1*(output$ProbaCond>2/p)
 draw_network(x,"Site", pal="dodgerblue3")
@@ -99,6 +98,7 @@ draw_network(x,"Site", pal="dodgerblue3")
 #### From `ResampleEMtree` output
 
 ```{r, fig.height=4.5, fig.width=4.5}
+
 f<-0.8
 df<-freq_selec(resample_output$Pmat,p=p,f=f)
 draw_network(df,"Site")
@@ -107,7 +107,8 @@ draw_network(df,"Site")
 
 #### Facet for plotting several models in one shot
 
-```{r, fig.height=3.5, fig.width=10, eval=FALSE}
+```{r, fig.height=3.5, fig.width=10}
+
 compar_graphs(compare_output,alpha=TRUE)
 ```
 

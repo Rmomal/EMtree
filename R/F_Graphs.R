@@ -18,7 +18,7 @@ draw_network<-function(df,adj_covar, pal=NULL){
     activate(edges)  %>%
     filter(weight !=0) %>%
     mutate(neibs=edge_is_incident(which(.N()$keyplayer)), model=adj_covar)
-
+#browser()
   pal_edges <-  ifelse(is.null(pal), viridisLite::viridis(5, option = "C")[c(3,2,4,1)], pal)
   pal_nodes<-c("gray15","goldenrod1")
 
@@ -53,11 +53,13 @@ compar_graphs<-function(allNets, alpha=TRUE){
     split(allNets$models) %>%
     tibble(P=map(.,function(x){
       model<-x$models[1]
+     # browser()
       res<- as_tbl_graph(x, directed=FALSE) %>%
+        activate(edges) %>% filter(value!=0) %>%
         activate(nodes) %>%
         mutate( importance=centrality_degree(),
                 keyplayer = node_is_keyplayer(k=3), model=model) %>%
-        activate(edges) %>% filter(value!=0) %>%
+        activate(edges) %>%
         mutate(neibs=edge_is_incident(which(.N()$keyplayer)), model=model) %>%
         activate(nodes) %>%
         mutate(label=ifelse(keyplayer,name,"")) #%>%
@@ -84,6 +86,7 @@ compar_graphs<-function(allNets, alpha=TRUE){
   }else{plot<-plot+
     geom_edge_arc(aes(color=model),curvature=0.3,show.legend=FALSE)
   }
+ # browser()
   plot+
     geom_node_point(aes(color=keyplayer, size=keyplayer), show.legend=FALSE)+
     scale_edge_colour_manual(values=pal_edges[c(4,2,1,3)], labels=mods)+
