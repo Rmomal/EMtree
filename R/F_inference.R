@@ -2,7 +2,7 @@
 #########################################################################
 ##############
 # test fonction perso
-optimRML<-function(init,log.psi, P,eps=1e-6){
+optimRML<-function(init,log.psi, P){
 
   gamma.old=init
   P.vec=F_Sym2Vec(P)
@@ -11,13 +11,14 @@ optimRML<-function(init,log.psi, P,eps=1e-6){
   # betaPsi<-F_Vec2Sym(exp(gamma.old))*exp(log.psi)
   # betaPsi[which(betaPsi<1e-16)]=1e-16
   M.vec = F_Sym2Vec(Kirshner(F_Vec2Sym(exp(gamma.old)))$Q)
-  lambda = SetLambda(P, F_Vec2Sym(M.vec))
+  #  lambda = SetLambda(P, F_Vec2Sym(M.vec))
   # browser()
-  gamma.vec =log(P.vec/(M.vec+lambda))
+  gamma.vec =log(P.vec/(M.vec))
   # browser()
-  # gamma.vec=gamma.vec-mean(gamma.vec)
-  # gamma.vec[which(gamma.vec<(-30))]=-30
-  # gamma.vec[which(gamma.vec>30)]=30
+  gamma.vec=gamma.vec-mean(gamma.vec)
+  borne=40
+  gamma.vec[which(gamma.vec<(-borne))]=-borne
+  # gamma.vec[which(gamma.vec>borne)]=borne
 
   if(sum(is.nan(gamma.vec))!=0) browser()
   gamma.old=gamma.vec
@@ -37,41 +38,27 @@ F_NegLikelihood <- function(beta.vec, log.psi, P){
 }
 # the derivative of F_NegLikelihood
 F_NegGradient <- function(beta.vec, log.psi, P){
-  M = Kirshner(F_Vec2Sym(beta.vec)*exp(log.psi))$Q
+  M = Kirshner(F_Vec2Sym(beta.vec))$Q
   lambda = SetLambda(P, M)
   return(- F_Sym2Vec(P)/beta.vec + F_Sym2Vec(M) + rep(lambda, length(beta.vec)))
 }
 ##############
 # changement de variable log
 F_NegLikelihood_Trans <- function(gamma, log.psi, P){
-  if(sum(exp(gamma))>2){
-    lambda=1e4
-    saveRDS(F_Vec2Sym(exp(gamma)),"beta_negLik.rds")
-    print(paste0("Neglik :",sum(exp(gamma))))
-  }else{
-    M = Kirshner(F_Vec2Sym(exp(gamma))*exp(log.psi))$Q
-    lambda = SetLambda(P, M)
-    saveRDS(M,"M_negLik.rds")
-    saveRDS(F_Vec2Sym(exp(gamma)),"beta_negLik.rds")
-    print(paste0("Neglik :",sum(exp(gamma))," // ",sum(P/(M+lambda))," // ", lambda))
+  gamma=gamma-mean(gamma)
+  gamma[which(gamma<(-30))]=-30
+  M = Kirshner(F_Vec2Sym(exp(gamma)))$Q
+  lambda = SetLambda(P, M)
 
-  }
-  # if(sum(exp(gamma))>2) gamma = log(P/(M+lambda))
-  res<-(-sum(F_Sym2Vec(P) * (log(exp(gamma))+ F_Sym2Vec(log.psi))) )+
-    log(SumTree(F_Vec2Sym(exp(gamma))))+lambda*(sum(exp(gamma))-0.5)
-  if(is.nan(res)){
-    browser()
-  }
+  res<-(-sum(F_Sym2Vec(P) * (log(exp(gamma))+ F_Sym2Vec(log.psi))) )+log(SumTree(F_Vec2Sym(exp(gamma))))+
+    lambda*(sum(exp(gamma))-0.5)
+  if(is.nan(res))  browser()
+
   return( res)
 }
 F_NegGradient_Trans <- function(gamma, log.psi, P){
-  M = Kirshner(F_Vec2Sym(exp(gamma))*exp(log.psi))$Q
+  M = Kirshner(F_Vec2Sym(exp(gamma)))$Q
   lambda = SetLambda(P, M)
-  saveRDS(P,"P.rds")
-  saveRDS(M,"M_gradient.rds")
-  saveRDS(F_Vec2Sym(exp(gamma)),"beta_gradient.rds")
-  print(paste0("Gradient :",sum(exp(gamma))," // ",sum(P/(M+lambda))," // ", lambda))
-  # cat( "\nval lambda: ",lambda," sum gamma:",sum(gamma)," sum expGamma:", sum(exp(gamma)))
   return(- F_Sym2Vec(P)+ exp(gamma)*(F_Sym2Vec(M) + lambda))
 }
 #########################################################################
@@ -105,7 +92,6 @@ SetLambda <- function(P, M, eps = 1e-6){
     x = (x.max+x.min)/2;
     f = F.x(x)
   }
-  # print( 1 - sum(P / (x+M)))
   if(abs( 1 - sum(P / (x+M)))>2) browser()
   return(x)
 }
@@ -142,38 +128,31 @@ FitBetaStatic <- function(beta.init, psi, maxIter, eps1 = 1e-6,eps2=1e-4, optim_
   iter = 0
   logpY = rep(0, maxIter)
   beta.diff = diff.loglik = 2 * eps2
-  cat("\nLikelihoods: ")
+  if(verbatim) cat("\nLikelihoods: ")
   T1<-Sys.time()
-  while (((beta.diff > eps1) || (diff.loglik>eps2) ) && iter < maxIter ){
+  stop=FALSE
+  while (((beta.diff > eps1) || (diff.loglik>eps2) ) && iter < maxIter && !stop){
     iter = iter+1
-
-    #print("CALCUL P")
     P = EdgeProba(beta.old*psi)
-
     init=F_Sym2Vec(beta.old)
     long=length(F_Sym2Vec(beta.old))
 
-    # gamma = optim(log(init), F_NegLikelihood_Trans, gr=F_NegGradient_Trans,method='BFGS', log.psi, P)$par
-    #gamma = cma_es(log(init), F_NegLikelihood_Trans,  log.psi, P, lower=rep(1e-30,long), upper=rep(1,long),
-    #             control=list(sigma=1e-4))$par
-
-    gamma=optimRML(log(init), log.psi, P, 1e-6)
-
+    gamma = optim(log(init), F_NegLikelihood_Trans, gr=F_NegGradient_Trans,method='BFGS', log.psi, P)$par
+    # gamma=optimRML(log(init), log.psi, P)
     beta=exp(gamma)
-
     beta[which(beta< beta.min)] = beta.min
     beta=F_Vec2Sym(beta)
 
-
-    diag(beta) =0
-
     logpY[iter] = -F_NegLikelihood(F_Sym2Vec(beta),log.psi,P)
-    cat(logpY[iter],", ")
+    if(verbatim) cat(logpY[iter],", ")
     beta.diff = max(abs(beta.old-beta))
     beta.old = beta
-
-    if(iter > 1){diff.loglik =  abs(logpY[iter]-logpY[iter-1])}else{diff.loglik=1}
-
+    diffPres=logpY[iter]-logpY[iter-1]
+    if(iter > 1){diff.loglik =  abs(diffPres)}else{diff.loglik=1}
+    if(iter>=3 && diffPres<0){
+      diffPast=logpY[iter-1]-logpY[iter-2]
+      if(abs(diffPres)>abs(diffPast)) stop=TRUE
+    }
   }
 
   time<-difftime(Sys.time(),T1)
@@ -184,9 +163,12 @@ FitBetaStatic <- function(beta.init, psi, maxIter, eps1 = 1e-6,eps2=1e-4, optim_
   if(verbatim){
     cat("\nConvergence took",round(time,2), attr(time, "units")," and ",
         iter," iterations.\nLikelihood difference =", diff.loglik, "\nBetas difference =",beta.diff)
+  }else{
+    cat("\nConvergence took",round(time,2), attr(time, "units")," and ",
+        iter," iterations.")
   }
   if(plot) print(g)
-  return(list(beta=beta, logpY=logpY,ProbaCond=P,maxIter=iter, times=time))
+  return(list(beta=beta, logpY=logpY,ProbaCond=P,maxIter=iter, timeEM=time))
 }
 
 #########################################################################
@@ -212,7 +194,7 @@ EMtree<-function(PLNobject,  maxIter, cond.tol=1e-10, optim_method, verbatim=TRU
 
   FitEM = FitBetaStatic(beta.init=beta.unif, psi=psi, maxIter = maxIter, optim_method=optim_method,
                         verbatim=verbatim, plot=plot)
-
+  FitEM$alpha=alpha.psi$alpha
   return(FitEM)
 }
 
@@ -267,7 +249,6 @@ ResampleEMtree <- function(counts, vec_covar, O=NULL, v=0.8, B=1e2, maxIter, con
 
     return(inf)
   }, mc.cores=cores)
-
   Pmat<-do.call(rbind,lapply(obj,function(x){F_Sym2Vec(x$ProbaCond)}))
 
   summaryiter = do.call(c,lapply(obj,function(x){x$maxIter}))

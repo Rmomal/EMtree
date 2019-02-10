@@ -63,15 +63,24 @@ KirshnerRM <- function(beta){
 EdgeProba <- function(W){
   # W = squared weight matrix
   # Direct calculation
-  borne=30
+ it=-1
+ Wcum = SumTree(W)
   if(!isSymmetric(W)){cat('Pb: W non symmpetric!')}
-   #browser()
-  W.log=log(F_Sym2Vec(W))
-  # W.center=W.log-mean(W.log)
-  # W.center[which(W.center<(-borne))]=-borne
-  # W.center[which(W.center>borne)]=borne
-  # W.tailed=F_Vec2Sym(exp(W.center))
-  p = nrow(W); P = matrix(0, p, p); Wcum = SumTree(W)
+  while(!is.finite(Wcum)){
+    it=it+1
+    borne=30-it
+    message(cat("W corrected, bound=",borne))
+
+    W.log=log(F_Sym2Vec(W))
+    W.center=W.log-mean(W.log)
+    W.center[which(W.center<(-borne))]=-borne
+    W.center[which(W.center>borne)]=borne
+    W=F_Vec2Sym(exp(W.center))
+    Wcum = SumTree(W)
+  }
+  #browser()
+
+  p = nrow(W); P = matrix(0, p, p)
 
   # cst=1 ;
   # while(min(eigen(W)$values)<0){
@@ -90,7 +99,7 @@ EdgeProba <- function(W){
            )
          }
   )
-if(sum(is.nan(P))!=0) browser()
+  if(sum(is.nan(P))!=0) browser()
   P[which(P<1e-10)]=1e-10
   diag(P)=0
   return(P)

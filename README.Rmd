@@ -57,22 +57,22 @@ model<-PLN(counts ~ covar$site)
 ```{r output}
 library(EMtree)
 set.seed(3)
-output<-EMtree(model,  maxIter = 40, plot=TRUE)
+output<-EMtree(model,  maxIter = 10, plot=TRUE)
 str(output)
 ```
 ### Foster robustness with resampling :
 
 
-```{r, cache=TRUE}
+```{r, cache=FALSE}
 library(parallel)
-resample_output<-ResampleEMtree(counts, "covar$site", B=5, maxIter=5,cond.tol=1e-8, cores=1)
+resample_output<-ResampleEMtree(counts, "covar$site", B=5, maxIter=10,cond.tol=1e-8, cores=1)
 str(resample_output)
 ```
 
 ### Several models with resampling :
 
 
-```{r, cache=TRUE}
+```{r, cache=FALSE}
 library(parallel)
 compare_output<-ComparEMtree(counts, c("covar$site","covar$date"), B=5, maxIter=5,cond.tol=1e-8,cores=1,f=0.8)
 
