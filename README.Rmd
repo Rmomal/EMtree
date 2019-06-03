@@ -65,7 +65,7 @@ str(output)
 
 ```{r, cache=FALSE}
 library(parallel)
-resample_output<-ResampleEMtree(counts, "covar$site", B=5, maxIter=10,cond.tol=1e-8, cores=1)
+resample_output<-ResampleEMtree(counts, "covar$site", S=5, maxIter=10,cond.tol=1e-8, cores=1)
 str(resample_output)
 ```
 
@@ -74,7 +74,7 @@ str(resample_output)
 
 ```{r, cache=FALSE}
 library(parallel)
-compare_output<-ComparEMtree(counts, c("covar$site","covar$date"), B=5, maxIter=5,cond.tol=1e-8,cores=1,f=0.8)
+compare_output<-ComparEMtree(counts, c("covar$site","covar$date"), S=1, maxIter=5,cond.tol=1e-8,cores=1,f=0.8)
 
 
 str(compare_output)

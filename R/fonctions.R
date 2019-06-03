@@ -61,13 +61,15 @@ erdos<-function(d,prob){
   G = matrix(rbinom(d^2, 1, prob), d, d)
   G[lower.tri(G, diag=T)] = 0; G = G+t(G)
 }
-SimCluster <- function(p, k, d, r){
+
+SimCluster <- function(p, k, dens, r){
+ # browser()
   # k = nb clusters, d = graph density, r = within/between ratio connection probability
-  beta = d / (r / k + (k - 1) / k)
+  beta = dens / (r / k + (k - 1) / k)
   alpha = r * beta
   while (alpha > 1) {
     r = .9 * r
-    beta = d / (r / k + (k - 1) / k)
+    beta = dens / (r / k + (k - 1) / k)
     alpha = r * beta
   }
   Z = t(rmultinom(p, 1, rep(1 / k, k)))
@@ -77,7 +79,7 @@ SimCluster <- function(p, k, d, r){
   G = F_Vec2Sym(rbinom(p * (p - 1) / 2, 1, alpha * ZZ + beta * (1 - ZZ)))
   #gplot(G, gmode='graph', label=1:p, vertex.col=Z%*%(1:k),
   #     main=paste0(round(r,2),"// alpha ",round(alpha,2),"// beta ",round(beta,2)))
-  
+
   return(G)
 }
 # d=10
@@ -103,13 +105,12 @@ generator_graph<-function(d = 20, graph = "tree", g = NULL, prob = NULL, dens=0.
     }
   theta = matrix(0, d, d)
   if (graph == "cluster") {
-    #browser()
-    
+
     theta<-SimCluster(d,3,dens,r) #prob=5/d ?
-    
+
   }
   if (graph == "scale-free") {
-    
+
     out = .C("SFGen", dd0 = as.integer(2), dd = as.integer(d),
              G = as.integer(theta), PACKAGE = "huge")
     theta = matrix(as.numeric(out$G), d, d)
@@ -125,7 +126,7 @@ generator_graph<-function(d = 20, graph = "tree", g = NULL, prob = NULL, dens=0.
       }
     }
   }
-  
+
   #browser()
   if (verbose)
     cat("done.\n")
@@ -207,7 +208,7 @@ simMatrix<-function(n){
 estim_reg<-function(Y,G){
   d<-ncol(Y)
   n<-nrow(Y)
-  if(n>d){ 
+  if(n>d){
     S = P  = matrix(0, d,d)
     for (j in 1:d){
       #  browser()
@@ -253,22 +254,22 @@ fun.auc.ggplot <- function(pred, obs, title,points){
   ROC_perf <- performance(prediction,"tpr","fpr")
   ROC_sens <- performance(prediction,"sens","spec")
   ROC_auc <- performance(prediction,"auc")
-  
+
   # Make plot data
   plotdat <- data.frame(FP=ROC_perf@x.values[[1]],TP=ROC_perf@y.values[[1]],CUT=ROC_perf@alpha.values[[1]],POINT=NA)
-  
+
   if(max(points)<max(plotdat$CUT[is.finite(plotdat$CUT)])){
     points<-points[-which(points>max(plotdat$CUT[is.finite(plotdat$CUT)]))]
   }
-  
+
   #plotdat[unlist(lapply(points,function(x){which.min(abs(plotdat$CUT-x))})),"POINT"]<- points
-  
+
   # Plot the curve
   rows<-which(!is.na(plotdat$POINT))
   while(length(rows)>20){
     rows<-rows[seq(1,length(rows),2)]
   }
-  
+
   ggplot(plotdat, aes(x=FP,y=TP)) +
     geom_abline(intercept=0,slope=1,linetype="dashed",color="grey") +
     geom_line() +
@@ -293,7 +294,7 @@ fun.auc.ggplot <- function(pred, obs, title,points){
 diagnostic.auc.sens.spe <- function(pred, obs,stat="auc",method){
   nvar<-ncol(obs)
   obs[which(abs(obs)<1e-16)]<-0
-  
+
   indices_nuls<-which(obs==0)
   label<-matrix(1,nrow=nrow(obs),ncol=ncol(obs))
   label[indices_nuls]<-0
@@ -314,17 +315,17 @@ diagnostic.auc.sens.spe <- function(pred, obs,stat="auc",method){
   return(list(res,precrec))
 }
 
-build_crit<-function(path, nbgraph,x,variable,method, crit="auc"){ #method="_spiecResid" 
+build_crit<-function(path, nbgraph,x,variable,method, crit="auc"){ #method="_spiecResid"
   if(variable=="n"){
     obs<-readRDS(paste0(path,"/Sets_param/Graph",nbgraph,".rds"))$omega
   }else{
-    obs<-readRDS(paste0(path,"/Sets_param/Graph",nbgraph,"_",x,".rds"))$omega  
-  } 
+    obs<-readRDS(paste0(path,"/Sets_param/Graph",nbgraph,"_",x,".rds"))$omega
+  }
   # if(method=="_treeggm_" || method=="_oracle"|| method=="_one_step_" || method=="_mint_"){
   #   pred<- readRDS(paste0(path,"/Scores/Graph",nbgraph,method,x,".rds"))[[colonne]]
   # }else{
   #   pred<- readRDS(paste0(path,"/Scores/Graph",nbgraph,method,x,".rds"))}
-  
+
     pred<- readRDS(paste0(path,"/Scores/",method,"_graph",nbgraph,"_",x,".rds"))
 #mehtod: EMmarg, EMCond, OneMarg, OneCond
     res<-switch(crit,"auc"=diagnost_auc(obs,pred), "precrec"=diagnost_precrec(obs,pred),
@@ -338,10 +339,10 @@ vec_obs_pred<-function(obs, pred){
   indices_nuls<-which(obs==0)
   label<-matrix(1,nrow=nrow(obs),ncol=ncol(obs))
   label[indices_nuls]<-0
-  
+
   vec_pred<-as.vector(pred[upper.tri(pred)])
   vec_obs<-as.vector(label[upper.tri(label)])
-  
+
   return(list(vec_pred,vec_obs))
 }
 diagnost_precrec<-function(obs, pred){
@@ -379,7 +380,7 @@ tableau3D<-function(samples,seq_rho){
   tab <- array( dim=c(n,n,length(seq_rho)))
   #nb_nuls<-data.frame(matrix(ncol=2,nrow=length(seq_rho)))
   for(rho in seq_rho){
-    
+
     omega_hat<-glasso(var(samples),rho=rho,penalize.diagonal = FALSE)$wi
     tab[,,which(seq_rho==rho)]<-omega_hat
     #nb_nuls[which(seq_rho==rho),"nuls"]<-length(which(omega_hat==0))*100/length(omega_hat)
@@ -425,7 +426,7 @@ mat_rho<-function(tab,seq_rho,minmax){
       indices_remplis<-which(!is.na(results))
       if(length(indices_remplis)!=0){
         indices_a_remplir<-setdiff(indices_nuls,indices_remplis) #indices nuls - les indices remplis
-        
+
       }else{
         indices_a_remplir<-indices_nuls
       }
@@ -476,7 +477,7 @@ inf_glasso_MB<-function(X){
 #library(SpiecEasi)
 inf_spieceasi<-function(Y){
   inf<-spiec.easi(Y, icov.select = FALSE, nlambda = 50, verbose = FALSE)
-  
+
   #browser()
   adjmat.array <- simplify2array(Map("*",
                                      inf$lambda,
@@ -559,7 +560,7 @@ grid_arrange_shared_legend <- function(..., ncol = length(list(...)), nrow = 1, 
                                            legend,
                                            ncol = 2,
                                            widths = unit.c(unit(1, "npc") - lwidth, lwidth)))
-  
+
   grid.newpage()
   grid.draw(combined)
   # return gtable invisibly

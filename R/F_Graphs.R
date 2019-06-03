@@ -47,7 +47,8 @@ draw_network<-function(df,adj_covar, pal=NULL,seed=200){
 #' @export
 #'
 #' @examples
-compar_graphs<-function(allNets, alpha=TRUE,seed=200){
+compar_graphs<-function(allNets, alpha=TRUE,seed=123, nb=3){
+
   nbmod<-length(unique(allNets$models))
 
   spliT<-data.frame(allNets) %>%
@@ -55,30 +56,31 @@ compar_graphs<-function(allNets, alpha=TRUE,seed=200){
     tibble(P=map(.,function(x){
       set.seed(seed)
       model<-x$models[1]
-     # browser()
+      #browser()
       res<- as_tbl_graph(x, directed=FALSE) %>%
         activate(edges) %>% filter(value!=0) %>%
         activate(nodes) %>%
-        mutate( importance=centrality_degree(),
+        mutate( importance=centrality_degree(),btw=centrality_betweenness(),boolbtw=(btw>sort(btw, decreasing = TRUE)[nb]),
                 keyplayer = node_is_keyplayer(k=3), model=model) %>%
         activate(edges) %>%
-        mutate(neibs=edge_is_incident(which(.N()$keyplayer)), model=model) %>%
+        mutate(neibs=edge_is_incident(which(.N()$boolbtw)), model=model) %>%
         activate(nodes) %>%
-        mutate(label=ifelse(keyplayer,name,"")) #%>%
+        mutate(label=ifelse(boolbtw,name,"")) #%>%
       #  filter(importance!=0)
     }))
+#  browser()
   mods=unique(allNets$models)
   pal_edges <- viridisLite::viridis(5, option = "C")
   pal_nodes<-c("gray15","goldenrod1")
-  lay<-create_layout(spliT$P[2][[1]],layout="circle")
+  lay<-create_layout(spliT$P[4][[1]],layout="circle")
   set_graph_style()
 
   plot<- spliT$P[1][[1]] %>%
-    bind_graphs(spliT$P[2][[1]] )%>%
     bind_graphs(spliT$P[3][[1]] )%>%
+    bind_graphs(spliT$P[2][[1]] )%>%
     bind_graphs(spliT$P[4][[1]] )%>%
     activate(nodes) %>%
-    mutate(model=factor(model,levels=mods),x=rep(lay$x,4),y=rep(lay$y,4)) %>%
+    mutate(model=factor(model,levels=mods),x=rep(lay$x,nbmod),y=rep(lay$y,nbmod)) %>%
     ggraph(layout="auto")
   if(alpha){
     plot<-plot+
@@ -88,16 +90,17 @@ compar_graphs<-function(allNets, alpha=TRUE,seed=200){
   }else{plot<-plot+
     geom_edge_arc(aes(color=model),curvature=0.3,show.legend=FALSE)
   }
- # browser()
+
   plot+
-    geom_node_point(aes(color=keyplayer, size=keyplayer), show.legend=FALSE)+
-    scale_edge_colour_manual(values=pal_edges[c(4,2,1,3)], labels=mods)+
+    geom_node_point(aes(color=boolbtw, size=boolbtw), show.legend=FALSE)+
+    scale_edge_colour_manual(values=pal_edges[c(1,2,4,3)], labels=mods)+
     scale_color_manual(values=pal_nodes)+
     scale_size_manual(values=c(1.5,6))+
     geom_node_text(aes(label = label),color="black")+
-    facet_nodes(~model, scales="free",ncol=4)+
+    facet_nodes(~model, scales="free",ncol=nbmod)+
     th_foreground(border=FALSE)+
     theme(strip.background = element_rect(fill="white",color="white"),
-          strip.text = element_text(color="black",size=12))
+          strip.text = element_text(color="black",size=14))
 
 }
+

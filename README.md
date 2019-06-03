@@ -81,10 +81,10 @@ library(EMtree)
 set.seed(3)
 output<-EMtree(model,  maxIter = 10, plot=TRUE)
 #> 
-#> Likelihoods: 53.90405 , 53.99346 , 53.99473 , 53.9953 , 53.99542 , 53.99547 , 
-#> Convergence took 0.74 secs  and  6  iterations.
-#> Likelihood difference = 5.088377e-05 
-#> Betas difference = 2.306306e-09
+#> Likelihoods: 122.393 , 122.4684 , 122.4685 , 
+#> Convergence took 0.58 secs  and  3  iterations.
+#> Likelihood difference = 5.737878e-05 
+#> Betas difference = 2.305835e-09
 ```
 
 <img src="man/figures/README-output-1.png" style="display: block; margin: auto;" />
@@ -93,66 +93,60 @@ output<-EMtree(model,  maxIter = 10, plot=TRUE)
 str(output)
 #> List of 6
 #>  $ beta     : num [1:33, 1:33] 0 0.000946 0.000946 0.000947 0.000946 ...
-#>  $ logpY    : num [1:6] 53.9 54 54 54 54 ...
-#>  $ ProbaCond: num [1:33, 1:33] 0 0.000202 0.005247 0.086169 0.005387 ...
-#>  $ maxIter  : num 6
-#>  $ timeEM   : 'difftime' num 0.7359299659729
+#>  $ logpY    : num [1:3] 122 122 122
+#>  $ ProbaCond: num [1:33, 1:33] 0.00 1.31e-05 1.40e-03 5.28e-02 1.03e-03 ...
+#>  $ maxIter  : num 3
+#>  $ timeEM   : 'difftime' num 0.57800817489624
 #>   ..- attr(*, "units")= chr "secs"
-#>  $ alpha    : num 0.632
+#>  $ alpha    : num 0.842
 ```
 
 ### Foster robustness with resampling :
 
 ``` r
 library(parallel)
-resample_output<-ResampleEMtree(counts, "covar$site", B=5, maxIter=10,cond.tol=1e-8, cores=1)
+resample_output<-ResampleEMtree(counts, "covar$site", S=5, maxIter=10,cond.tol=1e-8, cores=1)
 #> 
-#> Convergence took 0.3 secs  and  6  iterations.
-#> Convergence took 0.15 secs  and  3  iterations.
-#> Convergence took 0.26 secs  and  3  iterations.
-#> Convergence took 0.19 secs  and  4  iterations.
-#> Convergence took 0.42 secs  and  10  iterations.
+#> S= 1  
+#> Convergence took 0.2 secs  and  4  iterations.  0.7236842
+#> S= 2  
+#> Convergence took 0.15 secs  and  3  iterations.  0.7894737
+#> S= 3  
+#> Convergence took 0.37 secs  and  6  iterations.  0.6973684
+#> S= 4  
+#> Convergence took 0.21 secs  and  5  iterations.  0.7894737
+#> S= 5  
+#> Convergence took 0.15 secs  and  3  iterations.  0.8815789
 str(resample_output)
 #> List of 3
-#>  $ Pmat   : num [1:5, 1:528] 3.80e-03 1.58e-03 4.13e-04 4.95e-05 2.47e-05 ...
-#>  $ maxIter: num [1:5] 6 3 3 4 10
-#>  $ times  : NULL
+#>  $ Pmat   : num [1:5, 1:528] 3.77e-03 1.52e-03 4.24e-04 4.94e-05 2.46e-05 ...
+#>  $ maxIter: num [1:5] 4 3 6 5 3
+#>  $ times  : 'difftime' num [1:5] 0.198498964309692 0.152621030807495 0.371340036392212 0.210417032241821 ...
+#>   ..- attr(*, "units")= chr "secs"
 ```
 
 ### Several models with resampling :
 
 ``` r
 library(parallel)
-compare_output<-ComparEMtree(counts, c("covar$site","covar$date"), B=5, maxIter=5,cond.tol=1e-8,cores=1,f=0.8)
+compare_output<-ComparEMtree(counts, c("covar$site","covar$date"), S=1, maxIter=5,cond.tol=1e-8,cores=1,f=0.8)
 #> 
 #> model  null : 
 #> 
-#> Convergence took 0.24 secs  and  5  iterations.
-#> Convergence took 0.19 secs  and  4  iterations.
-#> Convergence took 0.23 secs  and  5  iterations.
-#> Convergence took 0.23 secs  and  5  iterations.
-#> Convergence took 0.15 secs  and  3  iterations.
+#> S= 1  
+#> Convergence took 0.22 secs  and  5  iterations.  0.3289474
 #> model  site : 
 #> 
-#> Convergence took 0.23 secs  and  5  iterations.
-#> Convergence took 0.15 secs  and  3  iterations.
-#> Convergence took 0.23 secs  and  5  iterations.
-#> Convergence took 0.24 secs  and  5  iterations.
-#> Convergence took 0.23 secs  and  5  iterations.
+#> S= 1  
+#> Convergence took 0.19 secs  and  4  iterations.  0.7236842
 #> model  date : 
 #> 
-#> Convergence took 0.22 secs  and  4  iterations.
-#> Convergence took 0.21 secs  and  4  iterations.
-#> Convergence took 0.19 secs  and  4  iterations.
-#> Convergence took 0.15 secs  and  3  iterations.
-#> Convergence took 0.19 secs  and  4  iterations.
+#> S= 1  
+#> Convergence took 0.22 secs  and  5  iterations.  0.2894737
 #> model  site + date : 
 #> 
-#> Convergence took 0.19 secs  and  4  iterations.
-#> Convergence took 0.19 secs  and  4  iterations.
-#> Convergence took 0.33 secs  and  5  iterations.
-#> Convergence took 0.22 secs  and  5  iterations.
-#> Convergence took 0.23 secs  and  5  iterations.
+#> S= 1  
+#> Convergence took 0.21 secs  and  5  iterations.  0.9736842
 
 
 str(compare_output)

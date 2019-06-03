@@ -74,7 +74,7 @@ EdgeProba <- function(W){
     W.log=log(F_Sym2Vec(W))
     W.center=W.log-mean(W.log)
     W.center[which(W.center<(-borne))]=-borne
-    W.center[which(W.center>borne)]=borne
+    #W.center[which(W.center>borne)]=borne
     W=F_Vec2Sym(exp(W.center))
     Wcum = SumTree(W)
   }

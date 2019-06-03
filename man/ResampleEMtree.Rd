@@ -4,11 +4,35 @@
 \alias{ResampleEMtree}
 \title{Title}
 \usage{
-ResampleEMtree(counts, vec_covar, O = NULL, v = 0.8, B = 100,
+ResampleEMtree(counts, vec_covar, O = NULL, v = 0.8, S = 100,
   maxIter, cond.tol = 1e-14, cores = 3)
 }
 \arguments{
-\item{cores}{}
+\item{counts}{Data of observed counts with dimensions n x p, either a matrix, data.frame or tibble.}
+
+\item{vec_covar}{Vecteur of quoted covariates to be accounted for with dimension n x d, with the data.frame of covariates. For example with
+X matrix of covariates : c("X$first", "X$second").}
+
+\item{O}{The n x p matrix of offsets, filled with zeros by default.}
+
+\item{v}{The proportion of observed data to be taken in each sub-sample. It is the ratio (sub-sample size)/n}
+
+\item{S}{Total number of sub-samples.}
+
+\item{maxIter}{Maximum number of EMtree iterations at each sub-sampling.}
+
+\item{cond.tol}{Tolerance for the psi matrix.}
+
+\item{cores}{Number of cores, can be greater than 1 if data involves less than about 32 species.}
+}
+\value{
+Returns a list which contains the Pmat data.frame, and vectors of EMtree maximum iterations and running times in each
+resampling.
+\itemize{
+ \item{Pmat }{B x p(p-1)/2 matrix with edge probability for each resample}
+ \item{maxIter }{EMtree maximum iterations in each resampling.}
+ \item{times }{EMtree running times in each resampling.}
+}
 }
 \description{
 Title
