@@ -10,24 +10,37 @@
 #' @export
 #'
 #' @examples
-draw_network<-function(df,adj_covar, pal=NULL,seed=200){
+draw_network<-function(df,adj_covar, pal=NULL,seed=200, layout=NULL,names=NULL){
   set.seed(seed)
+    # browser()
+  p=nrow(df)
+  nb=round(p/6,0)
+  if(is.null(names)){ names=1:p ; bool=TRUE}else{bool=FALSE}
+
   res<- as_tbl_graph(df, directed=FALSE) %>%
     activate(nodes) %>%
-    mutate( keyplayer = node_is_keyplayer(k=3), model=adj_covar, name=1:p,
-            label=ifelse(keyplayer,name,"")) %>%
+    mutate( keyplayer = node_is_keyplayer(k=3), btw=centrality_betweenness(),
+            boolbtw=(btw>sort(btw, decreasing = TRUE)[nb]),boolimp=(centrality_degree()>0),model=adj_covar, name=names,
+            )
+  if(bool){
+    res<-res %>% mutate(label=ifelse(boolbtw,name,""))
+  }else{
+    res<-res %>% mutate(label=ifelse(boolimp,name,""))
+  }
+  res<-res %>%
     activate(edges)  %>%
     filter(weight !=0) %>%
-    mutate(neibs=edge_is_incident(which(.N()$keyplayer)), model=adj_covar)
-#browser()
+    mutate(neibs=edge_is_incident(which(.N()$boolbtw)), model=adj_covar)
+  #browser()
   pal_edges <-  ifelse(is.null(pal), viridisLite::viridis(5, option = "C")[c(3,2,4,1)], pal)
   pal_nodes<-c("gray15","goldenrod1")
 
   set_graph_style()
+  layout=ifelse(is.null(layout),"circle",layout)
   res %>%
-    ggraph(layout="circle")+
+    ggraph(layout=layout)+
     geom_edge_arc(aes(color=adj_covar),curvature=0.3,show.legend=FALSE)+
-    geom_node_point(aes(color=keyplayer, size=keyplayer), show.legend=FALSE)+
+    geom_node_point(aes(color=boolbtw, size=boolbtw), show.legend=FALSE)+
     scale_edge_colour_manual(values=pal_edges)+
     scale_color_manual(values=pal_nodes)+
     scale_size_manual(values=c(1.5,6))+
@@ -68,7 +81,7 @@ compar_graphs<-function(allNets, alpha=TRUE,seed=123, nb=3){
         mutate(label=ifelse(boolbtw,name,"")) #%>%
       #  filter(importance!=0)
     }))
-#  browser()
+  #  browser()
   mods=unique(allNets$models)
   pal_edges <- viridisLite::viridis(5, option = "C")
   pal_nodes<-c("gray15","goldenrod1")
