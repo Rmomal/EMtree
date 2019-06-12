@@ -240,15 +240,15 @@ EMtree<-function(PLNobject,  maxIter, cond.tol=1e-10, optim_method, verbatim=TRU
 #' @export
 #'
 #' @examples
-ResampleEMtree <- function(counts, vec_covar,data_covar=NULL, covariate=NULL  , O=NULL, v=0.8, S=1e2, maxIter, cond.tol=1e-14,cores=3){
+ResampleEMtree <- function(counts, vec_covar=NULL,data_covar=NULL, covariate=NULL  , O=NULL, v=0.8, S=1e2, maxIter, cond.tol=1e-14,cores=3){
 #browser()
   n = nrow(counts)
   p = ncol(counts)
   P = p * (p - 1) / 2
   V = round(v * n)
   Pmat = matrix(0, S, P)
-  if(is.null(O)){ O=matrix(0, n, p)}
-# browser()
+  if(is.null(O)){ O=matrix(1, n, p)}
+ #browser()
   if(is.null(covariate)){
     attach(data_covar)
     string<-paste("counts", paste(vec_covar, collapse=" + "), sep=" ~ ")

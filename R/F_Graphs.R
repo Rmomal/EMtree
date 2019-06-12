@@ -10,7 +10,7 @@
 #' @export
 #'
 #' @examples
-draw_network<-function(df,adj_covar, pal=NULL,seed=200, layout=NULL,names=NULL){
+draw_network<-function(df,adj_covar, pal=NULL,seed=200, layout=NULL,names=NULL, size=4, curv=0.3){
   set.seed(seed)
     # browser()
   p=nrow(df)
@@ -39,12 +39,12 @@ draw_network<-function(df,adj_covar, pal=NULL,seed=200, layout=NULL,names=NULL){
   layout=ifelse(is.null(layout),"circle",layout)
   res %>%
     ggraph(layout=layout)+
-    geom_edge_arc(aes(color=adj_covar),curvature=0.3,show.legend=FALSE)+
+    geom_edge_arc(aes(color=adj_covar),curvature=curv,show.legend=FALSE)+
     geom_node_point(aes(color=boolbtw, size=boolbtw), show.legend=FALSE)+
     scale_edge_colour_manual(values=pal_edges)+
     scale_color_manual(values=pal_nodes)+
     scale_size_manual(values=c(1.5,6))+
-    geom_node_text(aes(label = label),color="black")+
+    geom_node_text(aes(label = label),color="black", size=size)+
     labs(title=adj_covar)+theme(plot.title = element_text(hjust = 0.5))
 }
 
