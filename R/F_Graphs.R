@@ -10,9 +10,9 @@
 #' @export
 #'
 #' @examples
-draw_network<-function(df,adj_covar, pal=NULL,seed=200, layout=NULL,names=NULL, size=4, curv=0.3){
+draw_network<-function(df,adj_covar, pal=NULL,seed=200, layout=NULL,names=NULL, size=4, curv=0.3, filterDeg=FALSE){
   set.seed(seed)
-    # browser()
+   #  browser()
   p=nrow(df)
   nb=round(p/6,0)
   if(is.null(names)){ names=1:p ; bool=TRUE}else{bool=FALSE}
@@ -20,13 +20,15 @@ draw_network<-function(df,adj_covar, pal=NULL,seed=200, layout=NULL,names=NULL, 
   res<- as_tbl_graph(df, directed=FALSE) %>%
     activate(nodes) %>%
     mutate( keyplayer = node_is_keyplayer(k=3), btw=centrality_betweenness(),
-            boolbtw=(btw>sort(btw, decreasing = TRUE)[nb]),boolimp=(centrality_degree()>0),model=adj_covar, name=names,
+            boolbtw=(btw>sort(btw, decreasing = TRUE)[nb]),boolimp=(centrality_degree()>0),
+            deg=centrality_degree(), model=adj_covar, name=names,
             )
   if(bool){
     res<-res %>% mutate(label=ifelse(boolbtw,name,""))
   }else{
     res<-res %>% mutate(label=ifelse(boolimp,name,""))
   }
+  if(filterDeg) res <- res %>% activate(nodes) %>% filter(deg!=0)
   res<-res %>%
     activate(edges)  %>%
     filter(weight !=0) %>%
