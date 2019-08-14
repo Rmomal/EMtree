@@ -3,49 +3,9 @@
 ##############
 source("R/FunctionsMatVec.R")
 source("R/FunctionsTree.R")
-# test fonction perso
-optimRML<-function(init,log.psi, P){
-
-  gamma.old=init
-  P.vec=F_Sym2Vec(P)
-  # while(diff>eps){
-  #browser()
-  # betaPsi<-F_Vec2Sym(exp(gamma.old))*exp(log.psi)
-  # betaPsi[which(betaPsi<1e-16)]=1e-16
-  M.vec = F_Sym2Vec(Kirshner(F_Vec2Sym(exp(gamma.old)))$Q)
-  #  lambda = SetLambda(P, F_Vec2Sym(M.vec))
-  # browser()
-  gamma.vec =log(P.vec/(M.vec))
-  # browser()
-  gamma.vec=gamma.vec-mean(gamma.vec)
-  borne=40
-  gamma.vec[which(gamma.vec<(-borne))]=-borne
-  # gamma.vec[which(gamma.vec>borne)]=borne
-
-  if(sum(is.nan(gamma.vec))!=0) browser()
-  gamma.old=gamma.vec
-
-  if(sum(length(which(eigen(Laplacian(F_Vec2Sym(exp(gamma.vec)))[-1,-1])$values<0)))!=0) browser() # le résultat est-il défini positif ?
-  # negLik<-(-sum(F_Sym2Vec(P)*(gamma.old+F_Sym2Vec(log.psi)))) + log(SumTree(F_Vec2Sym(exp(gamma.old))))
-  #cat("\nneglik= ", negLik," // sum(exp(gamma))",sum(exp(gamma.vec)),"\n")
-  #}
-  return((gamma.vec))
-}
 
 ##############
-# programme original
-F_NegLikelihood <- function(beta.vec, log.psi, P){
-  res<-(-sum(F_Sym2Vec(P) * (log(beta.vec) + F_Sym2Vec(log.psi))) + log(SumTree(F_Vec2Sym(beta.vec))))
-  return( res)
-}
-# the derivative of F_NegLikelihood
-F_NegGradient <- function(beta.vec, log.psi, P){
-  M = Kirshner(F_Vec2Sym(beta.vec))$Q
-  lambda = SetLambda(P, M)
-  return(- F_Sym2Vec(P)/beta.vec + F_Sym2Vec(M) + rep(lambda, length(beta.vec)))
-}
-##############
-# changement de variable log
+# gradients with log change of variable
 F_NegLikelihood_Trans <- function(gamma, log.psi, P){
   gamma=gamma-mean(gamma)
   gamma[which(gamma<(-30))]=-30
@@ -148,9 +108,8 @@ FitBetaStatic <- function(beta.init, psi, maxIter, eps1 = 1e-6,eps2=1e-4, verbat
     P = EdgeProba(beta.old*psi)
     init=F_Sym2Vec(beta.old)
     long=length(F_Sym2Vec(beta.old))
-browser()
+    browser()
     gamma = optim(log(init), F_NegLikelihood_Trans, gr=F_NegGradient_Trans,method='BFGS', log.psi, P)$par
-    # gamma=optimRML(log(init), log.psi, P)
     beta=exp(gamma)
     beta[which(beta< beta.min)] = beta.min
     beta=F_Vec2Sym(beta)
@@ -161,10 +120,6 @@ browser()
     beta.old = beta
     diffPres=logpY[iter]-logpY[iter-1]
     if(iter > 1){diff.loglik =  abs(diffPres)}else{diff.loglik=1}
-    # if(iter>=3 && diffPres<0){
-    #   diffPast=logpY[iter-1]-logpY[iter-2]
-    #   if(abs(diffPres)>abs(diffPast)) stop=TRUE
-    # }
   }
 
   time<-difftime(Sys.time(),T1)
@@ -242,7 +197,7 @@ EMtree<-function(PLNobject,  maxIter=20, cond.tol=1e-10, verbatim=TRUE, plot=FAL
 #'
 #' @examples
 ResampleEMtree <- function(counts, vec_covar=NULL,data_covar=NULL, covariate=NULL  , O1=NULL, O2=NULL, v=0.8, S=1e2, maxIter, cond.tol=1e-14,cores=3){
-#browser()
+  #browser()
   counts=as.matrix(counts)
   n = nrow(counts)
   p = ncol(counts)
@@ -251,7 +206,7 @@ ResampleEMtree <- function(counts, vec_covar=NULL,data_covar=NULL, covariate=NUL
   Pmat = matrix(0, S, P)
   if(is.null(O1)){ O1=matrix(1, n, p)}
   if(is.null(O2)){ O2=matrix(1, n, p)}
- #browser()
+  #browser()
   if(is.null(covariate)){
     attach(data_covar)
     string<-paste("counts", paste(vec_covar, collapse=" + "), sep=" ~ ")
@@ -329,7 +284,7 @@ ResampleEMtree <- function(counts, vec_covar=NULL,data_covar=NULL, covariate=NUL
 #' @examples
 ComparEMtree <- function(counts, vec_covar, O=NULL, v=0.8, S=1e2, maxIter, cond.tol=1e-14,cores=3,f){
   p=ncol(counts)
- # browser()
+  # browser()
   split<-strsplit(vec_covar,"\\$")
   models =c("null",split[[1]][2],split[[2]][2],paste(lapply(split, function(x){x[2]}), collapse=" + "))
   cat("\nmodel ",models[1],": \n")
@@ -341,7 +296,7 @@ ComparEMtree <- function(counts, vec_covar, O=NULL, v=0.8, S=1e2, maxIter, cond.
   p3<-ResampleEMtree(counts, vec_covar=vec_covar[2], covariate=NULL,O=O, v=v, S=S, maxIter, cond.tol=cond.tol,cores=cores)$Pmat
   cat("\nmodel ",models[4],": \n")
   p4<-ResampleEMtree(counts, vec_covar=vec_covar,covariate=NULL, O=O, v=v, S=S, maxIter, cond.tol=cond.tol,cores=cores)$Pmat
-#browser()
+  #browser()
   Stab.sel=list(p1,p2,p3,p4)
 
   mat<-data.frame(freq_selec_list(Stab.sel,1,p,f)) # the first element is initialized
@@ -377,7 +332,7 @@ freq_selec<-function(Pmat,p,f){
 }
 
 freq_selec_list<-function(list_Pmat,x,p,f){
-#  browser()
+  #  browser()
   return(F_Vec2Sym( 1*(colMeans( 1*(list_Pmat[[x]]>2/p))>f)))
 }
 
