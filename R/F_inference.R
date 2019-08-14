@@ -151,7 +151,7 @@ FitBetaStatic <- function(beta.init, psi, maxIter, eps1 = 1e-6,eps2=1e-4, verbat
 #' @export
 #'
 #' @examples
-EMtree<-function(PLNobject,  maxIter=20, cond.tol=1e-10, verbatim=TRUE, plot=FALSE){
+EMtree<-function(PLNobject,  maxIter=30, cond.tol=1e-10, verbatim=TRUE, plot=FALSE){
   CorY=cov2cor(PLNobject$model_par$Sigma)
   p = ncol(CorY)
   n=PLNobject$n
