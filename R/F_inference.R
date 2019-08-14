@@ -131,7 +131,7 @@ F_AlphaN <- function(CorY, n, cond.tol=1e-10){
 }
 
 #########################################################################
-FitBetaStatic <- function(beta.init, psi, maxIter, eps1 = 1e-6,eps2=1e-4, optim_method, verbatim,plot){
+FitBetaStatic <- function(beta.init, psi, maxIter, eps1 = 1e-6,eps2=1e-4, verbatim,plot){
   options(nwarnings = 1)
   beta.tol = 1e-4
   beta.min = 1e-16
@@ -148,7 +148,7 @@ FitBetaStatic <- function(beta.init, psi, maxIter, eps1 = 1e-6,eps2=1e-4, optim_
     P = EdgeProba(beta.old*psi)
     init=F_Sym2Vec(beta.old)
     long=length(F_Sym2Vec(beta.old))
-
+browser()
     gamma = optim(log(init), F_NegLikelihood_Trans, gr=F_NegGradient_Trans,method='BFGS', log.psi, P)$par
     # gamma=optimRML(log(init), log.psi, P)
     beta=exp(gamma)
@@ -196,15 +196,16 @@ FitBetaStatic <- function(beta.init, psi, maxIter, eps1 = 1e-6,eps2=1e-4, optim_
 #' @export
 #'
 #' @examples
-EMtree<-function(PLNobject,  maxIter, cond.tol=1e-10, optim_method, verbatim=TRUE, plot=FALSE){
+EMtree<-function(PLNobject,  maxIter=20, cond.tol=1e-10, verbatim=TRUE, plot=FALSE){
   CorY=cov2cor(PLNobject$model_par$Sigma)
   p = ncol(CorY)
   n=PLNobject$n
   alpha.psi = F_AlphaN(CorY, n, cond.tol=cond.tol)
   psi = alpha.psi$psi
+  print(alpha.psi$alpha)
   beta.unif = matrix(1, p, p); diag(beta.unif) = 0; beta.unif = beta.unif / sum(beta.unif)
 
-  FitEM = FitBetaStatic(beta.init=beta.unif, psi=psi, maxIter = maxIter, optim_method=optim_method,
+  FitEM = FitBetaStatic(beta.init=beta.unif, psi=psi, maxIter = maxIter,
                         verbatim=verbatim, plot=plot)
   FitEM$alpha=alpha.psi$alpha
   return(FitEM)
@@ -240,14 +241,16 @@ EMtree<-function(PLNobject,  maxIter, cond.tol=1e-10, optim_method, verbatim=TRU
 #' @export
 #'
 #' @examples
-ResampleEMtree <- function(counts, vec_covar=NULL,data_covar=NULL, covariate=NULL  , O=NULL, v=0.8, S=1e2, maxIter, cond.tol=1e-14,cores=3){
+ResampleEMtree <- function(counts, vec_covar=NULL,data_covar=NULL, covariate=NULL  , O1=NULL, O2=NULL, v=0.8, S=1e2, maxIter, cond.tol=1e-14,cores=3){
 #browser()
+  counts=as.matrix(counts)
   n = nrow(counts)
   p = ncol(counts)
   P = p * (p - 1) / 2
   V = round(v * n)
   Pmat = matrix(0, S, P)
-  if(is.null(O)){ O=matrix(1, n, p)}
+  if(is.null(O1)){ O1=matrix(1, n, p)}
+  if(is.null(O2)){ O2=matrix(1, n, p)}
  #browser()
   if(is.null(covariate)){
     attach(data_covar)
@@ -266,10 +269,11 @@ ResampleEMtree <- function(counts, vec_covar=NULL,data_covar=NULL, covariate=NUL
     sample = sample(1:n, V, replace = F)
     counts.sample = counts[sample,]
     X.sample = X[sample,]
-    O.sample = O[sample,]
+    O1.sample = O1[sample,]
+    O2.sample = O2[sample,]
 
     suppressWarnings(
-      PLN.sample <- PLN(counts.sample ~ -1 + X.sample + offset(log(O.sample)),control = list("trace"=0))
+      PLN.sample <- PLN(counts.sample ~ -1 + X.sample + offset(log(O1.sample))+ offset(log(O2.sample)),control = list("trace"=0))
     )
 
     inf1<-EMtree( PLN.sample, maxIter=maxIter, cond.tol=cond.tol,
