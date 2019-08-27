@@ -235,7 +235,7 @@ ResampleEMtree <- function(counts, vec_covar=NULL,covariate=NULL  , O=NULL, v=0.
     O.sample = O[sample,]
 
     suppressWarnings(
-      PLN.sample <- PLN(counts.sample ~ -1 + X.sample + offset(log(O)),control = list("trace"=0))
+      PLN.sample <- PLN(counts.sample ~ -1 + X.sample + offset(log(O.sample)),control = list("trace"=0))
     )
 
     inf1<-EMtree( PLN.sample, maxIter=maxIter, cond.tol=cond.tol,
@@ -341,6 +341,16 @@ freq_selec_list<-function(list_Pmat,x,p,f){
   return(F_Vec2Sym( 1*(colMeans( 1*(list_Pmat[[x]]>2/p))>f)))
 }
 
+#' Title
+#'
+#' @param Pmat
+#' @param p
+#' @param f
+#'
+#' @return
+#' @export
+#'
+#' @examples
 freq_selec<-function(Pmat,p,f){
   return(F_Vec2Sym(1*colMeans(1*(Pmat>2/p))>f))
 }
