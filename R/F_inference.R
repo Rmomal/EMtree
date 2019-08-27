@@ -5,11 +5,15 @@ source("R/FunctionsMatVec.R")
 source("R/FunctionsTree.R")
 
 ##############
+F_NegLikelihood <- function(beta.vec, log.psi, P){
+  return(- sum(F_Sym2Vec(P)*(log(beta.vec)+F_Sym2Vec(log.psi))) +
+           log(SumTree(F_Vec2Sym(beta.vec))))
+}
 # gradients with log change of variable
 F_NegLikelihood_Trans <- function(gamma, log.psi, P){
   gamma=gamma-mean(gamma)
   gamma[which(gamma<(-30))]=-30
-  M = Kirshner(F_Vec2Sym(exp(gamma)))$Q
+  M = Meila(F_Vec2Sym(exp(gamma)))
   lambda = SetLambda(P, M)
 
   res<-(-sum(F_Sym2Vec(P) * (log(exp(gamma))+ F_Sym2Vec(log.psi))) )+log(SumTree(F_Vec2Sym(exp(gamma))))+
@@ -17,7 +21,7 @@ F_NegLikelihood_Trans <- function(gamma, log.psi, P){
   if(is.nan(res)){
     cat(max(gamma),": higher bound ")
     gamma[which(gamma>(30))]=30
-    M = Kirshner(F_Vec2Sym(exp(gamma)))$Q
+    M = Meila(F_Vec2Sym(exp(gamma)))
     lambda = SetLambda(P, M)
 
     res<-(-sum(F_Sym2Vec(P) * (log(exp(gamma))+ F_Sym2Vec(log.psi))) )+log(SumTree(F_Vec2Sym(exp(gamma))))+
@@ -29,7 +33,7 @@ F_NegLikelihood_Trans <- function(gamma, log.psi, P){
   return( res)
 }
 F_NegGradient_Trans <- function(gamma, log.psi, P){
-  M = Kirshner(F_Vec2Sym(exp(gamma)))$Q
+  M = Meila(F_Vec2Sym(exp(gamma)))
   lambda = SetLambda(P, M)
   return(- F_Sym2Vec(P)+ exp(gamma)*(F_Sym2Vec(M) + lambda))
 }
@@ -91,7 +95,7 @@ F_AlphaN <- function(CorY, n, cond.tol=1e-10){
 }
 
 #########################################################################
-FitBetaStatic <- function(beta.init, psi, maxIter, eps1 = 1e-6,eps2=1e-4, verbatim,plot){
+FitBetaStatic <- function(beta.init, psi, maxIter, eps1 = 1e-6,eps2=1e-4, verbatim=TRUE,plot=FALSE){
   options(nwarnings = 1)
   beta.tol = 1e-4
   beta.min = 1e-16
@@ -108,7 +112,6 @@ FitBetaStatic <- function(beta.init, psi, maxIter, eps1 = 1e-6,eps2=1e-4, verbat
     P = EdgeProba(beta.old*psi)
     init=F_Sym2Vec(beta.old)
     long=length(F_Sym2Vec(beta.old))
-    browser()
     gamma = optim(log(init), F_NegLikelihood_Trans, gr=F_NegGradient_Trans,method='BFGS', log.psi, P)$par
     beta=exp(gamma)
     beta[which(beta< beta.min)] = beta.min
@@ -173,7 +176,7 @@ EMtree<-function(PLNobject,  maxIter=30, cond.tol=1e-10, verbatim=TRUE, plot=FAL
 # B = nb resamples
 # Out = Pmat = B x p(p-1)/2 matrix with edge probability for each resample
 # Y = Data$count; X = matrix(1, n, 1); O = matrix(0, n, p)
-#' Title
+#' Resampling procedure for EMtree
 #'
 #' @param counts Data of observed counts with dimensions n x p, either a matrix, data.frame or tibble.
 #' @param vec_covar Vecteur of quoted covariates to be accounted for with dimension n x d, with the data.frame of covariates. For example with
@@ -196,7 +199,7 @@ EMtree<-function(PLNobject,  maxIter=30, cond.tol=1e-10, verbatim=TRUE, plot=FAL
 #' @export
 #'
 #' @examples
-ResampleEMtree <- function(counts, vec_covar=NULL,data_covar=NULL, covariate=NULL  , O1=NULL, O2=NULL, v=0.8, S=1e2, maxIter, cond.tol=1e-14,cores=3){
+ResampleEMtree <- function(counts, vec_covar=NULL,covariate=NULL  , O1=NULL, O2=NULL, v=0.8, S=1e2, maxIter=30, cond.tol=1e-14,cores=3){
   #browser()
   counts=as.matrix(counts)
   n = nrow(counts)
@@ -208,11 +211,16 @@ ResampleEMtree <- function(counts, vec_covar=NULL,data_covar=NULL, covariate=NUL
   if(is.null(O2)){ O2=matrix(1, n, p)}
   #browser()
   if(is.null(covariate)){
-    attach(data_covar)
+    if(!is.null(vec_covar)){
+
     string<-paste("counts", paste(vec_covar, collapse=" + "), sep=" ~ ")
     formula<-as.formula(string)
 
     X = as.matrix(lm(formula, x=T)$x)
+    }else{
+      X=matrix(1,nrow=n,ncol=1)
+    }
+
   }else{
     X=covariate
   }
@@ -247,10 +255,11 @@ ResampleEMtree <- function(counts, vec_covar=NULL,data_covar=NULL, covariate=NUL
       sample = sample(1:n, V, replace = F)
       counts.sample = counts[sample,]
       X.sample = X[sample,]
-      O.sample = O[sample,]
+      O1.sample = O1[sample,]
+      O2.sample = O2[sample,]
 
       suppressWarnings(
-        PLN.sample <- PLN(counts.sample ~ -1 + X.sample + offset(O.sample),control = list("trace"=0))
+        PLN.sample <- PLN(counts.sample ~ -1 + X.sample + offset(log(O1.sample))+ offset(log(O2.sample)),control = list("trace"=0))
       )
       obj[[x]]<<-EMtree( PLN.sample, maxIter=maxIter, cond.tol=cond.tol,
                          verbatim=FALSE,plot=FALSE)[c("ProbaCond","maxIter","timeEM")]
@@ -276,7 +285,7 @@ ResampleEMtree <- function(counts, vec_covar=NULL,data_covar=NULL, covariate=NUL
 #' @param cond.tol
 #' @param cores
 #' @param f
-#' @param seed
+#'
 #'
 #' @return
 #' @export
@@ -288,14 +297,14 @@ ComparEMtree <- function(counts, vec_covar, O=NULL, v=0.8, S=1e2, maxIter, cond.
   split<-strsplit(vec_covar,"\\$")
   models =c("null",split[[1]][2],split[[2]][2],paste(lapply(split, function(x){x[2]}), collapse=" + "))
   cat("\nmodel ",models[1],": \n")
-  p1<-ResampleEMtree(counts, vec_covar="1",covariate=NULL, O=O, v=v, S=S, maxIter, cond.tol=cond.tol,cores=cores)$Pmat
+  p1<-ResampleEMtree(counts, vec_covar="1",covariate=NULL, O1=O,O2=NULL, v=v, S=S, maxIter, cond.tol=cond.tol,cores=cores)$Pmat
   cat("\nmodel ",models[2],": \n")
-  p2<-ResampleEMtree(counts, vec_covar=vec_covar[1],covariate=NULL, O=O, v=v, S=S, maxIter, cond.tol=cond.tol,cores=cores)$Pmat
+  p2<-ResampleEMtree(counts, vec_covar=vec_covar[1],covariate=NULL,O2=NULL, O1=O, v=v, S=S, maxIter, cond.tol=cond.tol,cores=cores)$Pmat
 
   cat("\nmodel ",models[3],": \n")
-  p3<-ResampleEMtree(counts, vec_covar=vec_covar[2], covariate=NULL,O=O, v=v, S=S, maxIter, cond.tol=cond.tol,cores=cores)$Pmat
+  p3<-ResampleEMtree(counts, vec_covar=vec_covar[2], covariate=NULL,O2=NULL,O1=O, v=v, S=S, maxIter, cond.tol=cond.tol,cores=cores)$Pmat
   cat("\nmodel ",models[4],": \n")
-  p4<-ResampleEMtree(counts, vec_covar=vec_covar,covariate=NULL, O=O, v=v, S=S, maxIter, cond.tol=cond.tol,cores=cores)$Pmat
+  p4<-ResampleEMtree(counts, vec_covar=vec_covar,covariate=NULL,O2=NULL, O1=O, v=v, S=S, maxIter, cond.tol=cond.tol,cores=cores)$Pmat
   #browser()
   Stab.sel=list(p1,p2,p3,p4)
 

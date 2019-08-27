@@ -4,8 +4,8 @@
 \alias{EMtree}
 \title{Title}
 \usage{
-EMtree(PLNobject, maxIter, cond.tol = 1e-10, optim_method,
-  verbatim = TRUE, plot = FALSE)
+EMtree(PLNobject, maxIter = 30, cond.tol = 1e-10, verbatim = TRUE,
+  plot = FALSE)
 }
 \arguments{
 \item{verbatim}{}

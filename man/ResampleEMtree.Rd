@@ -2,18 +2,17 @@
 % Please edit documentation in R/F_inference.R
 \name{ResampleEMtree}
 \alias{ResampleEMtree}
-\title{Title}
+\title{Resampling procedure for EMtree}
 \usage{
-ResampleEMtree(counts, vec_covar, O = NULL, v = 0.8, S = 100,
-  maxIter, cond.tol = 1e-14, cores = 3)
+ResampleEMtree(counts, vec_covar = NULL, covariate = NULL, O1 = NULL,
+  O2 = NULL, v = 0.8, S = 100, maxIter = 30, cond.tol = 1e-14,
+  cores = 3)
 }
 \arguments{
 \item{counts}{Data of observed counts with dimensions n x p, either a matrix, data.frame or tibble.}
 
 \item{vec_covar}{Vecteur of quoted covariates to be accounted for with dimension n x d, with the data.frame of covariates. For example with
 X matrix of covariates : c("X$first", "X$second").}
-
-\item{O}{The n x p matrix of offsets, filled with zeros by default.}
 
 \item{v}{The proportion of observed data to be taken in each sub-sample. It is the ratio (sub-sample size)/n}
 
@@ -24,16 +23,18 @@ X matrix of covariates : c("X$first", "X$second").}
 \item{cond.tol}{Tolerance for the psi matrix.}
 
 \item{cores}{Number of cores, can be greater than 1 if data involves less than about 32 species.}
+
+\item{O}{The n x p matrix of offsets, filled with zeros by default.}
 }
 \value{
 Returns a list which contains the Pmat data.frame, and vectors of EMtree maximum iterations and running times in each
 resampling.
 \itemize{
- \item{Pmat }{B x p(p-1)/2 matrix with edge probability for each resample}
- \item{maxIter }{EMtree maximum iterations in each resampling.}
- \item{times }{EMtree running times in each resampling.}
+ \item{Pmat: }{S x p(p-1)/2 matrix with edge probabilities for each resample}
+ \item{maxIter: }{EMtree maximum iterations in each resampling.}
+ \item{times: }{EMtree running times in each resampling.}
 }
 }
 \description{
-Title
+Resampling procedure for EMtree
 }

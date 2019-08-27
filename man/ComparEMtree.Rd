@@ -4,11 +4,11 @@
 \alias{ComparEMtree}
 \title{Title}
 \usage{
-ComparEMtree(counts, vec_covar, O = NULL, v = 0.8, B = 100, maxIter,
+ComparEMtree(counts, vec_covar, O = NULL, v = 0.8, S = 100, maxIter,
   cond.tol = 1e-14, cores = 3, f)
 }
 \arguments{
-\item{seed}{}
+\item{f}{}
 }
 \description{
 Title

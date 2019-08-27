@@ -2,7 +2,12 @@
 
 export(ComparEMtree)
 export(EMtree)
+export(EdgeProba)
+export(Kirshner)
+export(Laplacian)
+export(Meila)
 export(ResampleEMtree)
+export(SumTree)
 export(compar_graphs)
 export(draw_network)
 export(freq_selec)
