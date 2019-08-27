@@ -2,3 +2,14 @@
 
 language: R
 cache: packages
+warnings_are_errors: false
+
+brew_packages:
+  - gcc
+
+use_bioc: true
+bioc_required: true
+
+bioc_packages:
+  - biomformat
+  - phyloseq
