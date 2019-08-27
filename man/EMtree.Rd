@@ -8,7 +8,15 @@ EMtree(PLNobject, maxIter = 30, cond.tol = 1e-10, verbatim = TRUE,
   plot = FALSE)
 }
 \arguments{
-\item{verbatim}{}
+\item{PLNobject}{an object resulting from the use of the `PLN` function}
+
+\item{maxIter}{Maximum number of iterations for EMtree}
+
+\item{cond.tol}{Tolerence parameter for the conditionement of psi matrix}
+
+\item{verbatim}{talks if set to TRUE}
+
+\item{plot}{plots if set to TRUE}
 }
 \description{
 Title

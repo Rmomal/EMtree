@@ -144,11 +144,11 @@ FitBetaStatic <- function(beta.init, psi, maxIter, eps1 = 1e-6,eps2=1e-4, verbat
 #########################################################################
 #' Title
 #'
-#' @param PLNobject
-#' @param maxIter
-#' @param cond.tol
-#' @param optim_method
-#' @param verbatim
+#' @param PLNobject  an object resulting from the use of the `PLN` function
+#' @param maxIter Maximum number of iterations for EMtree
+#' @param cond.tol Tolerence parameter for the conditionement of psi matrix
+#' @param verbatim talks if set to TRUE
+#' @param plot plots if set to TRUE
 #'
 #' @return
 #' @export
@@ -181,12 +181,13 @@ EMtree<-function(PLNobject,  maxIter=30, cond.tol=1e-10, verbatim=TRUE, plot=FAL
 #' @param counts Data of observed counts with dimensions n x p, either a matrix, data.frame or tibble.
 #' @param vec_covar Vecteur of quoted covariates to be accounted for with dimension n x d, with the data.frame of covariates. For example with
 #' X matrix of covariates : c("X$first", "X$second").
-#' @param O The n x p matrix of offsets, filled with zeros by default.
 #' @param v The proportion of observed data to be taken in each sub-sample. It is the ratio (sub-sample size)/n
-#' @param S Total number of sub-samples.
+#' @param S Total number of wanted sub-samples.
 #' @param maxIter Maximum number of EMtree iterations at each sub-sampling.
 #' @param cond.tol Tolerance for the psi matrix.
 #' @param cores Number of cores, can be greater than 1 if data involves less than about 32 species.
+#' @param covariate if a covariate matrix is already ready to be given to the lm function, it can be used here.
+#' @param O Matrix of offsets, with dimension n x p
 #'
 #' @return Returns a list which contains the Pmat data.frame, and vectors of EMtree maximum iterations and running times in each
 #' resampling.
@@ -199,17 +200,16 @@ EMtree<-function(PLNobject,  maxIter=30, cond.tol=1e-10, verbatim=TRUE, plot=FAL
 #' @export
 #'
 #' @examples
-ResampleEMtree <- function(counts, vec_covar=NULL,covariate=NULL  , O1=NULL, O2=NULL, v=0.8, S=1e2, maxIter=30, cond.tol=1e-14,cores=3){
-  #browser()
+ResampleEMtree <- function(counts, vec_covar=NULL,covariate=NULL  , O=NULL, v=0.8, S=1e2, maxIter=30, cond.tol=1e-14,cores=3){
+
   counts=as.matrix(counts)
   n = nrow(counts)
   p = ncol(counts)
   P = p * (p - 1) / 2
   V = round(v * n)
   Pmat = matrix(0, S, P)
-  if(is.null(O1)){ O1=matrix(1, n, p)}
-  if(is.null(O2)){ O2=matrix(1, n, p)}
-  #browser()
+  if(is.null(O)){ O=matrix(1, n, p)}
+
   if(is.null(covariate)){
     if(!is.null(vec_covar)){
 
@@ -232,11 +232,10 @@ ResampleEMtree <- function(counts, vec_covar=NULL,covariate=NULL  , O1=NULL, O2=
     sample = sample(1:n, V, replace = F)
     counts.sample = counts[sample,]
     X.sample = X[sample,]
-    O1.sample = O1[sample,]
-    O2.sample = O2[sample,]
+    O.sample = O[sample,]
 
     suppressWarnings(
-      PLN.sample <- PLN(counts.sample ~ -1 + X.sample + offset(log(O1.sample))+ offset(log(O2.sample)),control = list("trace"=0))
+      PLN.sample <- PLN(counts.sample ~ -1 + X.sample + offset(log(O)),control = list("trace"=0))
     )
 
     inf1<-EMtree( PLN.sample, maxIter=maxIter, cond.tol=cond.tol,
@@ -255,11 +254,10 @@ ResampleEMtree <- function(counts, vec_covar=NULL,covariate=NULL  , O1=NULL, O2=
       sample = sample(1:n, V, replace = F)
       counts.sample = counts[sample,]
       X.sample = X[sample,]
-      O1.sample = O1[sample,]
-      O2.sample = O2[sample,]
+      O.sample = O[sample,]
 
       suppressWarnings(
-        PLN.sample <- PLN(counts.sample ~ -1 + X.sample + offset(log(O1.sample))+ offset(log(O2.sample)),control = list("trace"=0))
+        PLN.sample <- PLN(counts.sample ~ -1 + X.sample + offset(log(O.sample)),control = list("trace"=0))
       )
       obj[[x]]<<-EMtree( PLN.sample, maxIter=maxIter, cond.tol=cond.tol,
                          verbatim=FALSE,plot=FALSE)[c("ProbaCond","maxIter","timeEM")]
@@ -280,12 +278,12 @@ ResampleEMtree <- function(counts, vec_covar=NULL,covariate=NULL  , O1=NULL, O2=
 #' @param vec_covar
 #' @param O
 #' @param v
-#' @param B
 #' @param maxIter
 #' @param cond.tol
 #' @param cores
 #' @param f
 #'
+#' @param S
 #'
 #' @return
 #' @export
@@ -297,14 +295,14 @@ ComparEMtree <- function(counts, vec_covar, O=NULL, v=0.8, S=1e2, maxIter, cond.
   split<-strsplit(vec_covar,"\\$")
   models =c("null",split[[1]][2],split[[2]][2],paste(lapply(split, function(x){x[2]}), collapse=" + "))
   cat("\nmodel ",models[1],": \n")
-  p1<-ResampleEMtree(counts, vec_covar="1",covariate=NULL, O1=O,O2=NULL, v=v, S=S, maxIter, cond.tol=cond.tol,cores=cores)$Pmat
+  p1<-ResampleEMtree(counts, vec_covar="1",covariate=NULL, O=O, v=v, S=S, maxIter, cond.tol=cond.tol,cores=cores)$Pmat
   cat("\nmodel ",models[2],": \n")
-  p2<-ResampleEMtree(counts, vec_covar=vec_covar[1],covariate=NULL,O2=NULL, O1=O, v=v, S=S, maxIter, cond.tol=cond.tol,cores=cores)$Pmat
+  p2<-ResampleEMtree(counts, vec_covar=vec_covar[1],covariate=NULL, O=O, v=v, S=S, maxIter, cond.tol=cond.tol,cores=cores)$Pmat
 
   cat("\nmodel ",models[3],": \n")
-  p3<-ResampleEMtree(counts, vec_covar=vec_covar[2], covariate=NULL,O2=NULL,O1=O, v=v, S=S, maxIter, cond.tol=cond.tol,cores=cores)$Pmat
+  p3<-ResampleEMtree(counts, vec_covar=vec_covar[2], covariate=NULL,O=O, v=v, S=S, maxIter, cond.tol=cond.tol,cores=cores)$Pmat
   cat("\nmodel ",models[4],": \n")
-  p4<-ResampleEMtree(counts, vec_covar=vec_covar,covariate=NULL,O2=NULL, O1=O, v=v, S=S, maxIter, cond.tol=cond.tol,cores=cores)$Pmat
+  p4<-ResampleEMtree(counts, vec_covar=vec_covar,covariate=NULL, O=O, v=v, S=S, maxIter, cond.tol=cond.tol,cores=cores)$Pmat
   #browser()
   Stab.sel=list(p1,p2,p3,p4)
 
@@ -325,10 +323,13 @@ ComparEMtree <- function(counts, vec_covar, O=NULL, v=0.8, S=1e2, maxIter, cond.
   return(allNets)
 }
 
+####################################################
+
 
 #' Title
 #'
-#' @param list
+#' @param list_Pmat
+#' @param x
 #' @param p
 #' @param f
 #'
@@ -336,13 +337,12 @@ ComparEMtree <- function(counts, vec_covar, O=NULL, v=0.8, S=1e2, maxIter, cond.
 #' @export
 #'
 #' @examples
-freq_selec<-function(Pmat,p,f){
-  return(F_Vec2Sym(1*colMeans(1*(Pmat>2/p))>f))
+freq_selec_list<-function(list_Pmat,x,p,f){
+  return(F_Vec2Sym( 1*(colMeans( 1*(list_Pmat[[x]]>2/p))>f)))
 }
 
-freq_selec_list<-function(list_Pmat,x,p,f){
-  #  browser()
-  return(F_Vec2Sym( 1*(colMeans( 1*(list_Pmat[[x]]>2/p))>f)))
+freq_selec<-function(Pmat,p,f){
+  return(F_Vec2Sym(1*colMeans(1*(Pmat>2/p))>f))
 }
 
 select_edges<-function(data,p=p){

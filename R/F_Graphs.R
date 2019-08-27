@@ -5,6 +5,12 @@
 #' @param df
 #' @param adj_covar
 #' @param pal
+#' @param seed
+#' @param layout
+#' @param names
+#' @param size
+#' @param curv
+#' @param filterDeg
 #'
 #' @return
 #' @export
@@ -12,7 +18,7 @@
 #' @examples
 draw_network<-function(df,adj_covar, pal=NULL,seed=200, layout=NULL,names=NULL, size=4, curv=0.3, filterDeg=FALSE){
   set.seed(seed)
-   #  browser()
+
   p=nrow(df)
   nb=round(p/6,0)
   if(is.null(names)){ names=1:p ; bool=TRUE}else{bool=FALSE}
@@ -21,7 +27,7 @@ draw_network<-function(df,adj_covar, pal=NULL,seed=200, layout=NULL,names=NULL, 
     activate(nodes) %>%
     mutate( keyplayer = node_is_keyplayer(k=3), btw=centrality_betweenness(),
             boolbtw=(btw>sort(btw, decreasing = TRUE)[nb]),boolimp=(centrality_degree()>0),
-            deg=centrality_degree(), model=adj_covar, name=names,
+            deg=centrality_degree(), model=adj_covar, name=names
             )
   if(bool){
     res<-res %>% mutate(label=ifelse(boolbtw,name,""))
@@ -33,7 +39,7 @@ draw_network<-function(df,adj_covar, pal=NULL,seed=200, layout=NULL,names=NULL, 
     activate(edges)  %>%
     filter(weight !=0) %>%
     mutate(neibs=edge_is_incident(which(.N()$boolbtw)), model=adj_covar)
-  #browser()
+
   pal_edges <-  ifelse(is.null(pal), viridisLite::viridis(5, option = "C")[c(3,2,4,1)], pal)
   pal_nodes<-c("gray15","goldenrod1")
 
@@ -57,6 +63,8 @@ draw_network<-function(df,adj_covar, pal=NULL,seed=200, layout=NULL,names=NULL, 
 #'
 #' @param allNets
 #' @param alpha
+#' @param seed
+#' @param nb
 #'
 #' @return
 #' @export
@@ -71,7 +79,7 @@ compar_graphs<-function(allNets, alpha=TRUE,seed=123, nb=3){
     tibble(P=map(.,function(x){
       set.seed(seed)
       model<-x$models[1]
-      #browser()
+
       res<- as_tbl_graph(x, directed=FALSE) %>%
         activate(edges) %>% filter(value!=0) %>%
         activate(nodes) %>%
@@ -80,10 +88,9 @@ compar_graphs<-function(allNets, alpha=TRUE,seed=123, nb=3){
         activate(edges) %>%
         mutate(neibs=edge_is_incident(which(.N()$boolbtw)), model=model) %>%
         activate(nodes) %>%
-        mutate(label=ifelse(boolbtw,name,"")) #%>%
-      #  filter(importance!=0)
+        mutate(label=ifelse(boolbtw,name,""))
     }))
-  #  browser()
+
   mods=unique(allNets$models)
   pal_edges <- viridisLite::viridis(5, option = "C")
   pal_nodes<-c("gray15","goldenrod1")

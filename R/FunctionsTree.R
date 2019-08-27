@@ -40,7 +40,6 @@ Meila <- function(W){
   if(!isSymmetric(W)){cat('Pb: W non symmetric!')}
   p = nrow(W)
   L = Laplacian(W)[-1, -1]
-  if(!is.finite(sum(L))) browser()
   Leigen = eigen(L); M = (Leigen$vectors) %*% diag(1/Leigen$values) %*% t(Leigen$vectors)
   M = rbind(c(0, diag(M)),
             cbind(diag(M), (diag(M)%o%rep(1, p-1) + rep(1, p-1)%o%diag(M) - 2*M)))

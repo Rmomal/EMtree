@@ -4,9 +4,8 @@
 \alias{ResampleEMtree}
 \title{Resampling procedure for EMtree}
 \usage{
-ResampleEMtree(counts, vec_covar = NULL, covariate = NULL, O1 = NULL,
-  O2 = NULL, v = 0.8, S = 100, maxIter = 30, cond.tol = 1e-14,
-  cores = 3)
+ResampleEMtree(counts, vec_covar = NULL, covariate = NULL, O = NULL,
+  v = 0.8, S = 100, maxIter = 30, cond.tol = 1e-14, cores = 3)
 }
 \arguments{
 \item{counts}{Data of observed counts with dimensions n x p, either a matrix, data.frame or tibble.}
@@ -14,17 +13,19 @@ ResampleEMtree(counts, vec_covar = NULL, covariate = NULL, O1 = NULL,
 \item{vec_covar}{Vecteur of quoted covariates to be accounted for with dimension n x d, with the data.frame of covariates. For example with
 X matrix of covariates : c("X$first", "X$second").}
 
+\item{covariate}{if a covariate matrix is already ready to be given to the lm function, it can be used here.}
+
+\item{O}{Matrix of offsets, with dimension n x p}
+
 \item{v}{The proportion of observed data to be taken in each sub-sample. It is the ratio (sub-sample size)/n}
 
-\item{S}{Total number of sub-samples.}
+\item{S}{Total number of wanted sub-samples.}
 
 \item{maxIter}{Maximum number of EMtree iterations at each sub-sampling.}
 
 \item{cond.tol}{Tolerance for the psi matrix.}
 
 \item{cores}{Number of cores, can be greater than 1 if data involves less than about 32 species.}
-
-\item{O}{The n x p matrix of offsets, filled with zeros by default.}
 }
 \value{
 Returns a list which contains the Pmat data.frame, and vectors of EMtree maximum iterations and running times in each

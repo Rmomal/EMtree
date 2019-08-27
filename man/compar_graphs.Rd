@@ -7,7 +7,7 @@
 compar_graphs(allNets, alpha = TRUE, seed = 123, nb = 3)
 }
 \arguments{
-\item{alpha}{}
+\item{nb}{}
 }
 \description{
 Title

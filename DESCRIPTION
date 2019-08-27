@@ -2,17 +2,24 @@ Package: EMtree
 Type: Package
 Title: Infers Ecological Interaction Networks from Abundance Data
 Version: 0.1.0
-Author@R: 
-    person(given="Raphaëlle",
-      family="Momal", 
-      role=c("aut","cre"), 
-      email= "raphaelle.momal@agroparistech.fr")  
+Author: Raphaëlle Momal <raphaelle.momal@agroparistech.fr>
 Maintainer: Raphaëlle Momal <raphaelle.momal@agroparistech.fr>
 Description: Uses averages over spanning trees within a Poisson log-Normal Model. 
     Involves plotting functionalities.
 License: GPL-3
 Encoding: UTF-8
-LazyData: true
+LazyData: false
 RoxygenNote: 6.1.1
 Suggests: 
     testthat (>= 2.1.0)
+Imports: 
+    PLNmodels,
+    stats,
+    base,
+    dplyr,
+    ggplot2,
+    tibble,
+    parallel,
+    tidygraph,
+    ggraph,
+    viridisLite

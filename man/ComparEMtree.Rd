@@ -8,6 +8,8 @@ ComparEMtree(counts, vec_covar, O = NULL, v = 0.8, S = 100, maxIter,
   cond.tol = 1e-14, cores = 3, f)
 }
 \arguments{
+\item{S}{}
+
 \item{f}{}
 }
 \description{

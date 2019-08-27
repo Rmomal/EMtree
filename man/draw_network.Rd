@@ -8,7 +8,7 @@ draw_network(df, adj_covar, pal = NULL, seed = 200, layout = NULL,
   names = NULL, size = 4, curv = 0.3, filterDeg = FALSE)
 }
 \arguments{
-\item{pal}{}
+\item{filterDeg}{}
 }
 \description{
 Title
