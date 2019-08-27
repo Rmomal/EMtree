@@ -1,5 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+<!-- badges: start --> [![Travis build status](https://travis-ci.org/Rmomal/EMtree.svg?branch=master)](https://travis-ci.org/Rmomal/EMtree) <!-- badges: end -->
+
 EMtree
 ======
 
@@ -69,8 +71,8 @@ library(PLNmodels)
 model<-PLN(counts ~ covar$site)
 #> 
 #>  Initialization...
-#>  Adjusting PLN model with full covariance model
-#>  Computing (pseudo) R2
+#>  Adjusting a PLN model with full covariance model
+#>  Post-treatments...
 #>  DONE!
 ```
 
@@ -80,11 +82,12 @@ model<-PLN(counts ~ covar$site)
 library(EMtree)
 set.seed(3)
 output<-EMtree(model,  maxIter = 10, plot=TRUE)
+#> [1] 0.7157895
 #> 
-#> Likelihoods: 122.393 , 122.4684 , 122.4685 , 
-#> Convergence took 0.58 secs  and  3  iterations.
-#> Likelihood difference = 5.737878e-05 
-#> Betas difference = 2.305835e-09
+#> Likelihoods: 81.60106 , 81.68395 , 81.684 , 
+#> Convergence took 0.87 secs  and  3  iterations.
+#> Likelihood difference = 5.399852e-05 
+#> Betas difference = 2.305752e-09
 ```
 
 <img src="man/figures/README-output-1.png" style="display: block; margin: auto;" />
@@ -93,12 +96,12 @@ output<-EMtree(model,  maxIter = 10, plot=TRUE)
 str(output)
 #> List of 6
 #>  $ beta     : num [1:33, 1:33] 0 0.000946 0.000946 0.000947 0.000946 ...
-#>  $ logpY    : num [1:3] 122 122 122
-#>  $ ProbaCond: num [1:33, 1:33] 0.00 1.31e-05 1.40e-03 5.28e-02 1.03e-03 ...
+#>  $ logpY    : num [1:3] 81.6 81.7 81.7
+#>  $ ProbaCond: num [1:33, 1:33] 0.00 6.78e-05 3.17e-03 7.09e-02 2.84e-03 ...
 #>  $ maxIter  : num 3
-#>  $ timeEM   : 'difftime' num 0.57800817489624
+#>  $ timeEM   : 'difftime' num 0.868338108062744
 #>   ..- attr(*, "units")= chr "secs"
-#>  $ alpha    : num 0.842
+#>  $ alpha    : num 0.716
 ```
 
 ### Foster robustness with resampling :
@@ -107,21 +110,26 @@ str(output)
 library(parallel)
 resample_output<-ResampleEMtree(counts, "covar$site", S=5, maxIter=10,cond.tol=1e-8, cores=1)
 #> 
-#> S= 1  
+#> S= 1  [1] 0.7236842
+#> 
 #> Convergence took 0.2 secs  and  4  iterations.  0.7236842
-#> S= 2  
-#> Convergence took 0.15 secs  and  3  iterations.  0.7894737
-#> S= 3  
-#> Convergence took 0.37 secs  and  6  iterations.  0.6973684
-#> S= 4  
-#> Convergence took 0.21 secs  and  5  iterations.  0.7894737
-#> S= 5  
-#> Convergence took 0.15 secs  and  3  iterations.  0.8815789
+#> S= 2  [1] 0.7894737
+#> 
+#> Convergence took 0.14 secs  and  3  iterations.  0.7894737
+#> S= 3  [1] 0.6973684
+#> 
+#> Convergence took 0.51 secs  and  10  iterations.  0.6973684
+#> S= 4  [1] 0.7894737
+#> 
+#> Convergence took 0.21 secs  and  4  iterations.  0.7894737
+#> S= 5  [1] 0.8815789
+#> 
+#> Convergence took 0.34 secs  and  8  iterations.  0.8815789
 str(resample_output)
 #> List of 3
-#>  $ Pmat   : num [1:5, 1:528] 3.77e-03 1.52e-03 4.24e-04 4.94e-05 2.46e-05 ...
-#>  $ maxIter: num [1:5] 4 3 6 5 3
-#>  $ times  : 'difftime' num [1:5] 0.198498964309692 0.152621030807495 0.371340036392212 0.210417032241821 ...
+#>  $ Pmat   : num [1:5, 1:528] 3.76e-03 1.58e-03 4.14e-04 4.88e-05 2.48e-05 ...
+#>  $ maxIter: num [1:5] 4 3 10 4 8
+#>  $ times  : 'difftime' num [1:5] 0.197849035263062 0.141584157943726 0.513354063034058 0.213857889175415 ...
 #>   ..- attr(*, "units")= chr "secs"
 ```
 
@@ -133,20 +141,24 @@ compare_output<-ComparEMtree(counts, c("covar$site","covar$date"), S=1, maxIter=
 #> 
 #> model  null : 
 #> 
-#> S= 1  
-#> Convergence took 0.22 secs  and  5  iterations.  0.3289474
+#> S= 1  [1] 0.3289474
+#> 
+#> Convergence took 0.15 secs  and  3  iterations.  0.3289474
 #> model  site : 
 #> 
-#> S= 1  
+#> S= 1  [1] 0.7236842
+#> 
 #> Convergence took 0.19 secs  and  4  iterations.  0.7236842
 #> model  date : 
 #> 
-#> S= 1  
-#> Convergence took 0.22 secs  and  5  iterations.  0.2894737
+#> S= 1  [1] 0.2894737
+#> 
+#> Convergence took 0.24 secs  and  5  iterations.  0.2894737
 #> model  site + date : 
 #> 
-#> S= 1  
-#> Convergence took 0.21 secs  and  5  iterations.  0.9736842
+#> S= 1  [1] 0.9605263
+#> 
+#> Convergence took 0.17 secs  and  4  iterations.  0.9605263
 
 
 str(compare_output)
