@@ -2,58 +2,61 @@
 
 #' Title
 #'
-#' @param df
-#' @param adj_covar
-#' @param pal
-#' @param seed
-#' @param layout
-#' @param names
-#' @param size
-#' @param curv
-#' @param filterDeg
+#' @param adj_matrix graph adjacency matrix
+#' @param title graph title
+#' @param size size of nodes
+#' @param curv edges curvature
+#' @param filter_deg selects nodes with a higher degree than filter_deg
+#' @param layout optional igraph layout.
+#' @param nodes_label optional labels for nodes.
+#' @param pal optional palette.
+#' @param seed optional seed for graph reproductibility.
 #'
-#' @return
+#' @return plots a network
 #' @export
+#' @import tidygraph dplyr ggraph ggplot2
 #'
-#' @examples
-draw_network<-function(df,adj_covar, pal=NULL,seed=200, layout=NULL,names=NULL, size=4, curv=0.3, filterDeg=FALSE){
-  set.seed(seed)
-
-  p=nrow(df)
+#' @examples adj_matrix= SimCluster(10,2,0.5, 0.1)
+#' draw_network(adj_matrix,"Cluster graph")
+draw_network<-function(adj_matrix,title, size=4, curv=0.3, filter_deg=FALSE,layout=NULL,nodes_label=NULL,pal=NULL,
+                       seed=200){
+  p=nrow(adj_matrix)
   nb=round(p/6,0)
-  if(is.null(names)){ names=1:p ; bool=TRUE}else{bool=FALSE}
+  if(is.null(nodes_label)){ nodes_label=1:p ; bool=TRUE}else{bool=FALSE}
 
-  res<- as_tbl_graph(df, directed=FALSE) %>%
+  res<- as_tbl_graph(adj_matrix, directed=FALSE) %>%
     activate(nodes) %>%
     mutate( keyplayer = node_is_keyplayer(k=3), btw=centrality_betweenness(),
-            boolbtw=(btw>sort(btw, decreasing = TRUE)[nb]),boolimp=(centrality_degree()>0),
-            deg=centrality_degree(), model=adj_covar, name=names
-            )
+            bool_btw=(btw>sort(btw, decreasing = TRUE)[nb]),bool_deg=(centrality_degree()>0),
+            deg=centrality_degree(), title=title, name=nodes_label
+    )
   if(bool){
-    res<-res %>% mutate(label=ifelse(boolbtw,name,""))
+    res<-res %>% mutate(label=ifelse(bool_btw,name,""))
   }else{
-    res<-res %>% mutate(label=ifelse(boolimp,name,""))
+    res<-res %>% mutate(label=ifelse(bool_deg,name,""))
   }
-  if(filterDeg) res <- res %>% activate(nodes) %>% filter(deg!=0)
+  if(filter_deg) res <- res %>% activate(nodes) %>% filter(deg!=0)
   res<-res %>%
     activate(edges)  %>%
     filter(weight !=0) %>%
-    mutate(neibs=edge_is_incident(which(.N()$boolbtw)), model=adj_covar)
+    mutate(neibs=edge_is_incident(which(.N()$bool_btw)), title=title)
 
-  pal_edges <-  ifelse(is.null(pal), viridisLite::viridis(5, option = "C")[c(3,2,4,1)], pal)
-  pal_nodes<-c("gray15","goldenrod1")
 
-  set_graph_style()
-  layout=ifelse(is.null(layout),"circle",layout)
-  res %>%
-    ggraph(layout=layout)+
-    geom_edge_arc(aes(color=adj_covar),curvature=curv,show.legend=FALSE)+
-    geom_node_point(aes(color=boolbtw, size=boolbtw), show.legend=FALSE)+
-    scale_edge_colour_manual(values=pal_edges)+
-    scale_color_manual(values=pal_nodes)+
-    scale_size_manual(values=c(1.5,6))+
-    geom_node_text(aes(label = label),color="black", size=size)+
-    labs(title=adj_covar)+theme(plot.title = element_text(hjust = 0.5))
+    pal_edges <-  ifelse(is.null(pal), viridisLite::viridis(5, option = "C")[c(3,2,4,1)], pal)
+    pal_nodes<-c("gray15","goldenrod1")
+
+    set_graph_style(family="sans")
+    layout = ifelse(is.null(layout), "circle", layout)
+    res %>%
+      ggraph(layout = layout) +
+      geom_edge_arc(aes(color = title), curvature = curv, show.legend = FALSE) +
+      geom_node_point(aes(color = bool_btw, size = bool_btw), show.legend = FALSE) +
+      scale_edge_colour_manual(values = pal_edges) +
+      scale_color_manual(values = pal_nodes) +
+      scale_size_manual(values = c(1.5, 6)) +
+      geom_node_text(aes(label = label), color = "black", size = size) +
+      labs(title = title) + theme(plot.title = element_text(hjust = 0.5))
+
 }
 
 
@@ -61,23 +64,23 @@ draw_network<-function(df,adj_covar, pal=NULL,seed=200, layout=NULL,names=NULL, 
 
 #' Title
 #'
-#' @param allNets
-#' @param alpha
-#' @param seed
-#' @param nb
+#' @param allNets object resulting of ComparEMtree()
+#' @param alpha if TRUE, sets edges non-linked to nodes with high betweenness transparent
+#' @param seed optional seed for graph reproductibility
+#' @param nb sets the number of nodes selected by thresholding the beetweenness scores
 #'
-#' @return
+#' @return plots a collection of networks
 #' @export
+#' @import tidygraph dplyr ggraph ggplot2
 #'
 #' @examples
-compar_graphs<-function(allNets, alpha=TRUE,seed=123, nb=3){
+compar_graphs<-function(allNets, alpha=TRUE,seed=123, nb=3, pos=1){
 
   nbmod<-length(unique(allNets$models))
 
   spliT<-data.frame(allNets) %>%
     split(allNets$models) %>%
     tibble(P=map(.,function(x){
-      set.seed(seed)
       model<-x$models[1]
 
       res<- as_tbl_graph(x, directed=FALSE) %>%
@@ -89,18 +92,17 @@ compar_graphs<-function(allNets, alpha=TRUE,seed=123, nb=3){
         mutate(neibs=edge_is_incident(which(.N()$boolbtw)), model=model) %>%
         activate(nodes) %>%
         mutate(label=ifelse(boolbtw,name,""))
+
     }))
 
   mods=unique(allNets$models)
   pal_edges <- viridisLite::viridis(5, option = "C")
   pal_nodes<-c("gray15","goldenrod1")
-  lay<-create_layout(spliT$P[4][[1]],layout="circle")
+  lay<-create_layout(spliT$P[[pos]],layout="circle")
   set_graph_style()
-
-  plot<- spliT$P[1][[1]] %>%
-    bind_graphs(spliT$P[3][[1]] )%>%
-    bind_graphs(spliT$P[2][[1]] )%>%
-    bind_graphs(spliT$P[4][[1]] )%>%
+set.seed(seed)
+  plot<- spliT$P %>%
+    reduce(bind_graphs) %>%
     activate(nodes) %>%
     mutate(model=factor(model,levels=mods),x=rep(lay$x,nbmod),y=rep(lay$y,nbmod)) %>%
     ggraph(layout="auto")

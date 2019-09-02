@@ -4,10 +4,19 @@
 \alias{compar_graphs}
 \title{Title}
 \usage{
-compar_graphs(allNets, alpha = TRUE, seed = 123, nb = 3)
+compar_graphs(allNets, alpha = TRUE, seed = 123, nb = 3, pos = 1)
 }
 \arguments{
-\item{nb}{}
+\item{allNets}{object resulting of ComparEMtree()}
+
+\item{alpha}{if TRUE, sets edges non-linked to nodes with high betweenness transparent}
+
+\item{seed}{optional seed for graph reproductibility}
+
+\item{nb}{sets the number of nodes selected by thresholding the beetweenness scores}
+}
+\value{
+plots a collection of networks
 }
 \description{
 Title

@@ -4,12 +4,36 @@
 \alias{draw_network}
 \title{Title}
 \usage{
-draw_network(df, adj_covar, pal = NULL, seed = 200, layout = NULL,
-  names = NULL, size = 4, curv = 0.3, filterDeg = FALSE)
+draw_network(adj_matrix, title, size = 4, curv = 0.3,
+  filter_deg = FALSE, layout = NULL, nodes_label = NULL,
+  pal = NULL, seed = 200)
 }
 \arguments{
-\item{filterDeg}{}
+\item{adj_matrix}{graph adjacency matrix}
+
+\item{title}{graph title}
+
+\item{size}{size of nodes}
+
+\item{curv}{edges curvature}
+
+\item{filter_deg}{selects nodes with a higher degree than filter_deg}
+
+\item{layout}{optional igraph layout.}
+
+\item{nodes_label}{optional labels for nodes.}
+
+\item{pal}{optional palette.}
+
+\item{seed}{optional seed for graph reproductibility.}
+}
+\value{
+plots a network
 }
 \description{
 Title
+}
+\examples{
+adj_matrix= SimCluster(10,2,0.5, 0.1)
+draw_network(adj_matrix,"Cluster graph")
 }

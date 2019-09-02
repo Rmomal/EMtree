@@ -84,25 +84,24 @@ set.seed(3)
 output<-EMtree(model,  maxIter = 10, plot=TRUE)
 #> [1] 0.7157895
 #> 
-#> Likelihoods: 81.60106 , 81.68395 , 81.684 , 
-#> Convergence took 0.65 secs  and  3  iterations.
-#> Likelihood difference = 5.399852e-05 
-#> Betas difference = 2.305752e-09
+#> Likelihoods: 81.60106 , 81.68395 , 81.684 ,
 ```
 
 <img src="man/figures/README-output-1.png" style="display: block; margin: auto;" />
 
-``` r
-str(output)
-#> List of 6
-#>  $ beta     : num [1:33, 1:33] 0 0.000946 0.000946 0.000947 0.000946 ...
-#>  $ logpY    : num [1:3] 81.6 81.7 81.7
-#>  $ ProbaCond: num [1:33, 1:33] 0.00 6.78e-05 3.17e-03 7.09e-02 2.84e-03 ...
-#>  $ maxIter  : num 3
-#>  $ timeEM   : 'difftime' num 0.654155969619751
-#>   ..- attr(*, "units")= chr "secs"
-#>  $ alpha    : num 0.716
-```
+    #> 
+    #> Convergence took 0.65 secs  and  3  iterations.
+    #> Likelihood difference = 5.399854e-05 
+    #> Betas difference = 2.305752e-09
+    str(output)
+    #> List of 6
+    #>  $ beta     : num [1:33, 1:33] 0 0.000946 0.000946 0.000947 0.000946 ...
+    #>  $ logpY    : num [1:3] 81.6 81.7 81.7
+    #>  $ ProbaCond: num [1:33, 1:33] 0.00 6.78e-05 3.17e-03 7.09e-02 2.84e-03 ...
+    #>  $ maxIter  : num 3
+    #>  $ timeEM   : 'difftime' num 0.647489786148071
+    #>   ..- attr(*, "units")= chr "secs"
+    #>  $ alpha    : num 0.716
 
 ### Foster robustness with resampling :
 
@@ -112,24 +111,24 @@ resample_output<-ResampleEMtree(counts=counts, vec_covar="covar$site", S=5, maxI
 #> 
 #> S= 1  [1] 0.7236842
 #> 
-#> Convergence took 0.2 secs  and  4  iterations.  0.7236842
+#> Convergence took 0.19 secs  and  4  iterations.  0.7236842
 #> S= 2  [1] 0.7894737
 #> 
-#> Convergence took 0.15 secs  and  3  iterations.  0.7894737
+#> Convergence took 0.14 secs  and  3  iterations.  0.7894737
 #> S= 3  [1] 0.6973684
 #> 
-#> Convergence took 0.39 secs  and  10  iterations.  0.6973684
+#> Convergence took 0.43 secs  and  10  iterations.  0.6973684
 #> S= 4  [1] 0.7894737
 #> 
-#> Convergence took 0.16 secs  and  4  iterations.  0.7894737
+#> Convergence took 0.17 secs  and  4  iterations.  0.7894737
 #> S= 5  [1] 0.8815789
 #> 
-#> Convergence took 0.32 secs  and  8  iterations.  0.8815789
+#> Convergence took 0.31 secs  and  8  iterations.  0.8815789
 str(resample_output)
 #> List of 3
 #>  $ Pmat   : num [1:5, 1:528] 3.76e-03 1.58e-03 4.14e-04 4.88e-05 2.48e-05 ...
 #>  $ maxIter: num [1:5] 4 3 10 4 8
-#>  $ times  : 'difftime' num [1:5] 0.204567909240723 0.14710807800293 0.386604070663452 0.161659955978394 ...
+#>  $ times  : 'difftime' num [1:5] 0.186710834503174 0.137768983840942 0.432647943496704 0.173125028610229 ...
 #>   ..- attr(*, "units")= chr "secs"
 ```
 
@@ -143,22 +142,22 @@ compare_output<-ComparEMtree(counts, vec_covar=c("covar$site","covar$date"), S=1
 #> 
 #> S= 1  [1] 0.3289474
 #> 
-#> Convergence took 0.13 secs  and  3  iterations.  0.3289474
+#> Convergence took 0.15 secs  and  3  iterations.  0.3289474
 #> model  site : 
 #> 
 #> S= 1  [1] 0.7236842
 #> 
-#> Convergence took 0.17 secs  and  4  iterations.  0.7236842
+#> Convergence took 0.16 secs  and  4  iterations.  0.7236842
 #> model  date : 
 #> 
 #> S= 1  [1] 0.2894737
 #> 
-#> Convergence took 0.2 secs  and  5  iterations.  0.2894737
+#> Convergence took 0.21 secs  and  5  iterations.  0.2894737
 #> model  site + date : 
 #> 
 #> S= 1  [1] 0.9605263
 #> 
-#> Convergence took 0.18 secs  and  4  iterations.  0.9605263
+#> Convergence took 0.17 secs  and  4  iterations.  0.9605263
 
 
 str(compare_output)

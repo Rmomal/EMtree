@@ -13,3 +13,33 @@ bioc_required: true
 bioc_packages:
   - biomformat
   - phyloseq
+
+matrix:
+  include:
+    - os: linux
+      r: bioc-devel
+    - os: osx
+      r: bioc-release
+    - os: linux
+      r: bioc-release
+      r_packages:
+        - covr
+        - pkgdown
+      after_success:
+        - Rscript -e 'covr::codecov()'
+        - R CMD INSTALL .
+        - Rscript -e 'pkgdown::build_site()'
+      deploy:
+        - provider: pages
+          skip-cleanup: true
+          github-token: $GITHUB_PAT
+          keep-history: true
+          local-dir: docs
+          on:
+            branch: master
+        - provider: releases
+          api_key: $GITHUB_PAT
+          file: $PKG_TARBALL
+          skip_cleanup: true
+          on:
+            tags: true

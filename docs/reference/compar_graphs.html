@@ -105,16 +105,32 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>compar_graphs</span>(<span class='no'>allNets</span>, <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>seed</span> <span class='kw'>=</span> <span class='fl'>123</span>, <span class='kw'>nb</span> <span class='kw'>=</span> <span class='fl'>3</span>)</pre>
+    <pre class="usage"><span class='fu'>compar_graphs</span>(<span class='no'>allNets</span>, <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>seed</span> <span class='kw'>=</span> <span class='fl'>123</span>, <span class='kw'>nb</span> <span class='kw'>=</span> <span class='fl'>3</span>, <span class='kw'>pos</span> <span class='kw'>=</span> <span class='fl'>1</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
+      <th>allNets</th>
+      <td><p>object resulting of ComparEMtree()</p></td>
+    </tr>
+    <tr>
       <th>alpha</th>
-      <td></td>
+      <td><p>if TRUE, sets edges non-linked to nodes with high betweenness transparent</p></td>
+    </tr>
+    <tr>
+      <th>seed</th>
+      <td><p>optional seed for graph reproductibility</p></td>
+    </tr>
+    <tr>
+      <th>nb</th>
+      <td><p>sets the number of nodes selected by thresholding the beetweenness scores</p></td>
     </tr>
     </table>
+    
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>plots a collection of networks</p>
     
 
   </div>
@@ -122,7 +138,9 @@
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+      
+      <li><a href="#value">Value</a></li>
+          </ul>
 
   </div>
 </div>

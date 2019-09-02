@@ -105,9 +105,8 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>ResampleEMtree</span>(<span class='no'>counts</span>, <span class='kw'>vec_covar</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>covariate</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>O1</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>O2</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>v</span> <span class='kw'>=</span> <span class='fl'>0.8</span>, <span class='kw'>S</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>maxIter</span> <span class='kw'>=</span> <span class='fl'>30</span>, <span class='kw'>cond.tol</span> <span class='kw'>=</span> <span class='fl'>1e-14</span>,
-  <span class='kw'>cores</span> <span class='kw'>=</span> <span class='fl'>3</span>)</pre>
+    <pre class="usage"><span class='fu'>ResampleEMtree</span>(<span class='no'>counts</span>, <span class='kw'>vec_covar</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>covariate</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>O</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>v</span> <span class='kw'>=</span> <span class='fl'>0.8</span>, <span class='kw'>S</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>maxIter</span> <span class='kw'>=</span> <span class='fl'>30</span>, <span class='kw'>cond.tol</span> <span class='kw'>=</span> <span class='fl'>1e-14</span>, <span class='kw'>cores</span> <span class='kw'>=</span> <span class='fl'>3</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -122,12 +121,20 @@
 X matrix of covariates : c("X$first", "X$second").</p></td>
     </tr>
     <tr>
+      <th>covariate</th>
+      <td><p>if a covariate matrix is already ready to be given to the lm function, it can be used here.</p></td>
+    </tr>
+    <tr>
+      <th>O</th>
+      <td><p>Matrix of offsets, with dimension n x p</p></td>
+    </tr>
+    <tr>
       <th>v</th>
       <td><p>The proportion of observed data to be taken in each sub-sample. It is the ratio (sub-sample size)/n</p></td>
     </tr>
     <tr>
       <th>S</th>
-      <td><p>Total number of sub-samples.</p></td>
+      <td><p>Total number of wanted sub-samples.</p></td>
     </tr>
     <tr>
       <th>maxIter</th>
@@ -140,10 +147,6 @@ X matrix of covariates : c("X$first", "X$second").</p></td>
     <tr>
       <th>cores</th>
       <td><p>Number of cores, can be greater than 1 if data involves less than about 32 species.</p></td>
-    </tr>
-    <tr>
-      <th>O</th>
-      <td><p>The n x p matrix of offsets, filled with zeros by default.</p></td>
     </tr>
     </table>
     

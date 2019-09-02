@@ -6,32 +6,38 @@ source("R/FunctionsTree.R")
 
 ##############
 F_NegLikelihood <- function(beta.vec, log.psi, P){
+  M = Meila(F_Vec2Sym(beta.vec))
+  lambda = SetLambda(P, M)
   return(- sum(F_Sym2Vec(P)*(log(beta.vec)+F_Sym2Vec(log.psi))) +
-           log(SumTree(F_Vec2Sym(beta.vec))))
+           log(SumTree(F_Vec2Sym(beta.vec)))+
+           lambda*(sum(beta.vec)-0.5))
 }
 # gradients with log change of variable
-F_NegLikelihood_Trans <- function(gamma, log.psi, P){
-  gamma=gamma-mean(gamma)
-  gamma[which(gamma<(-30))]=-30
+F_NegLikelihood_Trans <- function(gamma, log.psi, P, trim=TRUE){
+  if(trim){
+    gamma=gamma-mean(gamma)
+    gamma[which(gamma<(-30))]=-30
+  }
   M = Meila(F_Vec2Sym(exp(gamma)))
   lambda = SetLambda(P, M)
 
-  res<-(-sum(F_Sym2Vec(P) * (log(exp(gamma))+ F_Sym2Vec(log.psi))) )+log(SumTree(F_Vec2Sym(exp(gamma))))+
+  res<-(-sum(F_Sym2Vec(P) * (log(exp(gamma))+ F_Sym2Vec(log.psi))) )+
+    log(SumTree(F_Vec2Sym(exp(gamma))))+
     lambda*(sum(exp(gamma))-0.5)
+
   if(is.nan(res)){
     cat(max(gamma),": higher bound ")
     gamma[which(gamma>(30))]=30
     M = Meila(F_Vec2Sym(exp(gamma)))
     lambda = SetLambda(P, M)
-
-    res<-(-sum(F_Sym2Vec(P) * (log(exp(gamma))+ F_Sym2Vec(log.psi))) )+log(SumTree(F_Vec2Sym(exp(gamma))))+
+    res<-(-sum(F_Sym2Vec(P) * (log(exp(gamma))+ F_Sym2Vec(log.psi))) )+
+      log(SumTree(F_Vec2Sym(exp(gamma))))+
       lambda*(sum(exp(gamma))-0.5)
-
     if(is.nan(res)) browser()
   }
-
   return( res)
 }
+
 F_NegGradient_Trans <- function(gamma, log.psi, P){
   M = Meila(F_Vec2Sym(exp(gamma)))
   lambda = SetLambda(P, M)
@@ -127,8 +133,12 @@ FitBetaStatic <- function(beta.init, psi, maxIter, eps1 = 1e-6,eps2=1e-4, verbat
 
   time<-difftime(Sys.time(),T1)
   logpY = logpY[1:iter]
-  g<-tibble(p=logpY) %>% rowid_to_column() %>%
-    ggplot(aes(rowid,p))+geom_point()+geom_line()+theme_minimal()+labs(x="Iter",y="Likelihood")
+  if(plot){
+
+    g<-tibble(p=logpY) %>% rowid_to_column() %>%
+      ggplot(aes(rowid,p))+geom_point()+geom_line()+theme_minimal()+labs(x="Iter",y="Likelihood")
+    print(g)
+  }
   P = EdgeProba(beta.old*psi)
   if(verbatim){
     cat("\nConvergence took",round(time,2), attr(time, "units")," and ",
@@ -137,7 +147,7 @@ FitBetaStatic <- function(beta.init, psi, maxIter, eps1 = 1e-6,eps2=1e-4, verbat
     cat("\nConvergence took",round(time,2), attr(time, "units")," and ",
         iter," iterations.")
   }
-  if(plot) print(g)
+
   return(list(beta=beta, logpY=logpY,ProbaCond=P,maxIter=iter, timeEM=time))
 }
 
@@ -213,10 +223,10 @@ ResampleEMtree <- function(counts, vec_covar=NULL,covariate=NULL  , O=NULL, v=0.
   if(is.null(covariate)){
     if(!is.null(vec_covar)){
 
-    string<-paste("counts", paste(vec_covar, collapse=" + "), sep=" ~ ")
-    formula<-as.formula(string)
+      string<-paste("counts", paste(vec_covar, collapse=" + "), sep=" ~ ")
+      formula<-as.formula(string)
 
-    X = as.matrix(lm(formula, x=T)$x)
+      X = as.matrix(lm(formula, x=T)$x)
     }else{
       X=matrix(1,nrow=n,ncol=1)
     }
@@ -272,18 +282,18 @@ ResampleEMtree <- function(counts, vec_covar=NULL,covariate=NULL  , O=NULL, v=0.
   return(list(Pmat=Pmat,maxIter=summaryiter,times=times))
 }
 
+
 #' Title
 #'
 #' @param counts
 #' @param vec_covar
 #' @param O
 #' @param v
+#' @param S
 #' @param maxIter
 #' @param cond.tol
 #' @param cores
 #' @param f
-#'
-#' @param S
 #'
 #' @return
 #' @export

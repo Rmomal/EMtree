@@ -22,4 +22,9 @@ Imports:
     parallel,
     tidygraph,
     ggraph,
-    viridisLite
+    viridisLite,
+    vegan,
+    Matrix,
+    huge,
+    mvtnorm,
+    magrittr
