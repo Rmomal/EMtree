@@ -27,4 +27,5 @@ Imports:
     Matrix,
     huge,
     mvtnorm,
-    magrittr
+    magrittr,
+    influenceR

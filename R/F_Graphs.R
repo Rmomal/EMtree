@@ -71,7 +71,7 @@ draw_network<-function(adj_matrix,title, size=4, curv=0.3, filter_deg=FALSE,layo
 #'
 #' @return plots a collection of networks
 #' @export
-#' @import tidygraph dplyr ggraph ggplot2
+#' @import tidygraph dplyr ggraph ggplot2 influenceR
 #'
 #' @examples
 compar_graphs<-function(allNets, alpha=TRUE,seed=123, nb=3, pos=1){
