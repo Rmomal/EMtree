@@ -2,7 +2,7 @@
 % Please edit documentation in R/F_inference.R
 \name{ResampleEMtree}
 \alias{ResampleEMtree}
-\title{Resampling procedure for EMtree}
+\title{Resampling procedure for  edges probability}
 \usage{
 ResampleEMtree(counts, covar_matrix = NULL, O = NULL, v = 0.8,
   S = 100, maxIter = 30, cond.tol = 1e-14, cores = 3)
@@ -34,7 +34,7 @@ resampling.
 }
 }
 \description{
-Resampling procedure for EMtree
+Resampling procedure for  edges probability
 }
 \examples{
 n=30
@@ -43,4 +43,5 @@ S=5
 Y=data_from_scratch("tree",p=p,n=n)$data
 X = data.frame(rnorm(n),rbinom(n,1,0.7))
 resample=ResampleEMtree(Y,covar_matrix=X, S=S,cores = 1)
+str(resample)
 }

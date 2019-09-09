@@ -29,4 +29,6 @@ Imports:
     huge,
     mvtnorm,
     magrittr,
-    influenceR
+    influenceR,
+    purrr,
+    tidyr

@@ -10,8 +10,6 @@ freq_selec(Pmat, Pt)
 \item{Pmat}{matrix gathering edgges probability, with dimensions number of resamples x number of possible edges. Typically the Pmat output of ResampleEMtree()}
 
 \item{Pt}{edges probabilty threshold}
-
-\item{f}{}
 }
 \value{
 matrix of edges selection frequency
@@ -24,6 +22,7 @@ n=30
 p=10
 S=5
 Y=data_from_scratch("tree",p=p)$data
-resample=ResampleEMtree(Y, S=S,cores = 1)$Pmat
-freq_selec=(resample$Pmat,p=0.3)
+resample_prob=ResampleEMtree(Y, S=S,cores = 1)$Pmat
+edges_freq<-freq_selec(resample_prob,Pt=0.3)
+str(edges_freq)
 }

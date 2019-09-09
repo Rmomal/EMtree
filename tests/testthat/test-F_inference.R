@@ -36,7 +36,7 @@ test_that("EMtree", {
   expect_equal(EM$logpY[EM$maxIter]>EM$logpY[EM$maxIter-1],TRUE)
 })
 test_that("EMtree", {
-  expect_equal(dim(EM$beta)==dim(EM$ProbaCond),c(TRUE,TRUE))
+  expect_equal(dim(EM$edges_weight)==dim(EM$edges_prob),c(TRUE,TRUE))
 })
 test_that("ResampleEMtree", {
   expect_equal(rowSums(resampl$Pmat),rep(2*(p-1)/2,S))

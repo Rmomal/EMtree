@@ -31,7 +31,7 @@ SumTree <- function(W){
 #'
 #' @param W Squared weight matrix
 #'
-#' @return M matrix as defined in Meila et al. 2006}
+#' @return M matrix as defined in Meila et al. 2006
 #' @export
 #'
 #' @examples W = matrix(c(1,1,3,1,1,1,3,1,1),3,3,byrow=TRUE)

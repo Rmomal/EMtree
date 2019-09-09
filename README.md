@@ -80,6 +80,8 @@ model<-PLN(counts ~ covar$site)
 
 ``` r
 library(EMtree)
+#> Warning: replacing previous import 'dplyr::combine' by 'gridExtra::combine'
+#> when loading 'EMtree'
 set.seed(3)
 output<-EMtree(model,  maxIter = 10, plot=TRUE)
 #> [1] 0.7157895
@@ -90,7 +92,7 @@ output<-EMtree(model,  maxIter = 10, plot=TRUE)
 <img src="man/figures/README-output-1.png" style="display: block; margin: auto;" />
 
     #> 
-    #> Convergence took 0.66 secs  and  3  iterations.
+    #> Convergence took 0.67 secs  and  3  iterations.
     #> Likelihood difference = 5.399854e-05 
     #> Betas difference = 2.305752e-09
     str(output)
@@ -99,7 +101,7 @@ output<-EMtree(model,  maxIter = 10, plot=TRUE)
     #>  $ edges_weight: num [1:33, 1:33] 0 0.000946 0.000946 0.000947 0.000946 ...
     #>  $ logpY       : num [1:3] 81.6 81.7 81.7
     #>  $ maxIter     : num 3
-    #>  $ timeEM      : 'difftime' num 0.655726909637451
+    #>  $ timeEM      : 'difftime' num 0.670953989028931
     #>   ..- attr(*, "units")= chr "secs"
     #>  $ alpha       : num 0.716
 
@@ -111,24 +113,24 @@ resample_output<-ResampleEMtree(counts=counts, covar_matrix = covar$site , S=5, 
 #> 
 #> S= 1  [1] 0.7236842
 #> 
-#> Convergence took 0.24 secs  and  5  iterations.  0.7236842
+#> Convergence took 0.23 secs  and  5  iterations.  0.7236842
 #> S= 2  [1] 0.6052632
 #> 
-#> Convergence took 0.15 secs  and  3  iterations.  0.6052632
+#> Convergence took 0.16 secs  and  3  iterations.  0.6052632
 #> S= 3  [1] 0.6973684
 #> 
-#> Convergence took 0.35 secs  and  7  iterations.  0.6973684
+#> Convergence took 0.32 secs  and  7  iterations.  0.6973684
 #> S= 4  [1] 0.7894737
 #> 
-#> Convergence took 0.17 secs  and  3  iterations.  0.7894737
+#> Convergence took 0.13 secs  and  3  iterations.  0.7894737
 #> S= 5  [1] 0.8815789
 #> 
-#> Convergence took 0.32 secs  and  6  iterations.  0.8815789
+#> Convergence took 0.26 secs  and  6  iterations.  0.8815789
 str(resample_output)
 #> List of 3
 #>  $ Pmat   : num [1:5, 1:528] 3.86e-03 5.74e-03 4.27e-04 5.08e-05 2.41e-05 ...
 #>  $ maxIter: num [1:5] 5 3 7 3 6
-#>  $ times  : 'difftime' num [1:5] 0.243561983108521 0.153649091720581 0.349779844284058 0.1651771068573 ...
+#>  $ times  : 'difftime' num [1:5] 0.230384111404419 0.160486936569214 0.315670013427734 0.13437294960022 ...
 #>   ..- attr(*, "units")= chr "secs"
 ```
 
@@ -159,25 +161,25 @@ compare_output<-ComparEMtree(counts, covar_matrix=covar, models=tested_models, m
 #> Convergence took 0.15 secs  and  3  iterations.  0.6052632
 #> S= 3  [1] 0.6973684
 #> 
-#> Convergence took 0.26 secs  and  5  iterations.  0.6973684
+#> Convergence took 0.2 secs  and  5  iterations.  0.6973684
 #> model  date + site
 #> S= 1  [1] 0.9473684
 #> 
 #> Convergence took 0.22 secs  and  5  iterations.  0.9473684
 #> S= 2  [1] 0.9868421
 #> 
-#> Convergence took 0.22 secs  and  5  iterations.  0.9868421
+#> Convergence took 0.21 secs  and  5  iterations.  0.9868421
 #> S= 3  [1] 0.9868421
 #> 
-#> Convergence took 0.2 secs  and  5  iterations.  0.9868421
+#> Convergence took 0.22 secs  and  5  iterations.  0.9868421
 
 
 str(compare_output)
 #> Classes 'tbl_df', 'tbl' and 'data.frame':    3267 obs. of  4 variables:
-#>  $ key    : chr  "1" "1" "1" "1" ...
-#>  $ rowname: chr  "1" "2" "3" "4" ...
-#>  $ mods   : chr  "date" "date" "date" "date" ...
-#>  $ value  : num  0 0 0 0 0 0 0 0 0 0 ...
+#>  $ node1 : chr  "1" "1" "1" "1" ...
+#>  $ node2 : chr  "1" "2" "3" "4" ...
+#>  $ model : chr  "date" "date" "date" "date" ...
+#>  $ weight: num  0 0 0 0 0 0 0 0 0 0 ...
 ```
 
 ### Graphics
@@ -210,9 +212,20 @@ draw_network(df,"Site")
 
 #### Facet for plotting several models in one shot
 
+Comparing network by eye is difficult. In particular, choosing the right layout to do so is often troublesome. Here by default, the circle layout is used so that differences in density are easily seen.
+
 ``` r
 compar_graphs(compare_output,alpha=TRUE)
 #> Using `nicely` as default layout
 ```
 
 <img src="man/figures/README-unnamed-chunk-7-1.png" style="display: block; margin: auto;" />
+
+However, the user can decide another layout. The nodes position is preserved along the networks.
+
+``` r
+compar_graphs(compare_output,alpha=TRUE, layout="kk")
+#> Using `nicely` as default layout
+```
+
+<img src="man/figures/README-unnamed-chunk-8-1.png" style="display: block; margin: auto;" />

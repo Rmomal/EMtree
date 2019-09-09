@@ -67,7 +67,7 @@ str(output)
 ### Foster robustness with resampling :
 
 
-```{r, cache=FALSE}
+```{r, cache=TRUE}
 library(parallel)
 resample_output<-ResampleEMtree(counts=counts, covar_matrix = covar$site , S=5, maxIter=10,cond.tol=1e-8, cores=1)
 str(resample_output)
@@ -76,7 +76,7 @@ str(resample_output)
 ### Several models with resampling :
 
 
-```{r, cache=FALSE}
+```{r, cache=TRUE}
 library(parallel)
 tested_models=list("date","site",c("date","site"))
 models_names=c("date","site","date + site")
@@ -112,8 +112,16 @@ draw_network(df,"Site")
 
 #### Facet for plotting several models in one shot
 
+Comparing network by eye is difficult. In particular, choosing the right layout to do so is often troublesome. Here by default, the circle layout is used so that differences in density are easily seen.
+
 ```{r, fig.height=3.5, fig.width=10}
 compar_graphs(compare_output,alpha=TRUE)
-
 ```
+
+However, the user can decide another layout. The nodes position is preserved along the networks.
+
+```{r}
+compar_graphs(compare_output,alpha=TRUE, layout="kk")
+```
+
 

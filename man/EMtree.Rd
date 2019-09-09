@@ -2,7 +2,7 @@
 % Please edit documentation in R/F_inference.R
 \name{EMtree}
 \alias{EMtree}
-\title{Compute edges probability from count data, accounting for covar_matrixs and sample- and/or species-specific offsets.}
+\title{Computes edges probability}
 \usage{
 EMtree(PLNobject, maxIter = 30, cond.tol = 1e-10, verbatim = TRUE,
   plot = FALSE)
@@ -29,12 +29,12 @@ EMtree(PLNobject, maxIter = 30, cond.tol = 1e-10, verbatim = TRUE,
 }
 }
 \description{
-Compute edges probability from count data, accounting for covar_matrixs and sample- and/or species-specific offsets.
+Computes edges probability
 }
 \examples{
 n=30
 p=10
 Y=data_from_scratch("tree",p=p)$data
-PLN_Y = PLN(Y~1)
+PLN_Y = PLNmodels::PLN(Y~1)
 EMtree(PLN_Y,verbatim=TRUE, plot=TRUE)
 }

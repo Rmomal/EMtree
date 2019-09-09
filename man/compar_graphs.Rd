@@ -2,22 +2,41 @@
 % Please edit documentation in R/F_Graphs.R
 \name{compar_graphs}
 \alias{compar_graphs}
-\title{Title}
+\title{Plots networks from several models}
 \usage{
-compar_graphs(allNets, alpha = TRUE, seed = 123, nb = 3, pos = 1)
+compar_graphs(allNets, curv = 0.2, width = 1, alpha = TRUE,
+  seed = 123, nb = 3, layout = "circle", pos = 1)
 }
 \arguments{
-\item{allNets}{object resulting of ComparEMtree()}
+\item{allNets}{tibble resulting of ComparEMtree()}
 
-\item{alpha}{if TRUE, sets edges non-linked to nodes with high betweenness transparent}
+\item{curv}{edges curvature}
+
+\item{width}{maximum width for the edges}
+
+\item{alpha}{if TRUE, sets to transparent the edges non-linked to nodes with high betweenness}
 
 \item{seed}{optional seed for graph reproductibility}
 
 \item{nb}{sets the number of nodes selected by thresholding the beetweenness scores}
+
+\item{layout}{choice of layout for all networks among available layouts in `ggraph`. Default is "circle"}
+
+\item{pos}{choice of referent model for the layout construction}
 }
 \value{
 plots a collection of networks
 }
 \description{
-Title
+Plots networks from several models
+}
+\examples{
+n=30
+p=10
+S=5
+Y=data_from_scratch("tree",p=p,n=n)$data
+X = data.frame(rnorm(n),rbinom(n,1,0.7))
+threemodels=ComparEMtree(Y,X,models=list(1,2,c(1,2)),
+m_names=list("1","2","both"),Pt=0.3,S=S, cores=1)
+compar_graphs(threemodels)
 }

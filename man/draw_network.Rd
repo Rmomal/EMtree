@@ -2,11 +2,11 @@
 % Please edit documentation in R/F_Graphs.R
 \name{draw_network}
 \alias{draw_network}
-\title{Title}
+\title{Plots a natwork}
 \usage{
 draw_network(adj_matrix, title = "", size = 4, curv = 0.2,
-  filter_deg = FALSE, layout = NULL, nodes_label = NULL,
-  pal = NULL, seed = 200)
+  width = 1, alpha = FALSE, filter_deg = FALSE, layout = NULL,
+  nodes_label = NULL, pal = NULL, seed = 200)
 }
 \arguments{
 \item{adj_matrix}{graph adjacency matrix}
@@ -17,9 +17,13 @@ draw_network(adj_matrix, title = "", size = 4, curv = 0.2,
 
 \item{curv}{edges curvature}
 
+\item{width}{maximum width for the edges}
+
+\item{alpha}{if TRUE, sets to transparent the edges non-linked to nodes with high betweenness}
+
 \item{filter_deg}{selects nodes with a higher degree than filter_deg}
 
-\item{layout}{optional igraph layout.}
+\item{layout}{optional ggraph layout.}
 
 \item{nodes_label}{optional labels for nodes.}
 
@@ -31,7 +35,7 @@ draw_network(adj_matrix, title = "", size = 4, curv = 0.2,
 plots a network
 }
 \description{
-Title
+Plots a natwork
 }
 \examples{
 adj_matrix= SimCluster(10,2,0.5, 0.1)

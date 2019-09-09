@@ -9,6 +9,9 @@ Meila(W)
 \arguments{
 \item{W}{Squared weight matrix}
 }
+\value{
+M matrix as defined in Meila et al. 2006
+}
 \description{
 Computing the M matrix
 }

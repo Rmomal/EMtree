@@ -1,13 +1,15 @@
 
 
-#' Title
+#' Plots a natwork
 #'
 #' @param adj_matrix graph adjacency matrix
 #' @param title graph title
 #' @param size size of nodes
 #' @param curv edges curvature
+#' @param width maximum width for the edges
+#' @param alpha if TRUE, sets to transparent the edges non-linked to nodes with high betweenness
 #' @param filter_deg selects nodes with a higher degree than filter_deg
-#' @param layout optional igraph layout.
+#' @param layout optional ggraph layout.
 #' @param nodes_label optional labels for nodes.
 #' @param pal optional palette.
 #' @param seed optional seed for graph reproductibility.
@@ -18,7 +20,7 @@
 #'
 #' @examples adj_matrix= SimCluster(10,2,0.5, 0.1)
 #' draw_network(adj_matrix,"Cluster graph", layout="kk")
-draw_network<-function(adj_matrix,title="", size=4, curv=0.2, filter_deg=FALSE,layout=NULL,nodes_label=NULL,pal=NULL,
+draw_network<-function(adj_matrix,title="", size=4, curv=0.2,width=1, alpha=FALSE, filter_deg=FALSE,layout=NULL,nodes_label=NULL,pal=NULL,
                        seed=200){
   p=nrow(adj_matrix)
   nb=round(p/6,0)
@@ -52,8 +54,16 @@ draw_network<-function(adj_matrix,title="", size=4, curv=0.2, filter_deg=FALSE,l
   layout = ifelse(is.null(layout), "circle", layout)
 
   g=res %>%
-    ggraph(layout = layout) +
-    geom_edge_arc(aes(edge_width=weight,color = title), curvature = curv, show.legend = FALSE) +
+    ggraph(layout = layout)
+  if(alpha){
+    g<-g+
+      geom_edge_arc(aes(edge_width=weight, alpha=neibs,color = title), curvature = curv, show.legend = FALSE) +
+      scale_edge_alpha_manual(values=c(0.2,1))
+
+  }else{ g<-g+
+    geom_edge_arc(aes(edge_width=weight,color = title), curvature = curv, show.legend = FALSE)
+  }
+  g<-g+
     geom_node_point(aes(color = bool_btw, size = bool_btw), show.legend = FALSE) +
     scale_edge_colour_manual(values = pal_edges) +
     scale_color_manual(values = pal_nodes)+
@@ -62,10 +72,10 @@ draw_network<-function(adj_matrix,title="", size=4, curv=0.2, filter_deg=FALSE,l
     labs(title = title) + theme(plot.title = element_text(hjust = 0.5))
 
   if(!binary){ g=g+
-    scale_edge_width_continuous(range=c(0.1,2))
+    scale_edge_width_continuous(range=c(0.1,width))
   }else{
     g=g+
-      scale_edge_width_continuous(range=c(0,1))
+      scale_edge_width_continuous(range=c(0,width))
   }
   return(g)
 
@@ -74,37 +84,48 @@ draw_network<-function(adj_matrix,title="", size=4, curv=0.2, filter_deg=FALSE,l
 
 
 
-#' Title
+#' Plots networks from several models
 #'
-#' @param allNets object resulting of ComparEMtree()
-#' @param alpha if TRUE, sets edges non-linked to nodes with high betweenness transparent
+#' @param allNets tibble resulting of ComparEMtree()
+#' @param curv edges curvature
+#' @param width maximum width for the edges
+#' @param alpha if TRUE, sets to transparent the edges non-linked to nodes with high betweenness
 #' @param seed optional seed for graph reproductibility
 #' @param nb sets the number of nodes selected by thresholding the beetweenness scores
+#' @param layout choice of layout for all networks among available layouts in `ggraph`. Default is "circle"
+#' @param pos choice of referent model for the layout construction
 #'
 #' @return plots a collection of networks
 #' @export
-#' @import tidygraph dplyr ggraph ggplot2 influenceR
+#' @import tidygraph dplyr ggraph ggplot2 influenceR purrr
 #'
 #' @examples
-compar_graphs<-function(allNets, alpha=TRUE,seed=123, nb=3, pos=1){
-
-  mods=unique(allNets$mods)
+#'n=30
+#'p=10
+#'S=5
+#'Y=data_from_scratch("tree",p=p,n=n)$data
+#'X = data.frame(rnorm(n),rbinom(n,1,0.7))
+#'threemodels=ComparEMtree(Y,X,models=list(1,2,c(1,2)),
+#'m_names=list("1","2","both"),Pt=0.3,S=S, cores=1)
+#'compar_graphs(threemodels)
+compar_graphs<-function(allNets, curv=0.2, width=1, alpha=TRUE,seed=123, nb=3, layout="circle", pos=1){
+  mods=unique(allNets$model)
   nbmod<-length(mods)
 
-  binary=(sum(unique(allNets$value))==1)
+  binary=(sum(unique(allNets$weight))==1)
 
   spliT<-data.frame(allNets) %>%
-    split(allNets$mods) %>%
+    split(allNets$model) %>%
     tibble(P=map(.,function(x){
-      model<-x$mods[1]
+      mod<-x$model[1]
 
       res<- as_tbl_graph(x, directed=FALSE) %>%
-        activate(edges) %>% filter(value!=0) %>%
+        activate(edges) %>% filter(weight!=0) %>%
         activate(nodes) %>%
         mutate( importance=centrality_degree(),btw=centrality_betweenness(),boolbtw=(btw>sort(btw, decreasing = TRUE)[nb]),
-                keyplayer = node_is_keyplayer(k=3), model=model) %>%
+                keyplayer = node_is_keyplayer(k=3), mod=mod) %>%
         activate(edges) %>%
-        mutate(neibs=edge_is_incident(which(.N()$boolbtw)), model=model) %>%
+        mutate(neibs=edge_is_incident(which(.N()$boolbtw)), mod=mod) %>%
         activate(nodes) %>%
         mutate(label=ifelse(boolbtw,name,""))
 
@@ -113,22 +134,22 @@ compar_graphs<-function(allNets, alpha=TRUE,seed=123, nb=3, pos=1){
 
   pal_edges <- viridisLite::viridis(5, option = "C")
   pal_nodes<-c("gray15","goldenrod1")
-  lay<-create_layout(spliT$P[[pos]],layout="circle")
-  set_graph_style()
+  lay<-create_layout(spliT$P[[pos]],layout=layout)
+  set_graph_style(family="sans")
 
   set.seed(seed)
   plot<- spliT$P %>%
     reduce(bind_graphs) %>%
     activate(nodes) %>%
-    mutate(model=factor(model,levels=mods),x=rep(lay$x,nbmod),y=rep(lay$y,nbmod)) %>%
+    mutate(mod=factor(mod,levels=mods),x=rep(lay$x,nbmod),y=rep(lay$y,nbmod)) %>%
     ggraph(layout="auto")
   if(alpha){
     plot<-plot+
-      geom_edge_arc(aes(edge_width=value,color=model, alpha=neibs),curvature=0.3,show.legend=FALSE)+
+      geom_edge_arc(aes(edge_width=weight,color=mod, alpha=neibs),curvature=curv,show.legend=FALSE)+
       scale_edge_alpha_manual(values=c(0.2,1))
 
   }else{plot<-plot+
-    geom_edge_arc(aes(edge_width=value,color=model),curvature=0.3,show.legend=FALSE)
+    geom_edge_arc(aes(edge_width=weight,color=mod),curvature=curv,show.legend=FALSE)
   }
 
   g= plot+
@@ -137,15 +158,15 @@ compar_graphs<-function(allNets, alpha=TRUE,seed=123, nb=3, pos=1){
     scale_color_manual(values=pal_nodes)+
     scale_size_manual(values=c(1.5,6))+
     geom_node_text(aes(label = label),color="black")+
-    facet_nodes(~model, scales="free",ncol=nbmod)+
+    facet_nodes(~mod, scales="free",ncol=nbmod)+
     th_foreground(border=FALSE)+
     theme(strip.background = element_rect(fill="white",color="white"),
           strip.text = element_text(color="black",size=14))
   if(!binary){ g=g+
-    scale_edge_width_continuous(range=c(0.1,2))
+    scale_edge_width_continuous(range=c(0.1,width))
   }else{
     g=g+
-      scale_edge_width_continuous(range=c(0,1))
+      scale_edge_width_continuous(range=c(0,width))
   }
   return(g)
 }

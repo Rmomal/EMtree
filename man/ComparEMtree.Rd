@@ -2,32 +2,44 @@
 % Please edit documentation in R/F_inference.R
 \name{ComparEMtree}
 \alias{ComparEMtree}
-\title{Title}
+\title{Runs EMtree for several covariates choices}
 \usage{
 ComparEMtree(counts, covar_matrix, models, m_names, O = NULL, Pt = 0.1,
   v = 0.8, S = 100, maxIter = 50, cond.tol = 1e-14, cores = 3)
 }
 \arguments{
-\item{O}{Offset matrix}
+\item{counts}{Data of observed counts with dimensions n x p, either a matrix, data.frame or tibble.}
+
+\item{covar_matrix}{matrix of covariates, should have the same number of rows as the count matrix.}
+
+\item{O}{Offset matrix with dimensions n x p}
 
 \item{Pt}{Probability threshold for every sub-sample}
 
 \item{v}{The proportion of observed data to be taken in each sub-sample. It is the ratio (sub-sample size)/n}
 
-\item{S}{Number of sub-samples}
+\item{S}{Number of desired sub-samples}
 
 \item{maxIter}{Maximum number of iterations of EMtree}
 
-\item{cores}{}
+\item{cond.tol}{Tolerance for the psi matrix.}
+
+\item{cores}{Number of cores, can be greater than 1 if data involves less than about 32 species.}
+
+\item{models_covar}{list of covariate combinations to be tested. For example list(1,2) will design two linear models with the first two covariates adjusted separately}
+}
+\value{
+a tibble in a suitable format for graphical purposes. It has four columns describing each edge of each model: the origin node ("node1"),
+the destination node ("node2"), the model it corresponds to ("model") and its weight ("value").
 }
 \description{
-Title
+Runs EMtree for several covariates choices
 }
 \examples{
 n=30
 p=10
-S=5
-Y=data_from_scratch("tree",p=p,n=n)$data
+S=3
+Y = data_from_scratch("tree",p=p,n=n)$data
 X = data.frame(rnorm(n),rbinom(n,1,0.7))
-ComparEMtree(Y,X,models=list(1,2,c(1,2)),m_names=list("1","2","both"),Pt=0.3,S=S)
+ComparEMtree(Y,X,models=list(1,2,c(1,2)),m_names=list("1","2","both"),Pt=0.3,S=S, cores=1)
 }
