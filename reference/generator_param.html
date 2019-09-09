@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Summing over trees (Matrix-tree thm) — SumTree • EMtree</title>
+<title>Generate simulation parameters from a graph adjacency matrix — generator_param • EMtree</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,8 @@
 
 
 
-<meta property="og:title" content="Summing over trees (Matrix-tree thm) — SumTree" />
-<meta property="og:description" content="Summing over trees (Matrix-tree thm)" />
+<meta property="og:title" content="Generate simulation parameters from a graph adjacency matrix — generator_param" />
+<meta property="og:description" content="Generate simulation parameters from a graph adjacency matrix" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -100,33 +100,90 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Summing over trees (Matrix-tree thm)</h1>
+    <h1>Generate simulation parameters from a graph adjacency matrix</h1>
     
-    <div class="hidden name"><code>SumTree.Rd</code></div>
+    <div class="hidden name"><code>generator_param.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Summing over trees (Matrix-tree thm)</p>
+    <p>Generate simulation parameters from a graph adjacency matrix</p>
     </div>
 
-    <pre class="usage"><span class='fu'>SumTree</span>(<span class='no'>W</span>)</pre>
+    <pre class="usage"><span class='fu'>generator_param</span>(<span class='no'>G</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>W</th>
-      <td><p>Squared weight matrix</p></td>
+      <th>G</th>
+      <td><p>adjacency matrix</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>The number of total possible spanning trees</p>
+    <p>a list containing</p><ul>
+<li><p>sigma: the covariance matrix</p></li>
+<li><p>omega: the precision matrix</p></li>
+<li><p>cste: the constant that was needed to load the diagonal of omega and esure its positive definitiveness</p></li>
+</ul>
+
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>uniformeW</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fl'>1</span>,<span class='fl'>3</span>,<span class='fl'>3</span>)
-<span class='fu'>SumTree</span>(<span class='no'>uniformeW</span>)</div><div class='output co'>#&gt; [1] 3</div></pre>
+    <pre class="examples"><div class='input'><span class='no'>G</span><span class='kw'>=</span><span class='fu'><a href='generator_graph.html'>generator_graph</a></span>(<span class='kw'>p</span><span class='kw'>=</span><span class='fl'>10</span>,<span class='kw'>graph</span><span class='kw'>=</span><span class='st'>"tree"</span>)
+<span class='fu'>generator_param</span>(<span class='no'>G</span>)</div><div class='output co'>#&gt; $sigma
+#&gt;             [,1]       [,2]       [,3]       [,4]       [,5]       [,6]
+#&gt;  [1,]  1.0000000  0.6528211 -0.8622373 -0.7585157  0.6680735 -0.8852393
+#&gt;  [2,]  0.6528211  1.0000000 -0.5628867 -0.8606560  0.4361325 -0.7374516
+#&gt;  [3,] -0.8622373 -0.5628867  1.0000000  0.6540205 -0.7748139  0.7632863
+#&gt;  [4,] -0.7585157 -0.8606560  0.6540205  1.0000000 -0.5067442  0.8568482
+#&gt;  [5,]  0.6680735  0.4361325 -0.7748139 -0.5067442  1.0000000 -0.5914049
+#&gt;  [6,] -0.8852393 -0.7374516  0.7632863  0.8568482 -0.5914049  1.0000000
+#&gt;  [7,]  0.6528211  0.7407287 -0.5628867 -0.8606560  0.4361325 -0.7374516
+#&gt;  [8,]  0.8155067  0.8005097 -0.7031603 -0.9301158  0.5448184 -0.9212275
+#&gt;  [9,] -0.7219186 -0.7086427  0.6224651  0.8233750 -0.4822947  0.8155067
+#&gt; [10,]  0.6680735  0.4361325 -0.7748139 -0.5067442  0.6003366 -0.5914049
+#&gt;             [,7]       [,8]       [,9]      [,10]
+#&gt;  [1,]  0.6528211  0.8155067 -0.7219186  0.6680735
+#&gt;  [2,]  0.7407287  0.8005097 -0.7086427  0.4361325
+#&gt;  [3,] -0.5628867 -0.7031603  0.6224651 -0.7748139
+#&gt;  [4,] -0.8606560 -0.9301158  0.8233750 -0.5067442
+#&gt;  [5,]  0.4361325  0.5448184 -0.4822947  0.6003366
+#&gt;  [6,] -0.7374516 -0.9212275  0.8155067 -0.5914049
+#&gt;  [7,]  1.0000000  0.8005097 -0.7086427  0.4361325
+#&gt;  [8,]  0.8005097  1.0000000 -0.8852393  0.5448184
+#&gt;  [9,] -0.7086427 -0.8852393  1.0000000 -0.4822947
+#&gt; [10,]  0.4361325  0.5448184 -0.4822947  1.0000000
+#&gt; 
+#&gt; $omega
+#&gt; 10 x 10 sparse Matrix of class "dsCMatrix"
+#&gt;                                                                              
+#&gt;  [1,] 2.143589 .        1.000000 .        .        1.000000 .        .       
+#&gt;  [2,] .        2.143589 .        1.000000 .        .        .        .       
+#&gt;  [3,] 1.000000 .        2.143589 .        1.000000 .        .        .       
+#&gt;  [4,] .        1.000000 .        2.143589 .        .        1.000000 1.000000
+#&gt;  [5,] .        .        1.000000 .        2.143589 .        .        .       
+#&gt;  [6,] 1.000000 .        .        .        .        2.143589 .        1.000000
+#&gt;  [7,] .        .        .        1.000000 .        .        2.143589 .       
+#&gt;  [8,] .        .        .        1.000000 .        1.000000 .        2.143589
+#&gt;  [9,] .        .        .        .        .        .        .        1.000000
+#&gt; [10,] .        .        1.000000 .        .        .        .        .       
+#&gt;                        
+#&gt;  [1,] .        .       
+#&gt;  [2,] .        .       
+#&gt;  [3,] .        1.000000
+#&gt;  [4,] .        .       
+#&gt;  [5,] .        .       
+#&gt;  [6,] .        .       
+#&gt;  [7,] .        .       
+#&gt;  [8,] 1.000000 .       
+#&gt;  [9,] 2.143589 .       
+#&gt; [10,] .        2.143589
+#&gt; 
+#&gt; $cste
+#&gt; [1] 2.143589
+#&gt; </div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

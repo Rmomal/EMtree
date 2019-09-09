@@ -6,23 +6,27 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Title — EMtree • EMtree</title>
+<title>Computes edges probability — EMtree • EMtree</title>
+
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+<!-- headroom.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -30,10 +34,11 @@
 
 
 
-<meta property="og:title" content="Title — EMtree" />
 
-<meta property="og:description" content="Title" />
+<meta property="og:title" content="Computes edges probability — EMtree" />
+<meta property="og:description" content="Computes edges probability" />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -45,6 +50,7 @@
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
+
 
 
   </head>
@@ -71,7 +77,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -79,7 +85,6 @@
   <a href="../reference/index.html">Reference</a>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
@@ -89,31 +94,30 @@
 </div><!--/.navbar -->
 
       
+
       </header>
 
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Title</h1>
+    <h1>Computes edges probability</h1>
     
     <div class="hidden name"><code>EMtree.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    
-    <p>Title</p>
-    
+    <p>Computes edges probability</p>
     </div>
 
     <pre class="usage"><span class='fu'>EMtree</span>(<span class='no'>PLNobject</span>, <span class='kw'>maxIter</span> <span class='kw'>=</span> <span class='fl'>30</span>, <span class='kw'>cond.tol</span> <span class='kw'>=</span> <span class='fl'>1e-10</span>, <span class='kw'>verbatim</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
-    
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>PLNobject</th>
-      <td><p>an object resulting from the use of the `PLN` function</p></td>
+      <td><p>an object resulting from the use of the `PLN` function from package `PLNmodels`</p></td>
     </tr>
     <tr>
       <th>maxIter</th>
@@ -129,20 +133,108 @@
     </tr>
     <tr>
       <th>plot</th>
-      <td><p>plots if set to TRUE</p></td>
+      <td><p>plots likelihood if set to TRUE</p></td>
     </tr>
     </table>
-    
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    
+<ul>
+<li><p>edges_prob: p x p matrix of edges probabilities</p></li>
+<li><p>edges_weight: p x p matrix of edges weights for any spanning tree</p></li>
+<li><p>logpY: vector of log-likelihoods</p></li>
+<li><p>maxIter: final number of iterations EMtree has ran</p></li>
+<li><p>timeEM: EMtree computation time</p></li>
+<li><p>alpha: data signal/noise ratio</p></li>
+</ul>
+
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='no'>n</span><span class='kw'>=</span><span class='fl'>30</span>
+<span class='no'>p</span><span class='kw'>=</span><span class='fl'>10</span>
+<span class='no'>Y</span><span class='kw'>=</span><span class='fu'><a href='data_from_scratch.html'>data_from_scratch</a></span>(<span class='st'>"tree"</span>,<span class='kw'>p</span><span class='kw'>=</span><span class='no'>p</span>)$<span class='no'>data</span>
+<span class='no'>PLN_Y</span> <span class='kw'>=</span> <span class='kw pkg'>PLNmodels</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/PLNmodels/man/PLN.html'>PLN</a></span>(<span class='no'>Y</span>~<span class='fl'>1</span>)</div><div class='output co'>#&gt; 
+#&gt;  Initialization...
+#&gt;  Adjusting a PLN model with full covariance model
+#&gt;  Post-treatments...
+#&gt;  DONE!</div><div class='input'><span class='fu'>EMtree</span>(<span class='no'>PLN_Y</span>,<span class='kw'>verbatim</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; [1] 0.88
+#&gt; 
+#&gt; Likelihoods: 19.05951 , 19.09449 , 19.09457 , </div><div class='img'><img src='EMtree-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; 
+#&gt; Convergence took 0.05 secs  and  3  iterations.
+#&gt; Likelihood difference = 7.988211e-05 
+#&gt; Betas difference = 7.644667e-08</div><div class='output co'>#&gt; $edges_prob
+#&gt;              [,1]       [,2]       [,3]        [,4]        [,5]       [,6]
+#&gt;  [1,] 0.000000000 0.29724054 0.09457675 0.012128390 0.001574434 0.09129004
+#&gt;  [2,] 0.297240542 0.00000000 0.17359974 0.095595413 0.010940999 0.61329921
+#&gt;  [3,] 0.094576749 0.17359974 0.00000000 0.042412488 0.242261132 0.64760122
+#&gt;  [4,] 0.012128390 0.09559541 0.04241249 0.000000000 0.002273544 0.35073418
+#&gt;  [5,] 0.001574434 0.01094100 0.24226113 0.002273544 0.000000000 0.65042250
+#&gt;  [6,] 0.091290036 0.61329921 0.64760122 0.350734181 0.650422502 0.00000000
+#&gt;  [7,] 0.413794521 0.30450924 0.17513224 0.288072702 0.003104968 0.44053045
+#&gt;  [8,] 0.081315775 0.07469784 0.29891163 0.224840057 0.092795604 0.72958578
+#&gt;  [9,] 0.008381661 0.45962476 0.03816736 0.002175115 0.002223810 0.46422968
+#&gt; [10,] 0.062072257 0.08076750 0.08692414 0.342179126 0.043787391 0.09654338
+#&gt;              [,7]       [,8]        [,9]      [,10]
+#&gt;  [1,] 0.413794521 0.08131577 0.008381661 0.06207226
+#&gt;  [2,] 0.304509236 0.07469784 0.459624758 0.08076750
+#&gt;  [3,] 0.175132239 0.29891163 0.038167363 0.08692414
+#&gt;  [4,] 0.288072702 0.22484006 0.002175115 0.34217913
+#&gt;  [5,] 0.003104968 0.09279560 0.002223810 0.04378739
+#&gt;  [6,] 0.440530455 0.72958578 0.464229685 0.09654338
+#&gt;  [7,] 0.000000000 0.53759032 0.016790514 0.13124445
+#&gt;  [8,] 0.537590322 0.00000000 0.017541061 0.09678208
+#&gt;  [9,] 0.016790514 0.01754106 0.000000000 0.05973398
+#&gt; [10,] 0.131244452 0.09678208 0.059733980 0.00000000
+#&gt; 
+#&gt; $edges_weight
+#&gt;             [,1]       [,2]       [,3]       [,4]       [,5]       [,6]
+#&gt;  [1,] 0.00000000 0.01115442 0.01106457 0.01102781 0.01102310 0.01106311
+#&gt;  [2,] 0.01115442 0.00000000 0.01110019 0.01106500 0.01102732 0.01129524
+#&gt;  [3,] 0.01106457 0.01110019 0.00000000 0.01104132 0.01113100 0.01131088
+#&gt;  [4,] 0.01102781 0.01106500 0.01104132 0.00000000 0.01102341 0.01117793
+#&gt;  [5,] 0.01102310 0.01102732 0.01113100 0.01102341 0.00000000 0.01131167
+#&gt;  [6,] 0.01106311 0.01129524 0.01131088 0.01117793 0.01131167 0.00000000
+#&gt;  [7,] 0.01120578 0.01115842 0.01110085 0.01115030 0.01102379 0.01121903
+#&gt;  [8,] 0.01105867 0.01105598 0.01115628 0.01112235 0.01106412 0.01134846
+#&gt;  [9,] 0.01102614 0.01122708 0.01103953 0.01102337 0.01102339 0.01122912
+#&gt; [10,] 0.01104998 0.01105827 0.01106100 0.01117361 0.01104186 0.01106527
+#&gt;             [,7]       [,8]       [,9]      [,10]
+#&gt;  [1,] 0.01120578 0.01105867 0.01102614 0.01104998
+#&gt;  [2,] 0.01115842 0.01105598 0.01122708 0.01105827
+#&gt;  [3,] 0.01110085 0.01115628 0.01103953 0.01106100
+#&gt;  [4,] 0.01115030 0.01112235 0.01102337 0.01117361
+#&gt;  [5,] 0.01102379 0.01106412 0.01102339 0.01104186
+#&gt;  [6,] 0.01121903 0.01134846 0.01122912 0.01106527
+#&gt;  [7,] 0.00000000 0.01126213 0.01102994 0.01108063
+#&gt;  [8,] 0.01126213 0.00000000 0.01103027 0.01106537
+#&gt;  [9,] 0.01102994 0.01103027 0.00000000 0.01104894
+#&gt; [10,] 0.01108063 0.01106537 0.01104894 0.00000000
+#&gt; 
+#&gt; $logpY
+#&gt; [1] 19.05951 19.09449 19.09457
+#&gt; 
+#&gt; $maxIter
+#&gt; [1] 3
+#&gt; 
+#&gt; $timeEM
+#&gt; Time difference of 0.04675889 secs
+#&gt; 
+#&gt; $alpha
+#&gt; [1] 0.88
+#&gt; </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+      <li><a href="#value">Value</a></li>
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>
+
 
       <footer>
       <div class="copyright">
@@ -150,13 +242,16 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.0.</p>
 </div>
+
       </footer>
    </div>
 
   
 
+
   </body>
 </html>
+
 
