@@ -6,13 +6,15 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Title — freq_selec • EMtree</title>
+<title>Computes edges selection frequency after resampling procedure — freq_selec • EMtree</title>
+
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -30,10 +32,11 @@
 
 
 
-<meta property="og:title" content="Title — freq_selec" />
 
-<meta property="og:description" content="Title" />
+<meta property="og:title" content="Computes edges selection frequency after resampling procedure — freq_selec" />
+<meta property="og:description" content="Computes edges selection frequency after resampling procedure" />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -79,7 +82,6 @@
   <a href="../reference/index.html">Reference</a>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
@@ -94,35 +96,57 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Title</h1>
+    <h1>Computes edges selection frequency after resampling procedure</h1>
     
     <div class="hidden name"><code>freq_selec.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    
-    <p>Title</p>
-    
+    <p>Computes edges selection frequency after resampling procedure</p>
     </div>
 
-    <pre class="usage"><span class='fu'>freq_selec</span>(<span class='no'>Pmat</span>, <span class='no'>p</span>, <span class='no'>f</span>)</pre>
-    
+    <pre class="usage"><span class='fu'>freq_selec</span>(<span class='no'>Pmat</span>, <span class='no'>Pt</span>)</pre>
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>Pmat</th>
+      <td><p>matrix gathering edgges probability, with dimensions number of resamples x number of possible edges. Typically the Pmat output of ResampleEMtree()</p></td>
+    </tr>
+    <tr>
+      <th>Pt</th>
+      <td><p>edges probabilty threshold</p></td>
+    </tr>
     <tr>
       <th>f</th>
       <td></td>
     </tr>
     </table>
-    
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>matrix of edges selection frequency</p>
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'>n=30
+p=10
+S=5
+Y=data_from_scratch("tree",p=p)$data
+resample=ResampleEMtree(Y, S=S,cores = 1)$Pmat
+freq_selec=(resample$Pmat,p=0.3)
+</div><div class='output co'>#&gt; <span class='error'>Error: &lt;text&gt;:6:26: unexpected ','</span>
+#&gt; <span class='error'>5: resample=ResampleEMtree(Y, S=S,cores = 1)$Pmat</span>
+#&gt; <span class='error'>6: freq_selec=(resample$Pmat,</span>
+#&gt; <span class='error'>                            ^</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+      <li><a href="#value">Value</a></li>
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>

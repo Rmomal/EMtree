@@ -4,12 +4,30 @@
 \alias{ComparEMtree}
 \title{Title}
 \usage{
-ComparEMtree(counts, vec_covar, O = NULL, v = 0.8, S = 100, maxIter,
-  cond.tol = 1e-14, cores = 3, f)
+ComparEMtree(counts, covar_matrix, models, m_names, O = NULL, Pt = 0.1,
+  v = 0.8, S = 100, maxIter = 50, cond.tol = 1e-14, cores = 3)
 }
 \arguments{
-\item{f}{}
+\item{O}{Offset matrix}
+
+\item{Pt}{Probability threshold for every sub-sample}
+
+\item{v}{The proportion of observed data to be taken in each sub-sample. It is the ratio (sub-sample size)/n}
+
+\item{S}{Number of sub-samples}
+
+\item{maxIter}{Maximum number of iterations of EMtree}
+
+\item{cores}{}
 }
 \description{
 Title
+}
+\examples{
+n=30
+p=10
+S=5
+Y=data_from_scratch("tree",p=p,n=n)$data
+X = data.frame(rnorm(n),rbinom(n,1,0.7))
+ComparEMtree(Y,X,models=list(1,2,c(1,2)),m_names=list("1","2","both"),Pt=0.3,S=S)
 }

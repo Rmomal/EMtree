@@ -44,7 +44,7 @@ erdos<-function(p,prob){
 #' @return the adjacency matrix of size p x p
 #' @export
 #'
-#' @examples SimCluster(10,2,0.5, 0.1)
+#' @examples SimCluster(10,2,0.5, 10)
 SimCluster <- function(p, k, dens, r){
   beta = dens / (r / k + (k - 1) / k)
   alpha = r * beta
@@ -171,11 +171,11 @@ generator_PLN<-function(Sigma,covariates=NULL, n=50){
 #' @importFrom tidygraph as_tbl_graph
 #' @importFrom ggraph ggraph geom_edge_link geom_node_point
 #' @examples data_from_scratch("tree",p=10,draw=TRUE)
-data_from_scratch<-function(type, p=20, r=5, covariates=NULL,prob=log(p)/p,dens=log(p)/p, draw=FALSE){
+data_from_scratch<-function(type, p=20,n=50, r=5, covariates=NULL,prob=log(p)/p,dens=log(p)/p, draw=FALSE){
   # make graph
   graph<- generator_graph(graph=type,p=p,prob=prob,dens=dens,r=r)
   param<-generator_param(as.matrix(graph))
-  data<-generator_PLN(param$sigma,covariates)
+  data<-generator_PLN(param$sigma,covariates,n)
   if(draw){ as_tbl_graph(as.matrix(graph)) %>%
       ggraph(layout="kk")+
       geom_edge_link()+

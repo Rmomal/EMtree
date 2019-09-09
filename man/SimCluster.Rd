@@ -22,5 +22,5 @@ the adjacency matrix of size p x p
 Simulates a cluster graph
 }
 \examples{
-SimCluster(10,2,0.5, 0.1)
+SimCluster(10,2,0.5, 10)
 }

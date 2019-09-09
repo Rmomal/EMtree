@@ -4,7 +4,7 @@
 \alias{draw_network}
 \title{Title}
 \usage{
-draw_network(adj_matrix, title, size = 4, curv = 0.3,
+draw_network(adj_matrix, title = "", size = 4, curv = 0.2,
   filter_deg = FALSE, layout = NULL, nodes_label = NULL,
   pal = NULL, seed = 200)
 }
@@ -35,5 +35,5 @@ Title
 }
 \examples{
 adj_matrix= SimCluster(10,2,0.5, 0.1)
-draw_network(adj_matrix,"Cluster graph")
+draw_network(adj_matrix,"Cluster graph", layout="kk")
 }

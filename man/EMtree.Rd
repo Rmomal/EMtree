@@ -2,13 +2,13 @@
 % Please edit documentation in R/F_inference.R
 \name{EMtree}
 \alias{EMtree}
-\title{Title}
+\title{Compute edges probability from count data, accounting for covar_matrixs and sample- and/or species-specific offsets.}
 \usage{
 EMtree(PLNobject, maxIter = 30, cond.tol = 1e-10, verbatim = TRUE,
   plot = FALSE)
 }
 \arguments{
-\item{PLNobject}{an object resulting from the use of the `PLN` function}
+\item{PLNobject}{an object resulting from the use of the `PLN` function from package `PLNmodels`}
 
 \item{maxIter}{Maximum number of iterations for EMtree}
 
@@ -16,8 +16,25 @@ EMtree(PLNobject, maxIter = 30, cond.tol = 1e-10, verbatim = TRUE,
 
 \item{verbatim}{talks if set to TRUE}
 
-\item{plot}{plots if set to TRUE}
+\item{plot}{plots likelihood if set to TRUE}
+}
+\value{
+\itemize{
+ \item{edges_prob: }{p x p matrix of edges probabilities}
+ \item{edges_weight: }{p x p matrix of edges weights for any spanning tree}
+ \item{logpY: }{vector of log-likelihoods}
+ \item{maxIter: }{final number of iterations EMtree has ran}
+ \item{timeEM: }{EMtree computation time}
+ \item{alpha: }{data signal/noise ratio}
+}
 }
 \description{
-Title
+Compute edges probability from count data, accounting for covar_matrixs and sample- and/or species-specific offsets.
+}
+\examples{
+n=30
+p=10
+Y=data_from_scratch("tree",p=p)$data
+PLN_Y = PLN(Y~1)
+EMtree(PLN_Y,verbatim=TRUE, plot=TRUE)
 }

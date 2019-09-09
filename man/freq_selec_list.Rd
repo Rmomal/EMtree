@@ -4,10 +4,10 @@
 \alias{freq_selec_list}
 \title{Title}
 \usage{
-freq_selec_list(list_Pmat, x, p, f)
+freq_selec_list(list_Pmat, x, Pt, Pf = NULL)
 }
 \arguments{
-\item{f}{}
+\item{Pf}{}
 }
 \description{
 Title

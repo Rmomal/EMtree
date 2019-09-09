@@ -90,45 +90,45 @@ output<-EMtree(model,  maxIter = 10, plot=TRUE)
 <img src="man/figures/README-output-1.png" style="display: block; margin: auto;" />
 
     #> 
-    #> Convergence took 0.75 secs  and  3  iterations.
+    #> Convergence took 0.66 secs  and  3  iterations.
     #> Likelihood difference = 5.399854e-05 
     #> Betas difference = 2.305752e-09
     str(output)
     #> List of 6
-    #>  $ beta     : num [1:33, 1:33] 0 0.000946 0.000946 0.000947 0.000946 ...
-    #>  $ logpY    : num [1:3] 81.6 81.7 81.7
-    #>  $ ProbaCond: num [1:33, 1:33] 0.00 6.78e-05 3.17e-03 7.09e-02 2.84e-03 ...
-    #>  $ maxIter  : num 3
-    #>  $ timeEM   : 'difftime' num 0.751084089279175
+    #>  $ edges_prob  : num [1:33, 1:33] 0.00 6.78e-05 3.17e-03 7.09e-02 2.84e-03 ...
+    #>  $ edges_weight: num [1:33, 1:33] 0 0.000946 0.000946 0.000947 0.000946 ...
+    #>  $ logpY       : num [1:3] 81.6 81.7 81.7
+    #>  $ maxIter     : num 3
+    #>  $ timeEM      : 'difftime' num 0.655726909637451
     #>   ..- attr(*, "units")= chr "secs"
-    #>  $ alpha    : num 0.716
+    #>  $ alpha       : num 0.716
 
 ### Foster robustness with resampling :
 
 ``` r
 library(parallel)
-resample_output<-ResampleEMtree(counts=counts, vec_covar="covar$site", S=5, maxIter=10,cond.tol=1e-8, cores=1)
+resample_output<-ResampleEMtree(counts=counts, covar_matrix = covar$site , S=5, maxIter=10,cond.tol=1e-8, cores=1)
 #> 
 #> S= 1  [1] 0.7236842
 #> 
-#> Convergence took 0.2 secs  and  4  iterations.  0.7236842
-#> S= 2  [1] 0.7894737
+#> Convergence took 0.24 secs  and  5  iterations.  0.7236842
+#> S= 2  [1] 0.6052632
 #> 
-#> Convergence took 0.14 secs  and  3  iterations.  0.7894737
+#> Convergence took 0.15 secs  and  3  iterations.  0.6052632
 #> S= 3  [1] 0.6973684
 #> 
-#> Convergence took 0.39 secs  and  10  iterations.  0.6973684
+#> Convergence took 0.35 secs  and  7  iterations.  0.6973684
 #> S= 4  [1] 0.7894737
 #> 
-#> Convergence took 0.19 secs  and  4  iterations.  0.7894737
+#> Convergence took 0.17 secs  and  3  iterations.  0.7894737
 #> S= 5  [1] 0.8815789
 #> 
-#> Convergence took 0.35 secs  and  8  iterations.  0.8815789
+#> Convergence took 0.32 secs  and  6  iterations.  0.8815789
 str(resample_output)
 #> List of 3
-#>  $ Pmat   : num [1:5, 1:528] 3.76e-03 1.58e-03 4.14e-04 4.88e-05 2.48e-05 ...
-#>  $ maxIter: num [1:5] 4 3 10 4 8
-#>  $ times  : 'difftime' num [1:5] 0.200549840927124 0.141237020492554 0.38936710357666 0.188949108123779 ...
+#>  $ Pmat   : num [1:5, 1:528] 3.86e-03 5.74e-03 4.27e-04 5.08e-05 2.41e-05 ...
+#>  $ maxIter: num [1:5] 5 3 7 3 6
+#>  $ times  : 'difftime' num [1:5] 0.243561983108521 0.153649091720581 0.349779844284058 0.1651771068573 ...
 #>   ..- attr(*, "units")= chr "secs"
 ```
 
@@ -136,35 +136,47 @@ str(resample_output)
 
 ``` r
 library(parallel)
-compare_output<-ComparEMtree(counts, vec_covar=c("covar$site","covar$date"), S=1, maxIter=5,cond.tol=1e-8,cores=1,f=0.8)
+tested_models=list("date","site",c("date","site"))
+models_names=c("date","site","date + site")
+compare_output<-ComparEMtree(counts, covar_matrix=covar, models=tested_models, m_names=models_names, Pt=0.15,  S=3, maxIter=5,cond.tol=1e-8,cores=1)
 #> 
-#> model  null : 
-#> 
-#> S= 1  [1] 0.3289474
-#> 
-#> Convergence took 0.15 secs  and  3  iterations.  0.3289474
-#> model  site : 
-#> 
-#> S= 1  [1] 0.7236842
-#> 
-#> Convergence took 0.3 secs  and  4  iterations.  0.7236842
-#> model  date : 
-#> 
+#> model  date
 #> S= 1  [1] 0.2894737
 #> 
-#> Convergence took 0.31 secs  and  5  iterations.  0.2894737
-#> model  site + date : 
+#> Convergence took 0.22 secs  and  5  iterations.  0.2894737
+#> S= 2  [1] 0.2763158
 #> 
-#> S= 1  [1] 0.9605263
+#> Convergence took 0.18 secs  and  4  iterations.  0.2763158
+#> S= 3  [1] 0.2368421
 #> 
-#> Convergence took 0.19 secs  and  4  iterations.  0.9605263
+#> Convergence took 0.21 secs  and  5  iterations.  0.2368421
+#> model  site
+#> S= 1  [1] 0.7236842
+#> 
+#> Convergence took 0.21 secs  and  5  iterations.  0.7236842
+#> S= 2  [1] 0.6052632
+#> 
+#> Convergence took 0.15 secs  and  3  iterations.  0.6052632
+#> S= 3  [1] 0.6973684
+#> 
+#> Convergence took 0.26 secs  and  5  iterations.  0.6973684
+#> model  date + site
+#> S= 1  [1] 0.9473684
+#> 
+#> Convergence took 0.22 secs  and  5  iterations.  0.9473684
+#> S= 2  [1] 0.9868421
+#> 
+#> Convergence took 0.22 secs  and  5  iterations.  0.9868421
+#> S= 3  [1] 0.9868421
+#> 
+#> Convergence took 0.2 secs  and  5  iterations.  0.9868421
 
 
 str(compare_output)
-#> Classes 'tbl_df', 'tbl' and 'data.frame':    4356 obs. of  4 variables:
+#> Classes 'tbl_df', 'tbl' and 'data.frame':    3267 obs. of  4 variables:
 #>  $ key    : chr  "1" "1" "1" "1" ...
 #>  $ rowname: chr  "1" "2" "3" "4" ...
-#>  $ models : chr  "null" "null" "null" "null" ...
+#>  $ mods   : chr  "date" "date" "date" "date" ...
 #>  $ value  : num  0 0 0 0 0 0 0 0 0 0 ...
 ```
 
@@ -180,8 +192,8 @@ library(tidygraph)
 library(viridis)
 
 set.seed(200)
-x<- 1*(output$ProbaCond>2/p)
-draw_network(x,"Site", pal="dodgerblue3")
+x<- 1*(output$edges_prob>2/p)
+draw_network(x,title="Site", pal="dodgerblue3")
 ```
 
 <img src="man/figures/README-unnamed-chunk-5-1.png" style="display: block; margin: auto;" />
@@ -189,8 +201,8 @@ draw_network(x,"Site", pal="dodgerblue3")
 #### From `ResampleEMtree` output
 
 ``` r
-f<-0.8
-df<-freq_selec(resample_output$Pmat,p=p,f=f)
+
+df<-freq_selec(resample_output$Pmat,Pt=2/p+0.1)
 draw_network(df,"Site")
 ```
 

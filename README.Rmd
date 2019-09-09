@@ -69,7 +69,7 @@ str(output)
 
 ```{r, cache=FALSE}
 library(parallel)
-resample_output<-ResampleEMtree(counts=counts, vec_covar="covar$site", S=5, maxIter=10,cond.tol=1e-8, cores=1)
+resample_output<-ResampleEMtree(counts=counts, covar_matrix = covar$site , S=5, maxIter=10,cond.tol=1e-8, cores=1)
 str(resample_output)
 ```
 
@@ -78,7 +78,9 @@ str(resample_output)
 
 ```{r, cache=FALSE}
 library(parallel)
-compare_output<-ComparEMtree(counts, vec_covar=c("covar$site","covar$date"), S=1, maxIter=5,cond.tol=1e-8,cores=1,f=0.8)
+tested_models=list("date","site",c("date","site"))
+models_names=c("date","site","date + site")
+compare_output<-ComparEMtree(counts, covar_matrix=covar, models=tested_models, m_names=models_names, Pt=0.15,  S=3, maxIter=5,cond.tol=1e-8,cores=1)
 
 
 str(compare_output)
@@ -94,16 +96,16 @@ library(tidygraph)
 library(viridis)
 
 set.seed(200)
-x<- 1*(output$ProbaCond>2/p)
-draw_network(x,"Site", pal="dodgerblue3")
+x<- 1*(output$edges_prob>2/p)
+draw_network(x,title="Site", pal="dodgerblue3")
 
 ```
 
 #### From `ResampleEMtree` output
 
 ```{r, fig.height=4.5, fig.width=4.5}
-f<-0.8
-df<-freq_selec(resample_output$Pmat,p=p,f=f)
+
+df<-freq_selec(resample_output$Pmat,Pt=2/p+0.1)
 draw_network(df,"Site")
 
 ```

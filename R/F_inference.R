@@ -101,7 +101,7 @@ F_AlphaN <- function(CorY, n, cond.tol=1e-10){
 }
 
 #########################################################################
-FitBetaStatic <- function(beta.init, psi, maxIter, eps1 = 1e-6,eps2=1e-4, verbatim=TRUE,plot=FALSE){
+FitBetaStatic <- function(beta.init, psi, maxIter=50, eps1 = 1e-6,eps2=1e-4, verbatim=TRUE,plot=FALSE){
   options(nwarnings = 1)
   beta.tol = 1e-4
   beta.min = 1e-16
@@ -148,22 +148,35 @@ FitBetaStatic <- function(beta.init, psi, maxIter, eps1 = 1e-6,eps2=1e-4, verbat
         iter," iterations.")
   }
 
-  return(list(beta=beta, logpY=logpY,ProbaCond=P,maxIter=iter, timeEM=time))
+  return(list(edges_prob=P, edges_weight=beta, logpY=logpY,maxIter=iter, timeEM=time))
 }
 
 #########################################################################
-#' Title
+#' Compute edges probability from count data, accounting for covar_matrixs and sample- and/or species-specific offsets.
 #'
-#' @param PLNobject  an object resulting from the use of the `PLN` function
+#' @param PLNobject  an object resulting from the use of the `PLN` function from package `PLNmodels`
 #' @param maxIter Maximum number of iterations for EMtree
 #' @param cond.tol Tolerence parameter for the conditionement of psi matrix
 #' @param verbatim talks if set to TRUE
-#' @param plot plots if set to TRUE
+#' @param plot plots likelihood if set to TRUE
 #'
 #' @return
+#' \itemize{
+#'  \item{edges_prob: }{p x p matrix of edges probabilities}
+#'  \item{edges_weight: }{p x p matrix of edges weights for any spanning tree}
+#'  \item{logpY: }{vector of log-likelihoods}
+#'  \item{maxIter: }{final number of iterations EMtree has ran}
+#'  \item{timeEM: }{EMtree computation time}
+#'  \item{alpha: }{data signal/noise ratio}
+#' }
 #' @export
 #'
 #' @examples
+#' n=30
+#' p=10
+#' Y=data_from_scratch("tree",p=p)$data
+#' PLN_Y = PLN(Y~1)
+#' EMtree(PLN_Y,verbatim=TRUE, plot=TRUE)
 EMtree<-function(PLNobject,  maxIter=30, cond.tol=1e-10, verbatim=TRUE, plot=FALSE){
   CorY=cov2cor(PLNobject$model_par$Sigma)
   p = ncol(CorY)
@@ -189,15 +202,13 @@ EMtree<-function(PLNobject,  maxIter=30, cond.tol=1e-10, verbatim=TRUE, plot=FAL
 #' Resampling procedure for EMtree
 #'
 #' @param counts Data of observed counts with dimensions n x p, either a matrix, data.frame or tibble.
-#' @param vec_covar Vecteur of quoted covariates to be accounted for with dimension n x d, with the data.frame of covariates. For example with
-#' X matrix of covariates : c("X$first", "X$second").
+#' @param covar_matrix matrix of covariates, should have the same number of rows as the count matrix.
+#' @param O Matrix of offsets, with dimension n x p
 #' @param v The proportion of observed data to be taken in each sub-sample. It is the ratio (sub-sample size)/n
 #' @param S Total number of wanted sub-samples.
 #' @param maxIter Maximum number of EMtree iterations at each sub-sampling.
 #' @param cond.tol Tolerance for the psi matrix.
 #' @param cores Number of cores, can be greater than 1 if data involves less than about 32 species.
-#' @param covariate if a covariate matrix is already ready to be given to the lm function, it can be used here.
-#' @param O Matrix of offsets, with dimension n x p
 #'
 #' @return Returns a list which contains the Pmat data.frame, and vectors of EMtree maximum iterations and running times in each
 #' resampling.
@@ -210,7 +221,13 @@ EMtree<-function(PLNobject,  maxIter=30, cond.tol=1e-10, verbatim=TRUE, plot=FAL
 #' @export
 #'
 #' @examples
-ResampleEMtree <- function(counts, vec_covar=NULL,covariate=NULL  , O=NULL, v=0.8, S=1e2, maxIter=30, cond.tol=1e-14,cores=3){
+#'n=30
+#'p=10
+#'S=5
+#'Y=data_from_scratch("tree",p=p,n=n)$data
+#'X = data.frame(rnorm(n),rbinom(n,1,0.7))
+#'resample=ResampleEMtree(Y,covar_matrix=X, S=S,cores = 1)
+ResampleEMtree <- function(counts, covar_matrix=NULL  , O=NULL, v=0.8, S=1e2, maxIter=30, cond.tol=1e-14,cores=3){
 
   counts=as.matrix(counts)
   n = nrow(counts)
@@ -220,19 +237,11 @@ ResampleEMtree <- function(counts, vec_covar=NULL,covariate=NULL  , O=NULL, v=0.
   Pmat = matrix(0, S, P)
   if(is.null(O)){ O=matrix(1, n, p)}
 
-  if(is.null(covariate)){
-    if(!is.null(vec_covar)){
-
-      string<-paste("counts", paste(vec_covar, collapse=" + "), sep=" ~ ")
-      formula<-as.formula(string)
-
-      X = as.matrix(lm(formula, x=T)$x)
-    }else{
-      X=matrix(1,nrow=n,ncol=1)
-    }
-
+  if(is.null(covar_matrix)){
+    #default
+    X=matrix(1,nrow=n,ncol=1)
   }else{
-    X=covariate
+    X=as.matrix(covar_matrix)
   }
 
   obj<-mclapply(1:S,function(b){
@@ -241,21 +250,23 @@ ResampleEMtree <- function(counts, vec_covar=NULL,covariate=NULL  , O=NULL, v=0.
 
     sample = sample(1:n, V, replace = F)
     counts.sample = counts[sample,]
-    X.sample = X[sample,]
+    X.sample = data.frame(X[sample,])
     O.sample = O[sample,]
 
     suppressWarnings(
-      PLN.sample <- PLN(counts.sample ~ -1 + X.sample + offset(log(O.sample)),control = list("trace"=0))
+      PLN.sample <- PLN(counts.sample ~ -1  + offset(log(O.sample)) + ., data=X.sample, control = list("trace"=0))
     )
 
     inf1<-EMtree( PLN.sample, maxIter=maxIter, cond.tol=cond.tol,
-                  verbatim=FALSE,plot=FALSE)[c("ProbaCond","maxIter","timeEM","alpha")]
+                  verbatim=FALSE,plot=FALSE)[c("edges_prob","maxIter","timeEM","alpha")]
     cat(" ",inf1$alpha)
 
-    inf<-inf1[c("ProbaCond","maxIter","timeEM")]
+    inf<-inf1[c("edges_prob","maxIter","timeEM")]
     return(inf)
   }, mc.cores=cores)
-
+  #parallelization can malfunction.
+  #here chack if all results were correctly computed (correct number of results)
+  #if not compute the missing results sequentially
   lengths<- sapply(obj,function(x){length(x)})
   if(mean(lengths)!=3){
     indices<-which(lengths!=3)
@@ -263,18 +274,19 @@ ResampleEMtree <- function(counts, vec_covar=NULL,covariate=NULL  , O=NULL, v=0.
       set.seed(x)
       sample = sample(1:n, V, replace = F)
       counts.sample = counts[sample,]
-      X.sample = X[sample,]
+      X.sample = data.frame(X[sample,])
       O.sample = O[sample,]
 
       suppressWarnings(
-        PLN.sample <- PLN(counts.sample ~ -1 + X.sample + offset(log(O.sample)),control = list("trace"=0))
+        PLN.sample <- PLN(counts.sample ~ -1  + offset(log(O.sample)) + ., data=X.sample, control = list("trace"=0))
       )
       obj[[x]]<<-EMtree( PLN.sample, maxIter=maxIter, cond.tol=cond.tol,
-                         verbatim=FALSE,plot=FALSE)[c("ProbaCond","maxIter","timeEM")]
+                         verbatim=FALSE,plot=FALSE)[c("edges_prob","maxIter","timeEM")]
     })
 
   }
-  Pmat<-do.call(rbind,lapply(obj,function(x){F_Sym2Vec(x$ProbaCond)}))
+
+  Pmat<-do.call(rbind,lapply(obj,function(x){F_Sym2Vec(x$edges_prob)}))
 
   summaryiter = do.call(c,lapply(obj,function(x){x$maxIter}))
   times<-do.call(c,lapply(obj,function(x){x$timeEM}))
@@ -286,47 +298,46 @@ ResampleEMtree <- function(counts, vec_covar=NULL,covariate=NULL  , O=NULL, v=0.
 #' Title
 #'
 #' @param counts
-#' @param vec_covar
-#' @param O
-#' @param v
-#' @param S
-#' @param maxIter
+#' @param covar_matrix
+#' @param models_covar
+#' @param O Offset matrix
+#' @param Pt Probability threshold for every sub-sample
+#' @param v The proportion of observed data to be taken in each sub-sample. It is the ratio (sub-sample size)/n
+#' @param S Number of sub-samples
+#' @param maxIter Maximum number of iterations of EMtree
 #' @param cond.tol
 #' @param cores
-#' @param f
 #'
 #' @return
 #' @export
 #'
 #' @examples
-ComparEMtree <- function(counts, vec_covar, O=NULL, v=0.8, S=1e2, maxIter, cond.tol=1e-14,cores=3,f){
+#'n=30
+#'p=10
+#'S=5
+#'Y=data_from_scratch("tree",p=p,n=n)$data
+#'X = data.frame(rnorm(n),rbinom(n,1,0.7))
+#'ComparEMtree(Y,X,models=list(1,2,c(1,2)),m_names=list("1","2","both"),Pt=0.3,S=S)
+ComparEMtree <- function(counts, covar_matrix, models, m_names, O=NULL, Pt=0.1, v=0.8, S=1e2, maxIter=50, cond.tol=1e-14,cores=3){
+
+  Stab.sel<- lapply(seq_along(models),function(x){
+    cat("\nmodel ",m_names[[x]])
+    ResampleEMtree(counts,covar_matrix[,models[[x]]],O=O, v=v, S=S, maxIter, cond.tol=cond.tol,cores=cores)$Pmat
+  })
   p=ncol(counts)
-  # browser()
-  split<-strsplit(vec_covar,"\\$")
-  models =c("null",split[[1]][2],split[[2]][2],paste(lapply(split, function(x){x[2]}), collapse=" + "))
-  cat("\nmodel ",models[1],": \n")
-  p1<-ResampleEMtree(counts, vec_covar="1",covariate=NULL, O=O, v=v, S=S, maxIter, cond.tol=cond.tol,cores=cores)$Pmat
-  cat("\nmodel ",models[2],": \n")
-  p2<-ResampleEMtree(counts, vec_covar=vec_covar[1],covariate=NULL, O=O, v=v, S=S, maxIter, cond.tol=cond.tol,cores=cores)$Pmat
 
-  cat("\nmodel ",models[3],": \n")
-  p3<-ResampleEMtree(counts, vec_covar=vec_covar[2], covariate=NULL,O=O, v=v, S=S, maxIter, cond.tol=cond.tol,cores=cores)$Pmat
-  cat("\nmodel ",models[4],": \n")
-  p4<-ResampleEMtree(counts, vec_covar=vec_covar,covariate=NULL, O=O, v=v, S=S, maxIter, cond.tol=cond.tol,cores=cores)$Pmat
-  #browser()
-  Stab.sel=list(p1,p2,p3,p4)
-
-  mat<-data.frame(freq_selec_list(Stab.sel,1,p,f)) # the first element is initialized
-  allNets<-tibble(P = list(mat), models =models )  %>%
+  mat<-data.frame(freq_selec(Stab.sel[[1]],Pt)) # the first element is initialized
+  allNets<-tibble(P = list(mat), mods =m_names )  %>%
     mutate(P=map( seq_along(P), function(x) {
-      df<-freq_selec_list(Stab.sel,x,p,f)
+      df<-freq_selec(Stab.sel[[x]],Pt=Pt)
       df[lower.tri(df, diag = TRUE)]<-0
       df<-data.frame(df)
       colnames(df)<-1:ncol(df)
       df
     })) %>%
     mutate(P = map(P,~rownames_to_column(.) %>%
-                     gather(key, value , -rowname))) %>%
+                     gather(key, value , -rowname)),
+           mods=unlist(mods)) %>%
     unnest()
   allNets<-allNets[,c(3,2,1,4)]
 
@@ -335,34 +346,51 @@ ComparEMtree <- function(counts, vec_covar, O=NULL, v=0.8, S=1e2, maxIter, cond.
 
 ####################################################
 
-
 #' Title
 #'
 #' @param list_Pmat
 #' @param x
-#' @param p
-#' @param f
+#' @param Pt
+#' @param Pf
 #'
 #' @return
 #' @export
 #'
 #' @examples
-freq_selec_list<-function(list_Pmat,x,p,f){
-  return(F_Vec2Sym( 1*(colMeans( 1*(list_Pmat[[x]]>2/p))>f)))
+freq_selec_list<-function(list_Pmat,x,Pt,Pf=NULL){
+  E=ncol(Pmat)
+  p=sqrt(2*E+(1/4))-1/2
+  if(is.null(Pt)) Pt= 2/p + 0.1
+  if ( is.null(Pf)){
+    res=F_Vec2Sym( colMeans( 1*(list_Pmat[[x]]>Pt)))
+  }else{
+    res= F_Vec2Sym( 1*(colMeans( 1*(list_Pmat[[x]]>Pt))>Pf))
+  }
+  return(res)
 }
 
-#' Title
+#' Computes edges selection frequency after resampling procedure
 #'
-#' @param Pmat
-#' @param p
+#' @param Pmat matrix gathering edgges probability, with dimensions number of resamples x number of possible edges. Typically the Pmat output of ResampleEMtree()
+#' @param Pt edges probabilty threshold
 #' @param f
 #'
-#' @return
+#' @return matrix of edges selection frequency
 #' @export
 #'
 #' @examples
-freq_selec<-function(Pmat,p,f){
-  return(F_Vec2Sym(1*colMeans(1*(Pmat>2/p))>f))
+#'n=30
+#'p=10
+#'S=5
+#'Y=data_from_scratch("tree",p=p)$data
+#'resample=ResampleEMtree(Y, S=S,cores = 1)$Pmat
+#'freq_selec=(resample$Pmat,p=0.3)
+
+freq_selec<-function(Pmat,Pt){
+  E=ncol(Pmat)
+  p=sqrt(2*E+(1/4))-1/2
+  if(is.null(Pt)) Pt= 2/p + 0.1
+  return(F_Vec2Sym(colMeans(1*(Pmat>Pt))))
 }
 
 select_edges<-function(data,p=p){

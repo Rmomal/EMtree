@@ -2,13 +2,28 @@
 % Please edit documentation in R/F_inference.R
 \name{freq_selec}
 \alias{freq_selec}
-\title{Title}
+\title{Computes edges selection frequency after resampling procedure}
 \usage{
-freq_selec(Pmat, p, f)
+freq_selec(Pmat, Pt)
 }
 \arguments{
+\item{Pmat}{matrix gathering edgges probability, with dimensions number of resamples x number of possible edges. Typically the Pmat output of ResampleEMtree()}
+
+\item{Pt}{edges probabilty threshold}
+
 \item{f}{}
 }
+\value{
+matrix of edges selection frequency
+}
 \description{
-Title
+Computes edges selection frequency after resampling procedure
+}
+\examples{
+n=30
+p=10
+S=5
+Y=data_from_scratch("tree",p=p)$data
+resample=ResampleEMtree(Y, S=S,cores = 1)$Pmat
+freq_selec=(resample$Pmat,p=0.3)
 }

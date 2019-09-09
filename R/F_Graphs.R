@@ -17,12 +17,15 @@
 #' @import tidygraph dplyr ggraph ggplot2
 #'
 #' @examples adj_matrix= SimCluster(10,2,0.5, 0.1)
-#' draw_network(adj_matrix,"Cluster graph")
-draw_network<-function(adj_matrix,title, size=4, curv=0.3, filter_deg=FALSE,layout=NULL,nodes_label=NULL,pal=NULL,
+#' draw_network(adj_matrix,"Cluster graph", layout="kk")
+draw_network<-function(adj_matrix,title="", size=4, curv=0.2, filter_deg=FALSE,layout=NULL,nodes_label=NULL,pal=NULL,
                        seed=200){
   p=nrow(adj_matrix)
   nb=round(p/6,0)
+  binary=FALSE
   if(is.null(nodes_label)){ nodes_label=1:p ; bool=TRUE}else{bool=FALSE}
+
+  if(sum(unique(adj_matrix))==1) binary=TRUE
 
   res<- as_tbl_graph(adj_matrix, directed=FALSE) %>%
     activate(nodes) %>%
@@ -42,20 +45,29 @@ draw_network<-function(adj_matrix,title, size=4, curv=0.3, filter_deg=FALSE,layo
     mutate(neibs=edge_is_incident(which(.N()$bool_btw)), title=title)
 
 
-    pal_edges <-  ifelse(is.null(pal), viridisLite::viridis(5, option = "C")[c(3,2,4,1)], pal)
-    pal_nodes<-c("gray15","goldenrod1")
+  pal_edges <-  ifelse(is.null(pal), viridisLite::viridis(5, option = "C")[c(3,2,4,1)], pal)
+  pal_nodes<-c("gray15","goldenrod1")
 
-    set_graph_style(family="sans")
-    layout = ifelse(is.null(layout), "circle", layout)
-    res %>%
-      ggraph(layout = layout) +
-      geom_edge_arc(aes(color = title), curvature = curv, show.legend = FALSE) +
-      geom_node_point(aes(color = bool_btw, size = bool_btw), show.legend = FALSE) +
-      scale_edge_colour_manual(values = pal_edges) +
-      scale_color_manual(values = pal_nodes) +
-      scale_size_manual(values = c(1.5, 6)) +
-      geom_node_text(aes(label = label), color = "black", size = size) +
-      labs(title = title) + theme(plot.title = element_text(hjust = 0.5))
+  set_graph_style(family="sans")
+  layout = ifelse(is.null(layout), "circle", layout)
+
+  g=res %>%
+    ggraph(layout = layout) +
+    geom_edge_arc(aes(edge_width=weight,color = title), curvature = curv, show.legend = FALSE) +
+    geom_node_point(aes(color = bool_btw, size = bool_btw), show.legend = FALSE) +
+    scale_edge_colour_manual(values = pal_edges) +
+    scale_color_manual(values = pal_nodes)+
+    scale_size_manual(values = c(1.5, 6))+
+    geom_node_text(aes(label = label), color = "black", size = size) +
+    labs(title = title) + theme(plot.title = element_text(hjust = 0.5))
+
+  if(!binary){ g=g+
+    scale_edge_width_continuous(range=c(0.1,2))
+  }else{
+    g=g+
+      scale_edge_width_continuous(range=c(0,1))
+  }
+  return(g)
 
 }
 
@@ -76,12 +88,15 @@ draw_network<-function(adj_matrix,title, size=4, curv=0.3, filter_deg=FALSE,layo
 #' @examples
 compar_graphs<-function(allNets, alpha=TRUE,seed=123, nb=3, pos=1){
 
-  nbmod<-length(unique(allNets$models))
+  mods=unique(allNets$mods)
+  nbmod<-length(mods)
+
+  binary=(sum(unique(allNets$value))==1)
 
   spliT<-data.frame(allNets) %>%
-    split(allNets$models) %>%
+    split(allNets$mods) %>%
     tibble(P=map(.,function(x){
-      model<-x$models[1]
+      model<-x$mods[1]
 
       res<- as_tbl_graph(x, directed=FALSE) %>%
         activate(edges) %>% filter(value!=0) %>%
@@ -95,12 +110,13 @@ compar_graphs<-function(allNets, alpha=TRUE,seed=123, nb=3, pos=1){
 
     }))
 
-  mods=unique(allNets$models)
+
   pal_edges <- viridisLite::viridis(5, option = "C")
   pal_nodes<-c("gray15","goldenrod1")
   lay<-create_layout(spliT$P[[pos]],layout="circle")
   set_graph_style()
-set.seed(seed)
+
+  set.seed(seed)
   plot<- spliT$P %>%
     reduce(bind_graphs) %>%
     activate(nodes) %>%
@@ -108,14 +124,14 @@ set.seed(seed)
     ggraph(layout="auto")
   if(alpha){
     plot<-plot+
-      geom_edge_arc(aes(color=model, alpha=neibs),curvature=0.3,show.legend=FALSE)+
+      geom_edge_arc(aes(edge_width=value,color=model, alpha=neibs),curvature=0.3,show.legend=FALSE)+
       scale_edge_alpha_manual(values=c(0.2,1))
 
   }else{plot<-plot+
-    geom_edge_arc(aes(color=model),curvature=0.3,show.legend=FALSE)
+    geom_edge_arc(aes(edge_width=value,color=model),curvature=0.3,show.legend=FALSE)
   }
 
-  plot+
+  g= plot+
     geom_node_point(aes(color=boolbtw, size=boolbtw), show.legend=FALSE)+
     scale_edge_colour_manual(values=pal_edges[c(1,2,4,3)], labels=mods)+
     scale_color_manual(values=pal_nodes)+
@@ -125,6 +141,12 @@ set.seed(seed)
     th_foreground(border=FALSE)+
     theme(strip.background = element_rect(fill="white",color="white"),
           strip.text = element_text(color="black",size=14))
-
+  if(!binary){ g=g+
+    scale_edge_width_continuous(range=c(0.1,2))
+  }else{
+    g=g+
+      scale_edge_width_continuous(range=c(0,1))
+  }
+  return(g)
 }
 

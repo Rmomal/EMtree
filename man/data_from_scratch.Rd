@@ -4,7 +4,7 @@
 \alias{data_from_scratch}
 \title{generates data under the PLN model with a certain type of dependency structure, and draws the structure.}
 \usage{
-data_from_scratch(type, p = 20, r = 5, covariates = NULL,
+data_from_scratch(type, p = 20, n = 50, r = 5, covariates = NULL,
   prob = log(p)/p, dens = log(p)/p, draw = FALSE)
 }
 \arguments{

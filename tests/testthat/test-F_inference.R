@@ -8,7 +8,7 @@ n=30
 p=10
 S=5
 ##########################
-Y=data_from_scratch("tree",p=p)$data
+Y=data_from_scratch("tree",p=p,n=n)$data
 beta = matrix(1/10,10,10)
 gamma=log(beta)
 psi=F_AlphaN(cor(Y), n)$psi

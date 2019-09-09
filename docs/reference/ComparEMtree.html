@@ -8,11 +8,13 @@
 
 <title>Title — ComparEMtree • EMtree</title>
 
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -30,10 +32,11 @@
 
 
 
-<meta property="og:title" content="Title — ComparEMtree" />
 
+<meta property="og:title" content="Title — ComparEMtree" />
 <meta property="og:description" content="Title" />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -79,7 +82,6 @@
   <a href="../reference/index.html">Reference</a>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
@@ -100,30 +102,57 @@
     </div>
 
     <div class="ref-description">
-    
     <p>Title</p>
-    
     </div>
 
-    <pre class="usage"><span class='fu'>ComparEMtree</span>(<span class='no'>counts</span>, <span class='no'>vec_covar</span>, <span class='kw'>O</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>v</span> <span class='kw'>=</span> <span class='fl'>0.8</span>, <span class='kw'>S</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='no'>maxIter</span>,
-  <span class='kw'>cond.tol</span> <span class='kw'>=</span> <span class='fl'>1e-14</span>, <span class='kw'>cores</span> <span class='kw'>=</span> <span class='fl'>3</span>, <span class='no'>f</span>)</pre>
-    
+    <pre class="usage"><span class='fu'>ComparEMtree</span>(<span class='no'>counts</span>, <span class='no'>covar_matrix</span>, <span class='no'>models</span>, <span class='no'>m_names</span>, <span class='kw'>O</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>Pt</span> <span class='kw'>=</span> <span class='fl'>0.1</span>,
+  <span class='kw'>v</span> <span class='kw'>=</span> <span class='fl'>0.8</span>, <span class='kw'>S</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>maxIter</span> <span class='kw'>=</span> <span class='fl'>50</span>, <span class='kw'>cond.tol</span> <span class='kw'>=</span> <span class='fl'>1e-14</span>, <span class='kw'>cores</span> <span class='kw'>=</span> <span class='fl'>3</span>)</pre>
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>f</th>
+      <th>O</th>
+      <td><p>Offset matrix</p></td>
+    </tr>
+    <tr>
+      <th>Pt</th>
+      <td><p>Probability threshold for every sub-sample</p></td>
+    </tr>
+    <tr>
+      <th>v</th>
+      <td><p>The proportion of observed data to be taken in each sub-sample. It is the ratio (sub-sample size)/n</p></td>
+    </tr>
+    <tr>
+      <th>S</th>
+      <td><p>Number of sub-samples</p></td>
+    </tr>
+    <tr>
+      <th>maxIter</th>
+      <td><p>Maximum number of iterations of EMtree</p></td>
+    </tr>
+    <tr>
+      <th>cores</th>
       <td></td>
     </tr>
     </table>
-    
 
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='no'>n</span><span class='kw'>=</span><span class='fl'>30</span>
+<span class='no'>p</span><span class='kw'>=</span><span class='fl'>10</span>
+<span class='no'>S</span><span class='kw'>=</span><span class='fl'>5</span>
+<span class='no'>Y</span><span class='kw'>=</span><span class='fu'><a href='data_from_scratch.html'>data_from_scratch</a></span>(<span class='st'>"tree"</span>,<span class='kw'>p</span><span class='kw'>=</span><span class='no'>p</span>,<span class='kw'>n</span><span class='kw'>=</span><span class='no'>n</span>)$<span class='no'>data</span>
+<span class='no'>X</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/data.frame'>data.frame</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/Normal'>rnorm</a></span>(<span class='no'>n</span>),<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/Binomial'>rbinom</a></span>(<span class='no'>n</span>,<span class='fl'>1</span>,<span class='fl'>0.7</span>))
+<span class='fu'>ComparEMtree</span>(<span class='no'>Y</span>,<span class='no'>X</span>,<span class='kw'>models</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>)),<span class='kw'>m_names</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='st'>"1"</span>,<span class='st'>"2"</span>,<span class='st'>"both"</span>),<span class='kw'>Pt</span><span class='kw'>=</span><span class='fl'>0.3</span>,<span class='kw'>S</span><span class='kw'>=</span><span class='no'>S</span>)</div><div class='output co'>#&gt; 
+#&gt; model  1</div><div class='output co'>#&gt; <span class='error'>Error in mclapply(1:S, function(b) {    cat("\nS=", b, " ")    set.seed(b)    sample = sample(1:n, V, replace = F)    counts.sample = counts[sample, ]    X.sample = data.frame(X[sample, ])    O.sample = O[sample, ]    suppressWarnings(PLN.sample &lt;- PLN(counts.sample ~ -1 + offset(log(O.sample)) +         ., data = X.sample, control = list(trace = 0)))    inf1 &lt;- EMtree(PLN.sample, maxIter = maxIter, cond.tol = cond.tol,         verbatim = FALSE, plot = FALSE)[c("edges_prob", "maxIter",         "timeEM", "alpha")]    cat(" ", inf1$alpha)    inf &lt;- inf1[c("edges_prob", "maxIter", "timeEM")]    return(inf)}, mc.cores = cores): could not find function "mclapply"</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>

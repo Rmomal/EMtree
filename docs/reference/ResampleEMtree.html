@@ -8,11 +8,13 @@
 
 <title>Resampling procedure for EMtree — ResampleEMtree • EMtree</title>
 
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -30,10 +32,11 @@
 
 
 
-<meta property="og:title" content="Resampling procedure for EMtree — ResampleEMtree" />
 
+<meta property="og:title" content="Resampling procedure for EMtree — ResampleEMtree" />
 <meta property="og:description" content="Resampling procedure for EMtree" />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -79,7 +82,6 @@
   <a href="../reference/index.html">Reference</a>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
@@ -100,14 +102,12 @@
     </div>
 
     <div class="ref-description">
-    
     <p>Resampling procedure for EMtree</p>
-    
     </div>
 
-    <pre class="usage"><span class='fu'>ResampleEMtree</span>(<span class='no'>counts</span>, <span class='kw'>vec_covar</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>covariate</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>O</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>v</span> <span class='kw'>=</span> <span class='fl'>0.8</span>, <span class='kw'>S</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>maxIter</span> <span class='kw'>=</span> <span class='fl'>30</span>, <span class='kw'>cond.tol</span> <span class='kw'>=</span> <span class='fl'>1e-14</span>, <span class='kw'>cores</span> <span class='kw'>=</span> <span class='fl'>3</span>)</pre>
-    
+    <pre class="usage"><span class='fu'>ResampleEMtree</span>(<span class='no'>counts</span>, <span class='kw'>covar_matrix</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>O</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>v</span> <span class='kw'>=</span> <span class='fl'>0.8</span>,
+  <span class='kw'>S</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>maxIter</span> <span class='kw'>=</span> <span class='fl'>30</span>, <span class='kw'>cond.tol</span> <span class='kw'>=</span> <span class='fl'>1e-14</span>, <span class='kw'>cores</span> <span class='kw'>=</span> <span class='fl'>3</span>)</pre>
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -116,13 +116,8 @@
       <td><p>Data of observed counts with dimensions n x p, either a matrix, data.frame or tibble.</p></td>
     </tr>
     <tr>
-      <th>vec_covar</th>
-      <td><p>Vecteur of quoted covariates to be accounted for with dimension n x d, with the data.frame of covariates. For example with
-X matrix of covariates : c("X$first", "X$second").</p></td>
-    </tr>
-    <tr>
-      <th>covariate</th>
-      <td><p>if a covariate matrix is already ready to be given to the lm function, it can be used here.</p></td>
+      <th>covar_matrix</th>
+      <td><p>matrix of covariates, should have the same number of rows as the count matrix.</p></td>
     </tr>
     <tr>
       <th>O</th>
@@ -149,7 +144,7 @@ X matrix of covariates : c("X$first", "X$second").</p></td>
       <td><p>Number of cores, can be greater than 1 if data involves less than about 32 species.</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>Returns a list which contains the Pmat data.frame, and vectors of EMtree maximum iterations and running times in each
@@ -159,16 +154,22 @@ resampling.</p><ul>
 <li><p>times: EMtree running times in each resampling.</p></li>
 </ul>
 
-    
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='no'>n</span><span class='kw'>=</span><span class='fl'>30</span>
+<span class='no'>p</span><span class='kw'>=</span><span class='fl'>10</span>
+<span class='no'>S</span><span class='kw'>=</span><span class='fl'>5</span>
+<span class='no'>Y</span><span class='kw'>=</span><span class='fu'><a href='data_from_scratch.html'>data_from_scratch</a></span>(<span class='st'>"tree"</span>,<span class='kw'>p</span><span class='kw'>=</span><span class='no'>p</span>,<span class='kw'>n</span><span class='kw'>=</span><span class='no'>n</span>)$<span class='no'>data</span>
+<span class='no'>X</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/data.frame'>data.frame</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/Normal'>rnorm</a></span>(<span class='no'>n</span>),<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/Binomial'>rbinom</a></span>(<span class='no'>n</span>,<span class='fl'>1</span>,<span class='fl'>0.7</span>))
+<span class='no'>resample</span><span class='kw'>=</span><span class='fu'>ResampleEMtree</span>(<span class='no'>Y</span>,<span class='kw'>covar_matrix</span><span class='kw'>=</span><span class='no'>X</span>, <span class='kw'>S</span><span class='kw'>=</span><span class='no'>S</span>,<span class='kw'>cores</span> <span class='kw'>=</span> <span class='fl'>1</span>)</div><div class='output co'>#&gt; <span class='error'>Error in mclapply(1:S, function(b) {    cat("\nS=", b, " ")    set.seed(b)    sample = sample(1:n, V, replace = F)    counts.sample = counts[sample, ]    X.sample = data.frame(X[sample, ])    O.sample = O[sample, ]    suppressWarnings(PLN.sample &lt;- PLN(counts.sample ~ -1 + offset(log(O.sample)) +         ., data = X.sample, control = list(trace = 0)))    inf1 &lt;- EMtree(PLN.sample, maxIter = maxIter, cond.tol = cond.tol,         verbatim = FALSE, plot = FALSE)[c("edges_prob", "maxIter",         "timeEM", "alpha")]    cat(" ", inf1$alpha)    inf &lt;- inf1[c("edges_prob", "maxIter", "timeEM")]    return(inf)}, mc.cores = cores): could not find function "mclapply"</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#value">Value</a></li>
-          </ul>
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>

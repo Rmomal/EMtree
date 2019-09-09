@@ -4,16 +4,13 @@
 \alias{ResampleEMtree}
 \title{Resampling procedure for EMtree}
 \usage{
-ResampleEMtree(counts, vec_covar = NULL, covariate = NULL, O = NULL,
-  v = 0.8, S = 100, maxIter = 30, cond.tol = 1e-14, cores = 3)
+ResampleEMtree(counts, covar_matrix = NULL, O = NULL, v = 0.8,
+  S = 100, maxIter = 30, cond.tol = 1e-14, cores = 3)
 }
 \arguments{
 \item{counts}{Data of observed counts with dimensions n x p, either a matrix, data.frame or tibble.}
 
-\item{vec_covar}{Vecteur of quoted covariates to be accounted for with dimension n x d, with the data.frame of covariates. For example with
-X matrix of covariates : c("X$first", "X$second").}
-
-\item{covariate}{if a covariate matrix is already ready to be given to the lm function, it can be used here.}
+\item{covar_matrix}{matrix of covariates, should have the same number of rows as the count matrix.}
 
 \item{O}{Matrix of offsets, with dimension n x p}
 
@@ -38,4 +35,12 @@ resampling.
 }
 \description{
 Resampling procedure for EMtree
+}
+\examples{
+n=30
+p=10
+S=5
+Y=data_from_scratch("tree",p=p,n=n)$data
+X = data.frame(rnorm(n),rbinom(n,1,0.7))
+resample=ResampleEMtree(Y,covar_matrix=X, S=S,cores = 1)
 }
