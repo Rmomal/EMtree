@@ -9,32 +9,41 @@
 #' @param width maximum width for the edges
 #' @param alpha if TRUE, sets to transparent the edges non-linked to nodes with high betweenness
 #' @param filter_deg selects nodes with a higher degree than filter_deg
+#' @param nb sets the number of nodes selected by thresholding the beetweenness scores
 #' @param layout optional ggraph layout.
 #' @param nodes_label optional labels for nodes.
 #' @param pal optional palette.
 #' @param seed optional seed for graph reproductibility.
+#' @param groupes optional vector seperating the nodes into groupes
 #'
-#' @return plots a network
+#' @return \itemize{
+#' \item[G] the network as a ggplot2 object, with highlighted high betweenness nodes
+#' \item[graph_data] data needed for plotting the network
+#' }
 #' @export
 #' @import tidygraph dplyr ggraph ggplot2
 #'
 #' @examples adj_matrix= SimCluster(10,2,0.5, 0.1)
 #' draw_network(adj_matrix,"Cluster graph", layout="kk")
-draw_network<-function(adj_matrix,title="", size=4, curv=0.2,width=1, alpha=FALSE, filter_deg=FALSE,layout=NULL,nodes_label=NULL,pal=NULL,
-                       seed=200){
+draw_network<-function(adj_matrix,title="", size=4, curv=0.2,width=1, alpha=FALSE, filter_deg=FALSE,nb=3,layout=NULL,nodes_label=NULL,pal=NULL,
+                       seed=200, groupes=NULL){
   p=nrow(adj_matrix)
-  nb=round(p/6,0)
+  if(is.null(nb)) nb=round(p/8,0)
   binary=FALSE
   if(is.null(nodes_label)){ nodes_label=1:p ; bool=TRUE}else{bool=FALSE}
 
   if(sum(unique(adj_matrix))==1) binary=TRUE
 
-  res<- as_tbl_graph(adj_matrix, directed=FALSE) %>%
+  res<- as_tbl_graph(adj_matrix, directed=FALSE) %>% activate(edges) %>%
+    mutate(btw.weights=ifelse(weight==0,0,1/weight)) %>%
     activate(nodes) %>%
-    mutate( keyplayer = node_is_keyplayer(k=3), btw=centrality_betweenness(),
+    mutate(  btw=centrality_betweenness(weights=btw.weights),
             bool_btw=(btw>sort(btw, decreasing = TRUE)[nb]),bool_deg=(centrality_degree()>0),
             deg=centrality_degree(), title=title, name=nodes_label
     )
+  if(!is.null(groupes)){
+    res<-res %>% mutate(groupes=as.factor(groupes))
+  }
   if(bool){
     res<-res %>% mutate(label=ifelse(bool_btw,name,""))
   }else{
@@ -48,8 +57,17 @@ draw_network<-function(adj_matrix,title="", size=4, curv=0.2,width=1, alpha=FALS
 
 
   pal_edges <-  ifelse(is.null(pal), viridisLite::viridis(5, option = "C")[c(3,2,4,1)], pal)
-  pal_nodes<-c("gray15","goldenrod1")
-
+ if(!is.null(groupes)){
+   pal_nodes=c("deepskyblue1","deeppink","orange")
+   res<-res %>%
+     activate(nodes)  %>%
+     mutate(finalcolor=groupes)
+ }else{
+   pal_nodes<-c("gray15","goldenrod1")
+   res<-res %>%
+     activate(nodes)  %>%
+     mutate(finalcolor=bool_btw)
+ }
   set_graph_style(family="sans")
   layout = ifelse(is.null(layout), "circle", layout)
 
@@ -64,7 +82,7 @@ draw_network<-function(adj_matrix,title="", size=4, curv=0.2,width=1, alpha=FALS
     geom_edge_arc(aes(edge_width=weight,color = title), curvature = curv, show.legend = FALSE)
   }
   g<-g+
-    geom_node_point(aes(color = bool_btw, size = bool_btw), show.legend = FALSE) +
+    geom_node_point(aes(color = finalcolor, size = bool_btw), show.legend = FALSE) +
     scale_edge_colour_manual(values = pal_edges) +
     scale_color_manual(values = pal_nodes)+
     scale_size_manual(values = c(1.5, 6))+
@@ -77,7 +95,8 @@ draw_network<-function(adj_matrix,title="", size=4, curv=0.2,width=1, alpha=FALS
     g=g+
       scale_edge_width_continuous(range=c(0,width))
   }
-  return(g)
+
+  return(list(G=g,graph_data=res))
 
 }
 
@@ -93,9 +112,12 @@ draw_network<-function(adj_matrix,title="", size=4, curv=0.2,width=1, alpha=FALS
 #' @param seed optional seed for graph reproductibility
 #' @param nb sets the number of nodes selected by thresholding the beetweenness scores
 #' @param layout choice of layout for all networks among available layouts in `ggraph`. Default is "circle"
-#' @param pos choice of referent model for the layout construction
+#' @param base_model choice of referent model for the layout construction
 #'
-#' @return plots a collection of networks
+#' @return \itemize{
+#' \item[G] the collection of networks as a ggplot2 object, with highlighted high betweenness nodes
+#' \item[graph_data] list of data needed to plot the networks
+#' }
 #' @export
 #' @import tidygraph dplyr ggraph ggplot2 influenceR purrr
 #'
@@ -108,8 +130,9 @@ draw_network<-function(adj_matrix,title="", size=4, curv=0.2,width=1, alpha=FALS
 #'threemodels=ComparEMtree(Y,X,models=list(1,2,c(1,2)),
 #'m_names=list("1","2","both"),Pt=0.3,S=S, cores=1)
 #'compar_graphs(threemodels)
-compar_graphs<-function(allNets, curv=0.2, width=1, alpha=TRUE,seed=123, nb=3, layout="circle", pos=1){
+compar_graphs<-function(allNets, curv=0.2, width=1, alpha=TRUE,seed=123, nb=3, layout="circle", base_model=NULL){
   mods=unique(allNets$model)
+  if(is.null(base_model)) base_model = allNets$model[1]
   nbmod<-length(mods)
 
   binary=(sum(unique(allNets$weight))==1)
@@ -121,9 +144,10 @@ compar_graphs<-function(allNets, curv=0.2, width=1, alpha=TRUE,seed=123, nb=3, l
 
       res<- as_tbl_graph(x, directed=FALSE) %>%
         activate(edges) %>% filter(weight!=0) %>%
+        mutate(btw.weights=1/weight) %>%
         activate(nodes) %>%
-        mutate( importance=centrality_degree(),btw=centrality_betweenness(),boolbtw=(btw>sort(btw, decreasing = TRUE)[nb]),
-                keyplayer = node_is_keyplayer(k=3), mod=mod) %>%
+        mutate( importance=centrality_degree(),btw=centrality_betweenness(weights = btw.weights),boolbtw=(btw>sort(btw, decreasing = TRUE)[nb]),
+                 mod=mod) %>%
         activate(edges) %>%
         mutate(neibs=edge_is_incident(which(.N()$boolbtw)), mod=mod) %>%
         activate(nodes) %>%
@@ -134,7 +158,8 @@ compar_graphs<-function(allNets, curv=0.2, width=1, alpha=TRUE,seed=123, nb=3, l
 
   pal_edges <- viridisLite::viridis(5, option = "C")
   pal_nodes<-c("gray15","goldenrod1")
-  lay<-create_layout(spliT$P[[pos]],layout=layout)
+  lay<-create_layout(spliT$P[[base_model]],layout=layout)
+
   set_graph_style(family="sans")
 
   set.seed(seed)
@@ -168,6 +193,6 @@ compar_graphs<-function(allNets, curv=0.2, width=1, alpha=TRUE,seed=123, nb=3, l
     g=g+
       scale_edge_width_continuous(range=c(0,width))
   }
-  return(g)
+  return(list(G=g, graph_data=spliT))
 }
 

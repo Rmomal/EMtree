@@ -103,13 +103,14 @@ F_AlphaN <- function(CorY, n, cond.tol=1e-10){
 #########################################################################
 #' internal function
 #'
-#' @param beta.init
-#' @param psi
-#' @param maxIter
-#' @param eps1
-#' @param eps2
-#' @param verbatim
-#' @param plot
+#' @param beta.init initialization of beta weights
+#' @param psi psi matrix, filled with ratios of bivariate probabilities over marginals, which can in the Gaussian
+#' wase be deduced from the correlation matrix.
+#' @param maxIter maximum number of iterations
+#' @param eps1 variation higher bound of beta weights
+#' @param eps2 variation higher bound of log likelihood
+#' @param verbatim boolean
+#' @param plot boolean
 #'
 #' @return
 #' @import PLNmodels tidyr dplyr tibble
@@ -307,7 +308,8 @@ ResampleEMtree <- function(counts, covar_matrix=NULL  , O=NULL, v=0.8, S=1e2, ma
 #'
 #' @param counts Data of observed counts with dimensions n x p, either a matrix, data.frame or tibble.
 #' @param covar_matrix matrix of covariates, should have the same number of rows as the count matrix.
-#' @param models_covar list of covariate combinations to be tested. For example list(1,2) will design two linear models with the first two covariates adjusted separately
+#' @param models list of covariate combinations to be tested. For example list(1,2) will design two linear models with the first two covariates adjusted separately
+#' @param m_names list of names for the models to be compared, for example list("first model","last model")
 #' @param O Offset matrix with dimensions n x p
 #' @param Pt Probability threshold for every sub-sample
 #' @param v The proportion of observed data to be taken in each sub-sample. It is the ratio (sub-sample size)/n
@@ -344,14 +346,16 @@ ComparEMtree <- function(counts, covar_matrix, models, m_names, O=NULL, Pt=0.1, 
   allNets<-tibble(P = list(mat), mods =m_names )  %>%
     mutate(P=map( seq_along(P), function(x) {
       df<-freq_selec(Stab.sel[[x]],Pt=Pt)
-      df[lower.tri(df, diag = TRUE)]<-0
+      df[lower.tri(df, diag = TRUE)]<-NA
       df<-data.frame(df)
       colnames(df)<-1:ncol(df)
       df
     })) %>%
     mutate(P = map(P,~rownames_to_column(.) %>%
-                     gather(key, value , -rowname)),
-           mods=unlist(mods)) %>%
+                     gather(key, value , -rowname) %>%filter(!is.na(value))
+                   ),
+           mods=unlist(mods)
+    ) %>%
     unnest()
   allNets<-allNets[,c(3,2,1,4)]
   colnames(allNets) = c("node1","node2","model","weight")
@@ -366,7 +370,7 @@ ComparEMtree <- function(counts, covar_matrix, models, m_names, O=NULL, Pt=0.1, 
 #' @param Pmat matrix gathering edgges probability, with dimensions number of resamples x number of possible edges. Typically the Pmat output of ResampleEMtree()
 #' @param Pt edges probabilty threshold
 #'
-#' @return matrix of edges selection frequency
+#' @return p x p matrix of edges selection frequency
 #' @export
 #'
 #' @examples

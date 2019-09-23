@@ -5,7 +5,7 @@
 \title{Plots networks from several models}
 \usage{
 compar_graphs(allNets, curv = 0.2, width = 1, alpha = TRUE,
-  seed = 123, nb = 3, layout = "circle", pos = 1)
+  seed = 123, nb = 3, layout = "circle", base_model = NULL)
 }
 \arguments{
 \item{allNets}{tibble resulting of ComparEMtree()}
@@ -22,10 +22,13 @@ compar_graphs(allNets, curv = 0.2, width = 1, alpha = TRUE,
 
 \item{layout}{choice of layout for all networks among available layouts in `ggraph`. Default is "circle"}
 
-\item{pos}{choice of referent model for the layout construction}
+\item{base_model}{choice of referent model for the layout construction}
 }
 \value{
-plots a collection of networks
+\itemize{
+\item[G] the collection of networks as a ggplot2 object, with highlighted high betweenness nodes
+\item[graph_data] list of data needed to plot the networks
+}
 }
 \description{
 Plots networks from several models

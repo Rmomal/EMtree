@@ -155,6 +155,7 @@ generator_PLN<-function(Sigma,covariates=NULL, n=50){
 #'
 #' @param type type of graph, either "tree", "erdos", "cluster" or "scale-free"
 #' @param p wanted number of columns (species)
+#' @param n wanted number of rows (samples/observations)
 #' @param r within/between connectiviy ratio for cluster graphs
 #' @param covariates a data.frame or matrix containing data covariates.
 #' @param prob edge probability for erdos graphs

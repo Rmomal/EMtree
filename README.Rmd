@@ -10,7 +10,6 @@ knitr::opts_chunk$set(
   comment = "#>",
   fig.path = "man/figures/README-", fig.align='center')
 
-extrafont::loadfonts()
 ```
 # EMtree
 
@@ -76,12 +75,11 @@ str(resample_output)
 ### Several models with resampling :
 
 
-```{r, cache=TRUE}
+```{r, cache=FALSE}
 library(parallel)
 tested_models=list("date","site",c("date","site"))
 models_names=c("date","site","date + site")
 compare_output<-ComparEMtree(counts, covar_matrix=covar, models=tested_models, m_names=models_names, Pt=0.15,  S=3, maxIter=5,cond.tol=1e-8,cores=1)
-
 
 str(compare_output)
 ```
@@ -96,8 +94,9 @@ library(tidygraph)
 library(viridis)
 
 set.seed(200)
-x<- 1*(output$edges_prob>2/p)
-draw_network(x,title="Site", pal="dodgerblue3")
+edges_prob<- output$edges_prob
+edges_prob[edges_prob<2/p]<-0
+draw_network(edges_prob,title="Site", pal="dodgerblue3", layout="nicely",curv=0.1)$G
 
 ```
 
@@ -106,7 +105,12 @@ draw_network(x,title="Site", pal="dodgerblue3")
 ```{r, fig.height=4.5, fig.width=4.5}
 
 df<-freq_selec(resample_output$Pmat,Pt=2/p+0.1)
-draw_network(df,"Site")
+
+draw_network(df,"Site", layout="nicely")$G
+
+df[which(df<1e-6)]=0
+draw_network(df,"Site", layout="nicely")$G
+draw_network(df,"Site", layout="nicely")$graph_data
 
 ```
 
@@ -115,13 +119,13 @@ draw_network(df,"Site")
 Comparing network by eye is difficult. In particular, choosing the right layout to do so is often troublesome. Here by default, the circle layout is used so that differences in density are easily seen.
 
 ```{r, fig.height=3.5, fig.width=10}
-compar_graphs(compare_output,alpha=TRUE)
+compar_graphs(compare_output,alpha=TRUE)$G
 ```
 
 However, the user can decide another layout. The nodes position is preserved along the networks.
 
 ```{r}
-compar_graphs(compare_output,alpha=TRUE, layout="kk")
+compar_graphs(compare_output,alpha=FALSE, layout="nicely", curv=0.1, base_model="site")$G
 ```
 
 

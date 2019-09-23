@@ -80,8 +80,6 @@ model<-PLN(counts ~ covar$site)
 
 ``` r
 library(EMtree)
-#> Warning: replacing previous import 'dplyr::combine' by 'gridExtra::combine'
-#> when loading 'EMtree'
 set.seed(3)
 output<-EMtree(model,  maxIter = 10, plot=TRUE)
 #> [1] 0.7157895
@@ -92,7 +90,7 @@ output<-EMtree(model,  maxIter = 10, plot=TRUE)
 <img src="man/figures/README-output-1.png" style="display: block; margin: auto;" />
 
     #> 
-    #> Convergence took 0.67 secs  and  3  iterations.
+    #> Convergence took 0.64 secs  and  3  iterations.
     #> Likelihood difference = 5.399854e-05 
     #> Betas difference = 2.305752e-09
     str(output)
@@ -101,7 +99,7 @@ output<-EMtree(model,  maxIter = 10, plot=TRUE)
     #>  $ edges_weight: num [1:33, 1:33] 0 0.000946 0.000946 0.000947 0.000946 ...
     #>  $ logpY       : num [1:3] 81.6 81.7 81.7
     #>  $ maxIter     : num 3
-    #>  $ timeEM      : 'difftime' num 0.670953989028931
+    #>  $ timeEM      : 'difftime' num 0.642226934432983
     #>   ..- attr(*, "units")= chr "secs"
     #>  $ alpha       : num 0.716
 
@@ -145,23 +143,23 @@ compare_output<-ComparEMtree(counts, covar_matrix=covar, models=tested_models, m
 #> model  date
 #> S= 1  [1] 0.2894737
 #> 
-#> Convergence took 0.22 secs  and  5  iterations.  0.2894737
+#> Convergence took 0.24 secs  and  5  iterations.  0.2894737
 #> S= 2  [1] 0.2763158
 #> 
-#> Convergence took 0.18 secs  and  4  iterations.  0.2763158
+#> Convergence took 0.19 secs  and  4  iterations.  0.2763158
 #> S= 3  [1] 0.2368421
 #> 
-#> Convergence took 0.21 secs  and  5  iterations.  0.2368421
+#> Convergence took 0.24 secs  and  5  iterations.  0.2368421
 #> model  site
 #> S= 1  [1] 0.7236842
 #> 
 #> Convergence took 0.21 secs  and  5  iterations.  0.7236842
 #> S= 2  [1] 0.6052632
 #> 
-#> Convergence took 0.15 secs  and  3  iterations.  0.6052632
+#> Convergence took 0.14 secs  and  3  iterations.  0.6052632
 #> S= 3  [1] 0.6973684
 #> 
-#> Convergence took 0.2 secs  and  5  iterations.  0.6973684
+#> Convergence took 0.21 secs  and  5  iterations.  0.6973684
 #> model  date + site
 #> S= 1  [1] 0.9473684
 #> 
@@ -171,15 +169,14 @@ compare_output<-ComparEMtree(counts, covar_matrix=covar, models=tested_models, m
 #> Convergence took 0.21 secs  and  5  iterations.  0.9868421
 #> S= 3  [1] 0.9868421
 #> 
-#> Convergence took 0.22 secs  and  5  iterations.  0.9868421
-
+#> Convergence took 0.21 secs  and  5  iterations.  0.9868421
 
 str(compare_output)
-#> Classes 'tbl_df', 'tbl' and 'data.frame':    3267 obs. of  4 variables:
-#>  $ node1 : chr  "1" "1" "1" "1" ...
-#>  $ node2 : chr  "1" "2" "3" "4" ...
+#> Classes 'tbl_df', 'tbl' and 'data.frame':    1584 obs. of  4 variables:
+#>  $ node1 : chr  "2" "3" "3" "4" ...
+#>  $ node2 : chr  "1" "1" "2" "1" ...
 #>  $ model : chr  "date" "date" "date" "date" ...
-#>  $ weight: num  0 0 0 0 0 0 0 0 0 0 ...
+#>  $ weight: num  0 0 0 0 0 ...
 ```
 
 ### Graphics
@@ -194,8 +191,9 @@ library(tidygraph)
 library(viridis)
 
 set.seed(200)
-x<- 1*(output$edges_prob>2/p)
-draw_network(x,title="Site", pal="dodgerblue3")
+edges_prob<- output$edges_prob
+edges_prob[edges_prob<2/p]<-0
+draw_network(edges_prob,title="Site", pal="dodgerblue3", layout="nicely",curv=0.1)$G
 ```
 
 <img src="man/figures/README-unnamed-chunk-5-1.png" style="display: block; margin: auto;" />
@@ -205,17 +203,52 @@ draw_network(x,title="Site", pal="dodgerblue3")
 ``` r
 
 df<-freq_selec(resample_output$Pmat,Pt=2/p+0.1)
-draw_network(df,"Site")
+
+draw_network(df,"Site", layout="nicely")$G
 ```
 
 <img src="man/figures/README-unnamed-chunk-6-1.png" style="display: block; margin: auto;" />
+
+``` r
+
+df[which(df<1e-6)]=0
+draw_network(df,"Site", layout="nicely")$G
+```
+
+<img src="man/figures/README-unnamed-chunk-6-2.png" style="display: block; margin: auto;" />
+
+``` r
+draw_network(df,"Site", layout="nicely")$graph_data
+#> # A tbl_graph: 33 nodes and 88 edges
+#> #
+#> # An undirected simple graph with 1 component
+#> #
+#> # Node Data: 33 x 8 (active)
+#>     btw bool_btw bool_deg   deg title  name label finalcolor
+#>   <dbl> <lgl>    <lgl>    <dbl> <chr> <int> <chr> <lgl>     
+#> 1  27.8 FALSE    TRUE         8 Site      1 ""    FALSE     
+#> 2  34.5 FALSE    TRUE         4 Site      2 ""    FALSE     
+#> 3   0   FALSE    TRUE         2 Site      3 ""    FALSE     
+#> 4   0   FALSE    TRUE         4 Site      4 ""    FALSE     
+#> 5   0   FALSE    TRUE         3 Site      5 ""    FALSE     
+#> 6  28.5 FALSE    TRUE         4 Site      6 ""    FALSE     
+#> # … with 27 more rows
+#> #
+#> # Edge Data: 88 x 6
+#>    from    to weight btw.weights neibs title
+#>   <int> <int>  <dbl>       <dbl> <lgl> <chr>
+#> 1     1     4    0.2         5   FALSE Site 
+#> 2     1     7    0.4         2.5 FALSE Site 
+#> 3     1     8    0.2         5   FALSE Site 
+#> # … with 85 more rows
+```
 
 #### Facet for plotting several models in one shot
 
 Comparing network by eye is difficult. In particular, choosing the right layout to do so is often troublesome. Here by default, the circle layout is used so that differences in density are easily seen.
 
 ``` r
-compar_graphs(compare_output,alpha=TRUE)
+compar_graphs(compare_output,alpha=TRUE)$G
 #> Using `nicely` as default layout
 ```
 
@@ -224,7 +257,7 @@ compar_graphs(compare_output,alpha=TRUE)
 However, the user can decide another layout. The nodes position is preserved along the networks.
 
 ``` r
-compar_graphs(compare_output,alpha=TRUE, layout="kk")
+compar_graphs(compare_output,alpha=FALSE, layout="nicely", curv=0.1, base_model="site")$G
 #> Using `nicely` as default layout
 ```
 

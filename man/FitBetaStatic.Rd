@@ -8,7 +8,20 @@ FitBetaStatic(beta.init, psi, maxIter = 50, eps1 = 1e-06,
   eps2 = 1e-04, verbatim = TRUE, plot = FALSE)
 }
 \arguments{
-\item{plot}{}
+\item{beta.init}{initialization of beta weights}
+
+\item{psi}{psi matrix, filled with ratios of bivariate probabilities over marginals, which can in the Gaussian
+wase be deduced from the correlation matrix.}
+
+\item{maxIter}{maximum number of iterations}
+
+\item{eps1}{variation higher bound of beta weights}
+
+\item{eps2}{variation higher bound of log likelihood}
+
+\item{verbatim}{boolean}
+
+\item{plot}{boolean}
 }
 \description{
 internal function

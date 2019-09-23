@@ -12,6 +12,8 @@ data_from_scratch(type, p = 20, n = 50, r = 5, covariates = NULL,
 
 \item{p}{wanted number of columns (species)}
 
+\item{n}{wanted number of rows (samples/observations)}
+
 \item{r}{within/between connectiviy ratio for cluster graphs}
 
 \item{covariates}{a data.frame or matrix containing data covariates.}

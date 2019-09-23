@@ -12,7 +12,7 @@ freq_selec(Pmat, Pt)
 \item{Pt}{edges probabilty threshold}
 }
 \value{
-matrix of edges selection frequency
+p x p matrix of edges selection frequency
 }
 \description{
 Computes edges selection frequency after resampling procedure

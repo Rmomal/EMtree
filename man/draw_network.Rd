@@ -5,8 +5,9 @@
 \title{Plots a natwork}
 \usage{
 draw_network(adj_matrix, title = "", size = 4, curv = 0.2,
-  width = 1, alpha = FALSE, filter_deg = FALSE, layout = NULL,
-  nodes_label = NULL, pal = NULL, seed = 200)
+  width = 1, alpha = FALSE, filter_deg = FALSE, nb = 3,
+  layout = NULL, nodes_label = NULL, pal = NULL, seed = 200,
+  groupes = NULL)
 }
 \arguments{
 \item{adj_matrix}{graph adjacency matrix}
@@ -23,6 +24,8 @@ draw_network(adj_matrix, title = "", size = 4, curv = 0.2,
 
 \item{filter_deg}{selects nodes with a higher degree than filter_deg}
 
+\item{nb}{sets the number of nodes selected by thresholding the beetweenness scores}
+
 \item{layout}{optional ggraph layout.}
 
 \item{nodes_label}{optional labels for nodes.}
@@ -30,9 +33,14 @@ draw_network(adj_matrix, title = "", size = 4, curv = 0.2,
 \item{pal}{optional palette.}
 
 \item{seed}{optional seed for graph reproductibility.}
+
+\item{groupes}{optional vector seperating the nodes into groupes}
 }
 \value{
-plots a network
+\itemize{
+\item[G] the network as a ggplot2 object, with highlighted high betweenness nodes
+\item[graph_data] data needed for plotting the network
+}
 }
 \description{
 Plots a natwork
