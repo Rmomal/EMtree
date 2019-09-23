@@ -4,6 +4,9 @@ library(PLNmodels)
 library(parallel)
 library(tidygraph)
 library(ggraph)
+library(purrr)
+library(dplyr)
+library(tidyr)
 ##########################
 n=30
 p=10
@@ -21,7 +24,7 @@ x=SetLambda(P,M)
 FitEM = FitBetaStatic(beta.init=beta, psi=psi, maxIter = 6,
                       verbatim=TRUE, plot=TRUE)
 PLNobj = PLN(Y~1)
-EM=EMtree(PLNobject =PLNobj)
+EM=EMtree(PLNobject =PLNobj, plot=FALSE, verbatim=FALSE)
 resampl=ResampleEMtree(Y, S=S,cores = 1)
 
 X = data.frame(rnorm(n),rbinom(n,1,0.7))
@@ -29,11 +32,13 @@ compare=ComparEMtree(Y,X,models=list(1,2),m_names=list("1","2"),Pt=0.3,S=S, core
 
 ##########################
 draw = draw_network(EM$edges_prob)
-test_that("draw_network", {
+comp.gr=compar_graphs(compare)
+
+
+test_that("draw_networktest", {
   expect_length(draw, 2)
 })
 
-comp.gr=compar_graphs(compare)
-test_that("compar_graphs", {
+test_that("compar_graphstest", {
   expect_length(comp.gr, 2)
 })

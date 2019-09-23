@@ -21,7 +21,7 @@ covar=data.frame(rnorm(10,n))
 FitEM = FitBetaStatic(beta.init=beta, psi=psi, maxIter = 6,
                       verbatim=TRUE, plot=TRUE)
 PLNobj = PLN(Y~1)
-EM=EMtree(PLNobject =PLNobj)
+EM=EMtree(PLNobject =PLNobj, plot=FALSE, verbatim=FALSE)
 resampl=ResampleEMtree(Y, S=S,cores = 1)
 
 X = data.frame(rnorm(n),rbinom(n,1,0.7))
