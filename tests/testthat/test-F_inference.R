@@ -2,7 +2,8 @@ library(tibble)
 library(ggplot2)
 library(PLNmodels)
 library(parallel)
-library(tidyverse)
+library(dplyr)
+library(tidyr)
 ##########################
 n=30
 p=10

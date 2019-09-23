@@ -331,7 +331,7 @@ ResampleEMtree <- function(counts, covar_matrix=NULL  , O=NULL, v=0.8, S=1e2, ma
 #'n=30
 #'p=10
 #'S=3
-#'Y = data_from_scratch("tree",p=p,n=n)$data
+#'Y = data_from_scratch(type="tree",p=p,n=n)$data
 #'X = data.frame(rnorm(n),rbinom(n,1,0.7))
 #'ComparEMtree(Y,X,models=list(1,2,c(1,2)),m_names=list("1","2","both"),Pt=0.3,S=S, cores=1)
 ComparEMtree <- function(counts, covar_matrix, models, m_names, O=NULL, Pt=0.1, v=0.8, S=1e2, maxIter=50, cond.tol=1e-14,cores=3){
