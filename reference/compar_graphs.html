@@ -110,7 +110,7 @@
     </div>
 
     <pre class="usage"><span class='fu'>compar_graphs</span>(<span class='no'>allNets</span>, <span class='kw'>curv</span> <span class='kw'>=</span> <span class='fl'>0.2</span>, <span class='kw'>width</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>seed</span> <span class='kw'>=</span> <span class='fl'>123</span>, <span class='kw'>nb</span> <span class='kw'>=</span> <span class='fl'>3</span>, <span class='kw'>layout</span> <span class='kw'>=</span> <span class='st'>"circle"</span>, <span class='kw'>pos</span> <span class='kw'>=</span> <span class='fl'>1</span>)</pre>
+  <span class='kw'>seed</span> <span class='kw'>=</span> <span class='fl'>123</span>, <span class='kw'>nb</span> <span class='kw'>=</span> <span class='fl'>3</span>, <span class='kw'>layout</span> <span class='kw'>=</span> <span class='st'>"circle"</span>, <span class='kw'>base_model</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -144,14 +144,19 @@
       <td><p>choice of layout for all networks among available layouts in `ggraph`. Default is "circle"</p></td>
     </tr>
     <tr>
-      <th>pos</th>
+      <th>base_model</th>
       <td><p>choice of referent model for the layout construction</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>plots a collection of networks</p>
+    
+<ul>
+<li><p>[G] the collection of networks as a ggplot2 object, with highlighted high betweenness nodes</p></li>
+<li><p>[graph_data] list of data needed to plot the networks</p></li>
+</ul>
+
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='no'>n</span><span class='kw'>=</span><span class='fl'>30</span>
@@ -164,7 +169,7 @@
 #&gt; model  1
 #&gt; S= 1  [1] 0.9583333
 #&gt; 
-#&gt; Convergence took 0.05 secs  and  3  iterations.  0.9583333
+#&gt; Convergence took 0.07 secs  and  3  iterations.  0.9583333
 #&gt; S= 2  [1] 0.9583333
 #&gt; 
 #&gt; Convergence took 0.05 secs  and  3  iterations.  0.9583333
@@ -173,14 +178,14 @@
 #&gt; Convergence took 0.05 secs  and  3  iterations.  0.9583333
 #&gt; S= 4  [1] 0.9583333
 #&gt; 
-#&gt; Convergence took 0.08 secs  and  3  iterations.  0.9583333
+#&gt; Convergence took 0.06 secs  and  3  iterations.  0.9583333
 #&gt; S= 5  [1] 0.9583333
 #&gt; 
-#&gt; Convergence took 0.07 secs  and  4  iterations.  0.9583333
+#&gt; Convergence took 0.08 secs  and  4  iterations.  0.9583333
 #&gt; model  2
 #&gt; S= 1  [1] 0.9583333
 #&gt; 
-#&gt; Convergence took 0.08 secs  and  4  iterations.  0.9583333
+#&gt; Convergence took 0.11 secs  and  4  iterations.  0.9583333
 #&gt; S= 2  [1] 0.9583333
 #&gt; 
 #&gt; Convergence took 0.1 secs  and  5  iterations.  0.9583333
@@ -192,11 +197,11 @@
 #&gt; Convergence took 0.07 secs  and  4  iterations.  0.9583333
 #&gt; S= 5  [1] 0.9583333
 #&gt; 
-#&gt; Convergence took 0.1 secs  and  3  iterations.  0.9583333
+#&gt; Convergence took 0.08 secs  and  3  iterations.  0.9583333
 #&gt; model  both
 #&gt; S= 1  [1] 0.9583333
 #&gt; 
-#&gt; Convergence took 0.07 secs  and  3  iterations.  0.9583333
+#&gt; Convergence took 0.09 secs  and  3  iterations.  0.9583333
 #&gt; S= 2  [1] 0.9583333
 #&gt; 
 #&gt; Convergence took 0.04 secs  and  3  iterations.  0.9583333
@@ -208,7 +213,15 @@
 #&gt; Convergence took 0.07 secs  and  3  iterations.  0.9583333
 #&gt; S= 5  [1] 0.9583333
 #&gt; 
-#&gt; Convergence took 0.05 secs  and  3  iterations.  0.9583333</div><div class='input'><span class='fu'>compar_graphs</span>(<span class='no'>threemodels</span>)</div><div class='output co'>#&gt; <span class='message'>Using `sugiyama` as default layout</span></div><div class='output co'>#&gt; <span class='warning'>Warning: The curvature argument has been deprecated in favour of strength</span></div><div class='img'><img src='compar_graphs-1.png' alt='' width='700' height='433' /></div></pre>
+#&gt; Convergence took 0.05 secs  and  3  iterations.  0.9583333</div><div class='input'><span class='fu'>compar_graphs</span>(<span class='no'>threemodels</span>)</div><div class='output co'>#&gt; $G</div><div class='img'><img src='compar_graphs-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; 
+#&gt; $graph_data
+#&gt; # A tibble: 3 x 2
+#&gt;   .                 P           
+#&gt;   &lt;named list&gt;      &lt;named list&gt;
+#&gt; 1 &lt;df[,4] [45 × 4]&gt; &lt;tbl_grph&gt;  
+#&gt; 2 &lt;df[,4] [45 × 4]&gt; &lt;tbl_grph&gt;  
+#&gt; 3 &lt;df[,4] [45 × 4]&gt; &lt;tbl_grph&gt;  
+#&gt; </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -228,7 +241,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
 
       </footer>

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Computing the M matrix — Meila • EMtree</title>
+<title>Choice of alpha for a numerically stable psi matrix — Psi_alpha • EMtree</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,8 @@
 
 
 
-<meta property="og:title" content="Computing the M matrix — Meila" />
-<meta property="og:description" content="Computing the M matrix" />
+<meta property="og:title" content="Choice of alpha for a numerically stable psi matrix — Psi_alpha" />
+<meta property="og:description" content="Choice of alpha for a numerically stable psi matrix" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -100,36 +100,50 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Computing the M matrix</h1>
+    <h1>Choice of alpha for a numerically stable psi matrix</h1>
     
-    <div class="hidden name"><code>Meila.Rd</code></div>
+    <div class="hidden name"><code>Psi_alpha.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Computing the M matrix</p>
+    <p>Choice of alpha for a numerically stable psi matrix</p>
     </div>
 
-    <pre class="usage"><span class='fu'>Meila</span>(<span class='no'>W</span>)</pre>
+    <pre class="usage"><span class='fu'>Psi_alpha</span>(<span class='no'>CorY</span>, <span class='no'>n</span>, <span class='kw'>cond.tol</span> <span class='kw'>=</span> <span class='fl'>1e-10</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>W</th>
-      <td><p>Squared weight matrix</p></td>
+      <th>CorY</th>
+      <td><p>Correlation matrix of dimensoins p x p with p the number of species for example.</p></td>
+    </tr>
+    <tr>
+      <th>n</th>
+      <td><p>number of samples</p></td>
+    </tr>
+    <tr>
+      <th>cond.tol</th>
+      <td><p>tolerance for the matrix conditionment, which is here the ratio of the absolute values of minimal eigen value on maximal eigen value</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>M matrix as defined in Meila et al. 2006</p>
+    
+<ul>
+<li><p>psi: p x p corrected psi matrix</p></li>
+<li><p>alpha: final alpha value needed to correct the psi matrix</p></li>
+</ul>
+
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>W</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>3</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>3</span>,<span class='fl'>1</span>,<span class='fl'>1</span>),<span class='fl'>3</span>,<span class='fl'>3</span>,<span class='kw'>byrow</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
-<span class='fu'>Meila</span>(<span class='no'>W</span>)</div><div class='output co'>#&gt;           [,1]      [,2]      [,3]
-#&gt; [1,] 0.0000000 0.5714286 0.2857143
-#&gt; [2,] 0.5714286 0.0000000 0.5714286
-#&gt; [3,] 0.2857143 0.5714286 0.0000000</div></pre>
+    <pre class="examples"><div class='input'><span class='no'>n</span><span class='kw'>=</span><span class='fl'>30</span>
+<span class='no'>p</span><span class='kw'>=</span><span class='fl'>10</span>
+<span class='no'>S</span><span class='kw'>=</span><span class='fl'>5</span>
+<span class='no'>Y</span><span class='kw'>=</span><span class='fu'><a href='data_from_scratch.html'>data_from_scratch</a></span>(<span class='st'>"tree"</span>,<span class='kw'>p</span><span class='kw'>=</span><span class='no'>p</span>,<span class='kw'>n</span><span class='kw'>=</span><span class='no'>n</span>)$<span class='no'>data</span>
+<span class='no'>beta</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fl'>1</span>/<span class='fl'>10</span>,<span class='fl'>10</span>,<span class='fl'>10</span>)
+<span class='no'>psi</span><span class='kw'>=</span><span class='fu'>Psi_alpha</span>(<span class='fu'><a href='https://rdrr.io/r/stats/cor.html'>cor</a></span>(<span class='no'>Y</span>), <span class='no'>n</span>)$<span class='no'>psi</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

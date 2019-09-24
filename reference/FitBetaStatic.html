@@ -116,17 +116,67 @@
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
+      <th>beta.init</th>
+      <td><p>initialization of beta weights</p></td>
+    </tr>
+    <tr>
+      <th>psi</th>
+      <td><p>psi matrix, filled with ratios of bivariate probabilities over marginals, which can in the Gaussian
+wase be deduced from the correlation matrix.</p></td>
+    </tr>
+    <tr>
+      <th>maxIter</th>
+      <td><p>maximum number of iterations</p></td>
+    </tr>
+    <tr>
+      <th>eps1</th>
+      <td><p>variation higher bound of beta weights</p></td>
+    </tr>
+    <tr>
+      <th>eps2</th>
+      <td><p>variation higher bound of log likelihood</p></td>
+    </tr>
+    <tr>
+      <th>verbatim</th>
+      <td><p>boolean</p></td>
+    </tr>
+    <tr>
       <th>plot</th>
-      <td></td>
+      <td><p>boolean</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
+    
+<ul>
+<li><p>edges_prob: p x p matrix of edges probabilities</p></li>
+<li><p>edges_weight: p x p matrix of edges weights for any spanning tree</p></li>
+<li><p>logpY: vector of log-likelihoods</p></li>
+<li><p>maxIter: final number of iterations EMtree has ran</p></li>
+<li><p>timeEM: EMtree computation time</p></li>
+</ul>
+
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='no'>n</span><span class='kw'>=</span><span class='fl'>30</span>
+<span class='no'>p</span><span class='kw'>=</span><span class='fl'>10</span>
+<span class='no'>S</span><span class='kw'>=</span><span class='fl'>5</span>
+<span class='no'>Y</span><span class='kw'>=</span><span class='fu'><a href='data_from_scratch.html'>data_from_scratch</a></span>(<span class='st'>"tree"</span>,<span class='kw'>p</span><span class='kw'>=</span><span class='no'>p</span>,<span class='kw'>n</span><span class='kw'>=</span><span class='no'>n</span>)$<span class='no'>data</span>
+<span class='no'>beta</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fl'>1</span>/<span class='fl'>10</span>,<span class='fl'>10</span>,<span class='fl'>10</span>)
+<span class='no'>psi</span><span class='kw'>=</span><span class='fu'><a href='Psi_alpha.html'>Psi_alpha</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/cor.html'>cor</a></span>(<span class='no'>Y</span>), <span class='no'>n</span>)$<span class='no'>psi</span>
+<span class='no'>FitEM</span> <span class='kw'>=</span> <span class='fu'>FitBetaStatic</span>(<span class='kw'>beta.init</span><span class='kw'>=</span><span class='no'>beta</span>, <span class='kw'>psi</span><span class='kw'>=</span><span class='no'>psi</span>, <span class='kw'>maxIter</span> <span class='kw'>=</span> <span class='fl'>6</span>, <span class='kw'>verbatim</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; 
+#&gt; Likelihoods: 16.40607 , 16.48495 , 16.48495 , </div><div class='img'><img src='FitBetaStatic-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; 
+#&gt; Convergence took 0.06 secs  and  3  iterations.
+#&gt; Likelihood difference = 1.42274e-06 
+#&gt; Betas difference = 8.615671e-10</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
+      <li><a href="#value">Value</a></li>
+      <li><a href="#examples">Examples</a></li>
     </ul>
 
   </div>
@@ -139,7 +189,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
 
       </footer>

@@ -126,7 +126,7 @@
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>matrix of edges selection frequency</p>
+    <p>p x p matrix of edges selection frequency</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='no'>n</span><span class='kw'>=</span><span class='fl'>30</span>
@@ -136,20 +136,20 @@
 <span class='no'>resample_prob</span><span class='kw'>=</span><span class='fu'><a href='ResampleEMtree.html'>ResampleEMtree</a></span>(<span class='no'>Y</span>, <span class='kw'>S</span><span class='kw'>=</span><span class='no'>S</span>,<span class='kw'>cores</span> <span class='kw'>=</span> <span class='fl'>1</span>)$<span class='no'>Pmat</span></div><div class='output co'>#&gt; 
 #&gt; S= 1  [1] 0.975
 #&gt; 
-#&gt; Convergence took 0.05 secs  and  3  iterations.  0.975
+#&gt; Convergence took 0.07 secs  and  3  iterations.  0.975
 #&gt; S= 2  [1] 0.975
 #&gt; 
-#&gt; Convergence took 0.05 secs  and  3  iterations.  0.975
+#&gt; Convergence took 0.1 secs  and  4  iterations.  0.975
 #&gt; S= 3  [1] 0.975
 #&gt; 
-#&gt; Convergence took 0.05 secs  and  3  iterations.  0.975
+#&gt; Convergence took 0.08 secs  and  6  iterations.  0.975
 #&gt; S= 4  [1] 0.975
 #&gt; 
 #&gt; Convergence took 0.05 secs  and  3  iterations.  0.975
 #&gt; S= 5  [1] 0.975
 #&gt; 
-#&gt; Convergence took 0.05 secs  and  3  iterations.  0.975</div><div class='input'><span class='no'>edges_freq</span><span class='kw'>&lt;-</span><span class='fu'>freq_selec</span>(<span class='no'>resample_prob</span>,<span class='kw'>Pt</span><span class='kw'>=</span><span class='fl'>0.3</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='no'>edges_freq</span>)</div><div class='output co'>#&gt;  num [1:10, 1:10] 0 0 0 0 0 0 0.6 0.4 0.2 0.8 ...</div></pre>
+#&gt; Convergence took 0.08 secs  and  3  iterations.  0.975</div><div class='input'><span class='no'>edges_freq</span><span class='kw'>&lt;-</span><span class='fu'>freq_selec</span>(<span class='no'>resample_prob</span>,<span class='kw'>Pt</span><span class='kw'>=</span><span class='fl'>0.3</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='no'>edges_freq</span>)</div><div class='output co'>#&gt;  num [1:10, 1:10] 0 0 0 0.6 0 1 0 0 0.2 0.6 ...</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -169,7 +169,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
 
       </footer>
