@@ -17,8 +17,8 @@
 #' @param groupes optional vector seperating the nodes into groupes
 #'
 #' @return \itemize{
-#' \item[G] the network as a ggplot2 object, with highlighted high betweenness nodes
-#' \item[graph_data] data needed for plotting the network
+#' \item{G} {the network as a ggplot2 object, with highlighted high betweenness nodes}
+#' \item{graph_data}{ data needed for plotting the network}
 #' }
 #' @export
 #' @importFrom tidygraph .N as_tbl_graph activate centrality_betweenness centrality_degree edge_is_incident
@@ -66,14 +66,14 @@ draw_network<-function(adj_matrix,title="", size=4, curv=0.2,width=1, alpha=FALS
      activate(nodes)  %>%
      mutate(finalcolor=groupes)
  }else{
-   pal_nodes<-c("gray15","goldenrod1")
+   pal_nodes<-c("white","goldenrod1")
    res<-res %>%
      activate(nodes)  %>%
      mutate(finalcolor=bool_btw)
  }
   set_graph_style(family="sans")
   layout = ifelse(is.null(layout), "circle", layout)
-
+print(pal_nodes)
   g=res %>%
     ggraph(layout = layout)
   if(alpha){
@@ -88,7 +88,7 @@ draw_network<-function(adj_matrix,title="", size=4, curv=0.2,width=1, alpha=FALS
     geom_node_point(aes(color = finalcolor, size = bool_btw), show.legend = FALSE) +
     scale_edge_colour_manual(values = pal_edges) +
     scale_color_manual(values = pal_nodes)+
-    scale_size_manual(values = c(1.5, 6))+
+    scale_size_manual(values = c(3, 6))+
     geom_node_text(aes(label = label), color = "black", size = size) +
     labs(title = title) + theme(plot.title = element_text(hjust = 0.5))
 
@@ -118,8 +118,8 @@ draw_network<-function(adj_matrix,title="", size=4, curv=0.2,width=1, alpha=FALS
 #' @param base_model choice of referent model for the layout construction
 #'
 #' @return \itemize{
-#' \item[G] the collection of networks as a ggplot2 object, with highlighted high betweenness nodes
-#' \item[graph_data] list of data needed to plot the networks
+#' \item{G}{ the collection of networks as a ggplot2 object, with highlighted high betweenness nodes}
+#' \item{graph_data }{list of data needed to plot the networks}
 #' }
 #' @export
 #' @importFrom tidygraph .N bind_graphs as_tbl_graph activate centrality_betweenness centrality_degree edge_is_incident
