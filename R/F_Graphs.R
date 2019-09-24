@@ -78,11 +78,11 @@ draw_network<-function(adj_matrix,title="", size=4, curv=0.2,width=1, alpha=FALS
     ggraph(layout = layout)
   if(alpha){
     g<-g+
-      geom_edge_arc(aes(edge_width=weight, alpha=neibs,color = title), curvature = curv, show.legend = FALSE) +
+      geom_edge_arc(aes(edge_width=weight, alpha=neibs,color = title), strength = curv, show.legend = FALSE) +
       scale_edge_alpha_manual(values=c(0.2,1))
 
   }else{ g<-g+
-    geom_edge_arc(aes(edge_width=weight,color = title), curvature = curv, show.legend = FALSE)
+    geom_edge_arc(aes(edge_width=weight,color = title), strength = curv, show.legend = FALSE)
   }
   g<-g+
     geom_node_point(aes(color = finalcolor, size = bool_btw), show.legend = FALSE) +
@@ -176,11 +176,11 @@ compar_graphs<-function(allNets, curv=0.2, width=1, alpha=TRUE,seed=123, nb=3, l
     ggraph(layout="nicely")
   if(alpha){
     plot<-plot+
-      geom_edge_arc(aes(edge_width=weight,color=mod, alpha=neibs),curvature=curv,show.legend=FALSE)+
+      geom_edge_arc(aes(edge_width=weight,color=mod, alpha=neibs),strength=curv,show.legend=FALSE)+
       scale_edge_alpha_manual(values=c(0.2,1))
 
   }else{plot<-plot+
-    geom_edge_arc(aes(edge_width=weight,color=mod),curvature=curv,show.legend=FALSE)
+    geom_edge_arc(aes(edge_width=weight,color=mod),strength=curv,show.legend=FALSE)
   }
 
   g= plot+

@@ -387,8 +387,8 @@ ComparEMtree <- function(counts, covar_matrix, models, m_names, O=NULL, Pt=0.1, 
                    ),
            mods=unlist(mods)
     ) %>%
-    unnest()
-  allNets<-allNets[,c(3,2,1,4)]
+    unnest(cols = c(P))
+  allNets<-allNets[,c(1,2,4,3)]
   colnames(allNets) = c("node1","node2","model","weight")
   return(allNets)
 }
