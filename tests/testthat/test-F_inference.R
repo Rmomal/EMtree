@@ -12,7 +12,7 @@ S=5
 Y=data_from_scratch("tree",p=p,n=n)$data
 beta = matrix(1/10,10,10)
 gamma=log(beta)
-psi=F_AlphaN(cor(Y), n)$psi
+psi=Psi_alpha(cor(Y), n)$psi
 P=EdgeProba(beta*psi)
 M=Meila(beta)
 x=SetLambda(P,M)

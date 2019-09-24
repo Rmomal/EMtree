@@ -21,8 +21,11 @@
 #' \item[graph_data] data needed for plotting the network
 #' }
 #' @export
-#' @import tidygraph dplyr ggraph ggplot2
-#'
+#' @importFrom tidygraph .N as_tbl_graph activate centrality_betweenness centrality_degree edge_is_incident
+#' @importFrom ggraph ggraph set_graph_style geom_edge_arc scale_edge_alpha_manual scale_edge_width_continuous geom_node_text geom_node_point  scale_edge_colour_manual
+#' @importFrom tibble tibble rownames_to_column
+#' @importFrom ggplot2 aes theme labs scale_color_manual scale_size_manual
+#' @importFrom dplyr mutate filter
 #' @examples adj_matrix= SimCluster(10,2,0.5, 0.1)
 #' draw_network(adj_matrix,"Cluster graph", layout="kk")
 draw_network<-function(adj_matrix,title="", size=4, curv=0.2,width=1, alpha=FALSE, filter_deg=FALSE,nb=3,layout=NULL,nodes_label=NULL,pal=NULL,
@@ -119,8 +122,12 @@ draw_network<-function(adj_matrix,title="", size=4, curv=0.2,width=1, alpha=FALS
 #' \item[graph_data] list of data needed to plot the networks
 #' }
 #' @export
-#' @import tidygraph dplyr ggraph ggplot2 influenceR purrr
-#'
+#' @importFrom tidygraph .N bind_graphs as_tbl_graph activate centrality_betweenness centrality_degree edge_is_incident
+#' @importFrom ggraph  ggraph create_layout set_graph_style facet_nodes th_foreground geom_edge_arc scale_edge_alpha_manual scale_edge_width_continuous geom_node_text geom_node_point  scale_edge_colour_manual
+#' @importFrom tibble tibble rownames_to_column
+#' @importFrom ggplot2 element_rect element_text aes theme labs scale_color_manual scale_size_manual
+#' @importFrom dplyr mutate filter
+#' @importFrom purrr map reduce
 #' @examples
 #'n=30
 #'p=10
@@ -134,7 +141,6 @@ compar_graphs<-function(allNets, curv=0.2, width=1, alpha=TRUE,seed=123, nb=3, l
   mods=unique(allNets$model)
   if(is.null(base_model)) base_model = allNets$model[1]
   nbmod<-length(mods)
-
   binary=(sum(unique(allNets$weight))==1)
 
   spliT<-data.frame(allNets) %>%
@@ -167,7 +173,7 @@ compar_graphs<-function(allNets, curv=0.2, width=1, alpha=TRUE,seed=123, nb=3, l
     reduce(bind_graphs) %>%
     activate(nodes) %>%
     mutate(mod=factor(mod,levels=mods),x=rep(lay$x,nbmod),y=rep(lay$y,nbmod)) %>%
-    ggraph(layout="auto")
+    ggraph(layout="nicely")
   if(alpha){
     plot<-plot+
       geom_edge_arc(aes(edge_width=weight,color=mod, alpha=neibs),curvature=curv,show.legend=FALSE)+

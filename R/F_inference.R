@@ -80,8 +80,25 @@ SetLambda <- function(P, M, eps = 1e-6){
 
 
 #########################################################################
-# Choice of alpha for alpha * n
-F_AlphaN <- function(CorY, n, cond.tol=1e-10){
+#
+#' Choice of alpha for a numerically stable psi matrix
+#'
+#' @param CorY Correlation matrix of dimensoins p x p with p the number of species for example.
+#' @param n number of samples
+#' @param cond.tol tolerance for the matrix conditionment, which is here the ratio of the absolute values of minimal eigen value on maximal eigen value
+#'
+#' @return \itemize{
+#' \item{psi: }{p x p corrected psi matrix}
+#' \item{alpha: }{final alpha value needed to correct the psi matrix}}
+#' @export
+#'
+#' @examples n=30
+#' p=10
+#' S=5
+#' Y=data_from_scratch("tree",p=p,n=n)$data
+#' beta = matrix(1/10,10,10)
+#' psi=Psi_alpha(cor(Y), n)$psi
+Psi_alpha <- function(CorY, n, cond.tol=1e-10){
   # Grid on alpha
   alpha.grid = (1:n)/n; alpha.nb = length(alpha.grid);
   cond = Inf; a = 0
@@ -113,9 +130,23 @@ F_AlphaN <- function(CorY, n, cond.tol=1e-10){
 #' @param plot boolean
 #'
 #' @return
-#' @import PLNmodels tidyr dplyr tibble
-#'
-#' @examples
+#' \itemize{
+#'  \item{edges_prob: }{p x p matrix of edges probabilities}
+#'  \item{edges_weight: }{p x p matrix of edges weights for any spanning tree}
+#'  \item{logpY: }{vector of log-likelihoods}
+#'  \item{maxIter: }{final number of iterations EMtree has ran}
+#'  \item{timeEM: }{EMtree computation time}
+#' }
+#' @export
+#' @importFrom tibble tibble rowid_to_column
+#' @importFrom ggplot2 ggplot geom_point geom_line theme_minimal labs aes
+#' @examples n=30
+#' p=10
+#' S=5
+#' Y=data_from_scratch("tree",p=p,n=n)$data
+#' beta = matrix(1/10,10,10)
+#' psi=Psi_alpha(cor(Y), n)$psi
+#' FitEM = FitBetaStatic(beta.init=beta, psi=psi, maxIter = 6, verbatim=TRUE, plot=TRUE)
 FitBetaStatic <- function(beta.init, psi, maxIter=50, eps1 = 1e-6,eps2=1e-4, verbatim=TRUE,plot=FALSE){
   options(nwarnings = 1)
   beta.tol = 1e-4
@@ -195,7 +226,7 @@ EMtree<-function(PLNobject,  maxIter=30, cond.tol=1e-10, verbatim=TRUE, plot=FAL
   CorY=cov2cor(PLNobject$model_par$Sigma)
   p = ncol(CorY)
   n=PLNobject$n
-  alpha.psi = F_AlphaN(CorY, n, cond.tol=cond.tol)
+  alpha.psi = Psi_alpha(CorY, n, cond.tol=cond.tol)
   psi = alpha.psi$psi
   print(alpha.psi$alpha)
   beta.unif = matrix(1, p, p); diag(beta.unif) = 0; beta.unif = beta.unif / sum(beta.unif)
@@ -228,6 +259,7 @@ EMtree<-function(PLNobject,  maxIter=30, cond.tol=1e-10, verbatim=TRUE, plot=FAL
 #'
 #' @export
 #' @importFrom PLNmodels PLN
+#' @importFrom parallel mclapply
 #' @examples
 #'n=30
 #'p=10
@@ -322,11 +354,10 @@ ResampleEMtree <- function(counts, covar_matrix=NULL  , O=NULL, v=0.8, S=1e2, ma
 #' the destination node ("node2"), the model it corresponds to ("model") and its weight ("value").
 #' @export
 #' @importFrom parallel mclapply
-#' @importFrom PLNmodels PLN
 #' @importFrom purrr map
 #' @importFrom tidyr gather  unnest
-#' @importFrom dplyr mutate
-#' @importFrom tibble rownames_to_column
+#' @importFrom dplyr mutate filter
+#' @importFrom tibble tibble rownames_to_column
 #' @examples
 #'n=30
 #'p=10

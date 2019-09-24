@@ -23,6 +23,24 @@ wase be deduced from the correlation matrix.}
 
 \item{plot}{boolean}
 }
+\value{
+\itemize{
+ \item{edges_prob: }{p x p matrix of edges probabilities}
+ \item{edges_weight: }{p x p matrix of edges weights for any spanning tree}
+ \item{logpY: }{vector of log-likelihoods}
+ \item{maxIter: }{final number of iterations EMtree has ran}
+ \item{timeEM: }{EMtree computation time}
+}
+}
 \description{
 internal function
+}
+\examples{
+n=30
+p=10
+S=5
+Y=data_from_scratch("tree",p=p,n=n)$data
+beta = matrix(1/10,10,10)
+psi=Psi_alpha(cor(Y), n)$psi
+FitEM = FitBetaStatic(beta.init=beta, psi=psi, maxIter = 6, verbatim=TRUE, plot=TRUE)
 }

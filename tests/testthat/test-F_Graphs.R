@@ -15,7 +15,7 @@ S=5
 Y=data_from_scratch(type="tree",p=p,n=n)$data
 beta = matrix(1/10,10,10)
 gamma=log(beta)
-psi=F_AlphaN(cor(Y), n)$psi
+psi=Psi_alpha(cor(Y), n)$psi
 P=EdgeProba(beta*psi)
 M=Meila(beta)
 x=SetLambda(P,M)
@@ -32,7 +32,7 @@ compare=ComparEMtree(Y,X,models=list(1,2),m_names=list("1","2"),Pt=0.3,S=S, core
 
 ##########################
 draw = draw_network(EM$edges_prob)
-comp.gr=compar_graphs(compare)
+comp.gr=compar_graphs(compare, layout="kk")
 
 
 test_that("draw_networktest", {
