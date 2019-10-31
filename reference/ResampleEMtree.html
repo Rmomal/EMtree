@@ -163,21 +163,22 @@ resampling.</p><ul>
     <pre class="examples"><div class='input'><span class='no'>n</span><span class='kw'>=</span><span class='fl'>30</span>
 <span class='no'>p</span><span class='kw'>=</span><span class='fl'>10</span>
 <span class='no'>S</span><span class='kw'>=</span><span class='fl'>5</span>
-<span class='no'>Y</span><span class='kw'>=</span><span class='fu'><a href='data_from_scratch.html'>data_from_scratch</a></span>(<span class='st'>"tree"</span>,<span class='kw'>p</span><span class='kw'>=</span><span class='no'>p</span>,<span class='kw'>n</span><span class='kw'>=</span><span class='no'>n</span>)$<span class='no'>data</span></div><div class='output co'>#&gt; [1] 10 10</div><div class='input'><span class='no'>X</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='no'>n</span>),<span class='fu'><a href='https://rdrr.io/r/stats/Binomial.html'>rbinom</a></span>(<span class='no'>n</span>,<span class='fl'>1</span>,<span class='fl'>0.7</span>))
+<span class='no'>Y</span><span class='kw'>=</span><span class='fu'><a href='data_from_scratch.html'>data_from_scratch</a></span>(<span class='st'>"tree"</span>,<span class='kw'>p</span><span class='kw'>=</span><span class='no'>p</span>,<span class='kw'>n</span><span class='kw'>=</span><span class='no'>n</span>)$<span class='no'>data</span>
+<span class='no'>X</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='no'>n</span>),<span class='fu'><a href='https://rdrr.io/r/stats/Binomial.html'>rbinom</a></span>(<span class='no'>n</span>,<span class='fl'>1</span>,<span class='fl'>0.7</span>))
 <span class='no'>resample</span><span class='kw'>=</span><span class='fu'>ResampleEMtree</span>(<span class='no'>Y</span>,<span class='kw'>covar_matrix</span><span class='kw'>=</span><span class='no'>X</span>, <span class='kw'>S</span><span class='kw'>=</span><span class='no'>S</span>,<span class='kw'>cores</span> <span class='kw'>=</span> <span class='fl'>1</span>)</div><div class='output co'>#&gt; 
 #&gt; S= 1  
-#&gt; Convergence took 0.05 secs  and  3  iterations. 
+#&gt; Convergence took 0.06 secs  and  3  iterations. 
 #&gt; S= 2  
-#&gt; Convergence took 0.06 secs  and  4  iterations. 
+#&gt; Convergence took 0.08 secs  and  4  iterations. 
 #&gt; S= 3  
-#&gt; Convergence took 0.07 secs  and  3  iterations. 
+#&gt; Convergence took 0.08 secs  and  3  iterations. 
 #&gt; S= 4  
-#&gt; Convergence took 0.05 secs  and  3  iterations. 
+#&gt; Convergence took 0.06 secs  and  3  iterations. 
 #&gt; S= 5  
 #&gt; Convergence took 0.1 secs  and  4  iterations. </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='no'>resample</span>)</div><div class='output co'>#&gt; List of 3
 #&gt;  $ Pmat   : num [1:5, 1:45] 0.0648 0.0602 0.0722 0.0731 0.2177 ...
 #&gt;  $ maxIter: num [1:5] 3 4 3 3 4
-#&gt;  $ times  : 'difftime' num [1:5] 0.0517866611480713 0.0577940940856934 0.0698533058166504 0.0515232086181641 ...
+#&gt;  $ times  : 'difftime' num [1:5] 0.0554835796356201 0.0810267925262451 0.0758154392242432 0.057938814163208 ...
 #&gt;   ..- attr(*, "units")= chr "secs"</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
