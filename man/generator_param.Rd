@@ -4,10 +4,14 @@
 \alias{generator_param}
 \title{Generate simulation parameters from a graph adjacency matrix}
 \usage{
-generator_param(G)
+generator_param(G, signed = FALSE, v = 0.01)
 }
 \arguments{
 \item{G}{adjacency matrix}
+
+\item{signed}{boolean: should the graph be composed of positive and negative partial correlations ?}
+
+\item{v}{parameter controlling the noise on the precision matrix}
 }
 \value{
 a list containing
@@ -22,6 +26,6 @@ Generate simulation parameters from a graph adjacency matrix
 }
 \examples{
 G=generator_graph(p=10,graph="tree")
-generator_param(G)
+generator_param(G=G)
 
 }

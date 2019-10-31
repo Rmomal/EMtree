@@ -4,8 +4,9 @@
 \alias{compar_graphs}
 \title{Plots networks from several models}
 \usage{
-compar_graphs(allNets, curv = 0.2, width = 1, alpha = TRUE,
-  seed = 123, nb = 3, layout = "circle", base_model = NULL)
+compar_graphs(allNets, curv = 0.2, width = 1, alpha = TRUE, Ft = 0,
+  nodes_label = NULL, seed = 123, nb = 3, layout = "circle",
+  base_model = NULL)
 }
 \arguments{
 \item{allNets}{tibble resulting of ComparEMtree()}
@@ -15,6 +16,10 @@ compar_graphs(allNets, curv = 0.2, width = 1, alpha = TRUE,
 \item{width}{maximum width for the edges}
 
 \item{alpha}{if TRUE, sets to transparent the edges non-linked to nodes with high betweenness}
+
+\item{Ft}{Frequency threshold}
+
+\item{nodes_label}{optional label for the nodes}
 
 \item{seed}{optional seed for graph reproductibility}
 
@@ -26,8 +31,8 @@ compar_graphs(allNets, curv = 0.2, width = 1, alpha = TRUE,
 }
 \value{
 \itemize{
-\item[G] the collection of networks as a ggplot2 object, with highlighted high betweenness nodes
-\item[graph_data] list of data needed to plot the networks
+\item{G}{ the collection of networks as a ggplot2 object, with highlighted high betweenness nodes}
+\item{graph_data }{list of data needed to plot the networks}
 }
 }
 \description{

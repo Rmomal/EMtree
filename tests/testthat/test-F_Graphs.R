@@ -27,7 +27,7 @@ PLNobj = PLN(Y~1)
 EM=EMtree(PLNobject =PLNobj, plot=FALSE, verbatim=FALSE)
 resampl=ResampleEMtree(Y, S=S,cores = 1)
 
-X = data.frame(rnorm(n),rbinom(n,1,0.7))
+X = data.frame(V1=rnorm(n),V2=rbinom(n,1,0.7))
 compare=ComparEMtree(Y,X,models=list(1,2),m_names=list("1","2"),Pt=0.3,S=S, cores=1)
 
 ##########################

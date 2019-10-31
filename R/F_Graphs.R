@@ -38,7 +38,7 @@ draw_network<-function(adj_matrix,title="", size=4, curv=0.2,width=1, alpha=FALS
   if(sum(unique(adj_matrix))==1) binary=TRUE
 
   res<- as_tbl_graph(adj_matrix, directed=FALSE) %>% activate(edges) %>%
-    mutate(btw.weights=ifelse(weight==0,0,1/weight)) %>%
+    mutate(btw.weights=ifelse(weight==0,0,log(1+1/weight))) %>%
     activate(nodes) %>%
     mutate(  btw=centrality_betweenness(weights=btw.weights),
             bool_btw=(btw>sort(btw, decreasing = TRUE)[nb]),bool_deg=(centrality_degree()>0),
@@ -66,14 +66,13 @@ draw_network<-function(adj_matrix,title="", size=4, curv=0.2,width=1, alpha=FALS
      activate(nodes)  %>%
      mutate(finalcolor=groupes)
  }else{
-   pal_nodes<-c("white","goldenrod1")
+   pal_nodes<-c("black","goldenrod1")
    res<-res %>%
      activate(nodes)  %>%
      mutate(finalcolor=bool_btw)
  }
   set_graph_style(family="sans")
   layout = ifelse(is.null(layout), "circle", layout)
-print(pal_nodes)
   g=res %>%
     ggraph(layout = layout)
   if(alpha){
@@ -88,8 +87,8 @@ print(pal_nodes)
     geom_node_point(aes(color = finalcolor, size = bool_btw), show.legend = FALSE) +
     scale_edge_colour_manual(values = pal_edges) +
     scale_color_manual(values = pal_nodes)+
-    scale_size_manual(values = c(3, 6))+
-    geom_node_text(aes(label = label), color = "black", size = size) +
+    scale_size_manual(values = c(2,6))+
+    geom_node_text(aes(label = label), color = "black", size = size) +#,nudge_x = 0.3
     labs(title = title) + theme(plot.title = element_text(hjust = 0.5))
 
   if(!binary){ g=g+
@@ -112,10 +111,12 @@ print(pal_nodes)
 #' @param curv edges curvature
 #' @param width maximum width for the edges
 #' @param alpha if TRUE, sets to transparent the edges non-linked to nodes with high betweenness
+#' @param Ft Frequency threshold
 #' @param seed optional seed for graph reproductibility
 #' @param nb sets the number of nodes selected by thresholding the beetweenness scores
 #' @param layout choice of layout for all networks among available layouts in `ggraph`. Default is "circle"
 #' @param base_model choice of referent model for the layout construction
+#' @param nodes_label optional label for the nodes
 #'
 #' @return \itemize{
 #' \item{G}{ the collection of networks as a ggplot2 object, with highlighted high betweenness nodes}
@@ -137,27 +138,35 @@ print(pal_nodes)
 #'threemodels=ComparEMtree(Y,X,models=list(1,2,c(1,2)),
 #'m_names=list("1","2","both"),Pt=0.3,S=S, cores=1)
 #'compar_graphs(threemodels)
-compar_graphs<-function(allNets, curv=0.2, width=1, alpha=TRUE,seed=123, nb=3, layout="circle", base_model=NULL){
-  mods=unique(allNets$model)
+compar_graphs<-function(allNets, curv=0.2, width=1, alpha=TRUE,Ft=0,
+                        nodes_label=NULL,seed=123, nb=3, layout="circle", base_model=NULL){
+
+   mods=unique(allNets$model)
   if(is.null(base_model)) base_model = allNets$model[1]
   nbmod<-length(mods)
   binary=(sum(unique(allNets$weight))==1)
 
+if(is.null(nodes_label)){
+  nb_sp = max(as.numeric(allNets$node2))
+  nodes_label=1:nb_sp
+}
+
+
   spliT<-data.frame(allNets) %>%
-    split(allNets$model) %>%
+    base::split(allNets$model) %>%
     tibble(P=map(.,function(x){
       mod<-x$model[1]
 
       res<- as_tbl_graph(x, directed=FALSE) %>%
         activate(edges) %>% filter(weight!=0) %>%
-        mutate(btw.weights=1/weight) %>%
+        mutate(btw.weights=log(1+1/weight)) %>%
         activate(nodes) %>%
         mutate( importance=centrality_degree(),btw=centrality_betweenness(weights = btw.weights),boolbtw=(btw>sort(btw, decreasing = TRUE)[nb]),
-                 mod=mod) %>%
+                 mod=mod, names=nodes_label) %>%
         activate(edges) %>%
         mutate(neibs=edge_is_incident(which(.N()$boolbtw)), mod=mod) %>%
         activate(nodes) %>%
-        mutate(label=ifelse(boolbtw,name,""))
+        mutate(label=ifelse(boolbtw,names,""))
 
     }))
 
@@ -173,6 +182,7 @@ compar_graphs<-function(allNets, curv=0.2, width=1, alpha=TRUE,seed=123, nb=3, l
     reduce(bind_graphs) %>%
     activate(nodes) %>%
     mutate(mod=factor(mod,levels=mods),x=rep(lay$x,nbmod),y=rep(lay$y,nbmod)) %>%
+    activate(edges) %>% filter(weight>Ft) %>%
     ggraph(layout="nicely")
   if(alpha){
     plot<-plot+
@@ -185,10 +195,10 @@ compar_graphs<-function(allNets, curv=0.2, width=1, alpha=TRUE,seed=123, nb=3, l
 
   g= plot+
     geom_node_point(aes(color=boolbtw, size=boolbtw), show.legend=FALSE)+
-    scale_edge_colour_manual(values=pal_edges[c(1,2,4,3)], labels=mods)+
+    scale_edge_colour_manual(values=pal_edges[c(1,3,2,4)], labels=mods)+
     scale_color_manual(values=pal_nodes)+
     scale_size_manual(values=c(1.5,6))+
-    geom_node_text(aes(label = label),color="black")+
+    geom_node_text(aes(label = label),color="black", repel = FALSE)+
     facet_nodes(~mod, scales="free",ncol=nbmod)+
     th_foreground(border=FALSE)+
     theme(strip.background = element_rect(fill="white",color="white"),

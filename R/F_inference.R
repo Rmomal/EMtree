@@ -33,7 +33,7 @@ F_NegLikelihood_Trans <- function(gamma, log.psi, P, trim=TRUE){
     res<-(-sum(F_Sym2Vec(P) * (log(exp(gamma))+ F_Sym2Vec(log.psi))) )+
       log(SumTree(F_Vec2Sym(exp(gamma))))+
       lambda*(sum(exp(gamma))-0.5)
-    if(is.nan(res)) browser()
+    if(is.nan(res))   cat("\nbeta optimization failed\n")
   }
   return( res)
 }
@@ -228,12 +228,12 @@ EMtree<-function(PLNobject,  maxIter=30, cond.tol=1e-10, verbatim=TRUE, plot=FAL
   n=PLNobject$n
   alpha.psi = Psi_alpha(CorY, n, cond.tol=cond.tol)
   psi = alpha.psi$psi
-  print(alpha.psi$alpha)
+
   beta.unif = matrix(1, p, p); diag(beta.unif) = 0; beta.unif = beta.unif / sum(beta.unif)
 
   FitEM = FitBetaStatic(beta.init=beta.unif, psi=psi, maxIter = maxIter,
                         verbatim=verbatim, plot=plot)
-  FitEM$alpha=alpha.psi$alpha
+
   return(FitEM)
 }
 
@@ -294,45 +294,50 @@ ResampleEMtree <- function(counts, covar_matrix=NULL  , O=NULL, v=0.8, S=1e2, ma
     X.sample = data.frame(X[sample,])
     O.sample = O[sample,]
 
-    suppressWarnings(
-      PLN.sample <- PLN(counts.sample ~ -1  + offset(log(O.sample)) + ., data=X.sample, control = list("trace"=0))
-    )
 
-    inf1<-EMtree( PLN.sample, maxIter=maxIter, cond.tol=cond.tol,
-                  verbatim=FALSE,plot=FALSE)[c("edges_prob","maxIter","timeEM","alpha")]
-    cat(" ",inf1$alpha)
-
-    inf<-inf1[c("edges_prob","maxIter","timeEM")]
-    return(inf)
-  }, mc.cores=cores)
-  #parallelization can malfunction.
-  #here chack if all results were correctly computed (correct number of results)
-  #if not compute the missing results sequentially
-  lengths<- sapply(obj,function(x){length(x)})
-  if(mean(lengths)!=3){
-    indices<-which(lengths!=3)
-    lapply(indices, function(x){
-      set.seed(x)
-      sample = sample(1:n, V, replace = F)
-      counts.sample = counts[sample,]
-      X.sample = data.frame(X[sample,])
-      O.sample = O[sample,]
-
-      suppressWarnings(
+      try({    suppressWarnings(
         PLN.sample <- PLN(counts.sample ~ -1  + offset(log(O.sample)) + ., data=X.sample, control = list("trace"=0))
       )
-      obj[[x]]<<-EMtree( PLN.sample, maxIter=maxIter, cond.tol=cond.tol,
-                         verbatim=FALSE,plot=FALSE)[c("edges_prob","maxIter","timeEM")]
-    })
+        inf1<-EMtree( PLN.sample, maxIter=maxIter, cond.tol=cond.tol,
+                      verbatim=FALSE,plot=FALSE)[c("edges_prob","maxIter","timeEM","alpha")]
+        cat(" ",inf1$alpha)
 
-  }
+        inf<-inf1[c("edges_prob","maxIter","timeEM")]
+      },silent=TRUE )
+      # if error then inf1=NA
 
-  Pmat<-do.call(rbind,lapply(obj,function(x){F_Sym2Vec(x$edges_prob)}))
+      if(!exists("inf")) inf=list(edges_prob=matrix(NA,1,P),maxIter=0,timeEM=0)
+      return(inf)
+  }, mc.cores=cores)
+    #parallelization can malfunction.
+    #here chack if all results were correctly computed (correct number of results)
+    #if not compute the missing results sequentially
+    lengths<- sapply(obj,function(x){length(x)})
+    if(mean(lengths)!=3){
+      indices<-which(lengths!=3)
+      lapply(indices, function(x){
+        set.seed(x)
+        sample = sample(1:n, V, replace = F)
+        counts.sample = counts[sample,]
+        X.sample = data.frame(X[sample,])
+        O.sample = O[sample,]
 
-  summaryiter = do.call(c,lapply(obj,function(x){x$maxIter}))
-  times<-do.call(c,lapply(obj,function(x){x$timeEM}))
+        suppressWarnings(
+          PLN.sample <- PLN(counts.sample ~ -1  + offset(log(O.sample)) + ., data=X.sample, control = list("trace"=0))
+        )
+        cat("need 2nd PLN")
+        obj[[x]]<<-EMtree( PLN.sample, maxIter=maxIter, cond.tol=cond.tol,
+                           verbatim=FALSE,plot=FALSE)[c("edges_prob","maxIter","timeEM")]
+      })
 
-  return(list(Pmat=Pmat,maxIter=summaryiter,times=times))
+    }
+
+    Pmat<-do.call(rbind,lapply(obj,function(x){F_Sym2Vec(x$edges_prob)}))
+
+    summaryiter = do.call(c,lapply(obj,function(x){x$maxIter}))
+    times<-do.call(c,lapply(obj,function(x){x$timeEM}))
+
+    return(list(Pmat=Pmat,maxIter=summaryiter,times=times))
 }
 
 
@@ -369,7 +374,13 @@ ComparEMtree <- function(counts, covar_matrix, models, m_names, O=NULL, Pt=0.1, 
 
   Stab.sel<- lapply(seq_along(models),function(x){
     cat("\nmodel ",m_names[[x]])
-    ResampleEMtree(counts,covar_matrix[,models[[x]]],O=O, v=v, S=S, maxIter, cond.tol=cond.tol,cores=cores)$Pmat
+
+    covariates=colnames(covar_matrix)[models[[x]]]
+    chaine=paste0("~-1+",paste(covariates,collapse="+"))
+    formule=formula(chaine)
+    matcovar=model.matrix(formule,covar_matrix)
+
+    ResampleEMtree(counts,matcovar,O=O, v=v, S=S, maxIter, cond.tol=cond.tol,cores=cores)$Pmat
   })
   p=ncol(counts)
 
@@ -384,8 +395,8 @@ ComparEMtree <- function(counts, covar_matrix, models, m_names, O=NULL, Pt=0.1, 
     })) %>%
     mutate(P = map(P,~rownames_to_column(.) %>%
                      gather(key, value , -rowname) %>%filter(!is.na(value))
-                   ),
-           mods=unlist(mods)
+    ),
+    mods=unlist(mods)
     ) %>%
     unnest(cols = c(P))
   allNets<-allNets[,c(1,2,4,3)]

@@ -38,8 +38,8 @@ draw_network(adj_matrix, title = "", size = 4, curv = 0.2,
 }
 \value{
 \itemize{
-\item[G] the network as a ggplot2 object, with highlighted high betweenness nodes
-\item[graph_data] data needed for plotting the network
+\item{G} {the network as a ggplot2 object, with highlighted high betweenness nodes}
+\item{graph_data}{ data needed for plotting the network}
 }
 }
 \description{

@@ -22,6 +22,6 @@ Simulate count data under the Poisson log-Normal model
 }
 \examples{
 G=generator_graph(p=10,graph="tree")
-sigma=generator_param(G)$sigma
+sigma=generator_param(G=G)$sigma
 generator_PLN(as.matrix(sigma))
 }

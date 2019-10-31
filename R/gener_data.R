@@ -79,7 +79,7 @@ generator_graph<-function(p = 20, graph = "tree", prob = 0.1, dens=0.3, r=5){
     theta<-SimCluster(p,3,dens,r)
   }
   if (graph == "scale-free") {
-    theta = huge.generator(graph="scale-free")$theta
+    theta = huge.generator(d=p,graph="scale-free")$theta
 
   }
   if(graph=="tree"){
@@ -93,6 +93,8 @@ generator_graph<-function(p = 20, graph = "tree", prob = 0.1, dens=0.3, r=5){
 #' Generate simulation parameters from a graph adjacency matrix
 #'
 #' @param G adjacency matrix
+#' @param signed boolean: should the graph be composed of positive and negative partial correlations ?
+#' @param v parameter controlling the noise on the precision matrix
 #'
 #' @return a list containing
 #' \itemize{
@@ -103,17 +105,32 @@ generator_graph<-function(p = 20, graph = "tree", prob = 0.1, dens=0.3, r=5){
 #' @export
 #'
 #' @examples G=generator_graph(p=10,graph="tree")
-#' generator_param(G)
+#' generator_param(G=G)
 #'
-generator_param<-function(G){
-  cste = 1
-  omega = diag(rep(cste, ncol(G))) + G
-  while (min(eigen(omega)$values) < 1e-6){
-    cste = 1.1*cste
-    omega = diag(rep(cste, ncol(G))) + G
+
+generator_param<-function(G,signed=FALSE,v=0.01){
+  lambda = 1
+  p=ncol(G)
+  sumlignes=rowSums(matrix(G,p,p))
+  D=diag(sumlignes+v)
+  if(signed){
+    Gsign = F_Vec2Sym(F_Sym2Vec(G * matrix(2*rbinom(p^2, 1, .3)-1, p, p)))
+    omega = lambda*D + Gsign
+    while(min(eigen(omega)$values) < 1e-10 & lambda<1e3){
+      lambda = 1.1*lambda
+      omega = lambda*D + Gsign
+    }
+    print(lambda)
+  }else{
+    print(dim(G))
+    omega = lambda*D + G
+    while (min(eigen(omega)$values) < 1e-10){
+      lambda = 1.1*lambda
+      omega =lambda*D + G
+    }
   }
   sigma = cov2cor(solve(omega))
-  sim=list(sigma=sigma,omega=omega,cste=cste)
+  sim=list(sigma=sigma,omega=omega,cste=lambda)
   return(sim)
 }
 #' Simulate count data under the Poisson log-Normal model
@@ -125,9 +142,9 @@ generator_param<-function(G){
 #'
 #' @return  Y: the simulated counts
 #' @export
-#' @import mvtnorm
+#' @importFrom  mvtnorm rmvnorm
 #' @examples G=generator_graph(p=10,graph="tree")
-#' sigma=generator_param(G)$sigma
+#' sigma=generator_param(G=G)$sigma
 #' generator_PLN(as.matrix(sigma))
 generator_PLN<-function(Sigma,covariates=NULL, n=50){
   p<-ncol(Sigma)
@@ -175,7 +192,7 @@ generator_PLN<-function(Sigma,covariates=NULL, n=50){
 data_from_scratch<-function(type, p=20,n=50, r=5, covariates=NULL,prob=log(p)/p,dens=log(p)/p, draw=FALSE){
   # make graph
   graph<- generator_graph(graph=type,p=p,prob=prob,dens=dens,r=r)
-  param<-generator_param(as.matrix(graph))
+  param<-generator_param(G=as.matrix(graph))
   data<-generator_PLN(param$sigma,covariates,n)
   if(draw){ as_tbl_graph(as.matrix(graph)) %>%
       ggraph(layout="kk")+
