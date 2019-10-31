@@ -122,7 +122,6 @@ generator_param<-function(G,signed=FALSE,v=0.01){
     }
     print(lambda)
   }else{
-    print(dim(G))
     omega = lambda*D + G
     while (min(eigen(omega)$values) < 1e-10){
       lambda = 1.1*lambda
@@ -178,7 +177,8 @@ generator_PLN<-function(Sigma,covariates=NULL, n=50){
 #' @param prob edge probability for erdos graphs
 #' @param dens density of edges for cluster graphs
 #' @param draw boolean, plots the graph if set to TRUE
-#'
+#' @param signed boolean: should the graph be composed of positive and negative partial correlations ?
+#' @param v noise parameter of the precision matrix
 #' @return a list containing
 #' \itemize{
 #'  \item{data: }{simulated counts}
@@ -188,16 +188,21 @@ generator_PLN<-function(Sigma,covariates=NULL, n=50){
 #' @importFrom magrittr "%>%"
 #' @importFrom tidygraph as_tbl_graph
 #' @importFrom ggraph ggraph geom_edge_link geom_node_point
-#' @examples data_from_scratch("tree",p=10,draw=TRUE)
-data_from_scratch<-function(type, p=20,n=50, r=5, covariates=NULL,prob=log(p)/p,dens=log(p)/p, draw=FALSE){
+#' @examples set.seed(1)
+#' data_from_scratch("tree",p=10,draw=TRUE)
+data_from_scratch<-function(type, p=20,n=50, r=5, covariates=NULL,prob=log(p)/p,dens=log(p)/p,
+                            signed=FALSE,v=0.01,draw=FALSE){
   # make graph
   graph<- generator_graph(graph=type,p=p,prob=prob,dens=dens,r=r)
-  param<-generator_param(G=as.matrix(graph))
+  param<-generator_param(G=as.matrix(graph),signed=signed,v=v)
   data<-generator_PLN(param$sigma,covariates,n)
-  if(draw){ as_tbl_graph(as.matrix(graph)) %>%
-      ggraph(layout="kk")+
+  if(draw){
+    g=as_tbl_graph(as.matrix(graph)) %>%
+      ggraph(layout="nicely")+
       geom_edge_link()+
       geom_node_point(size=2, color="blue")
+    print(g)
   }
+
   return(list(data=data,omega= param$omega))
 }

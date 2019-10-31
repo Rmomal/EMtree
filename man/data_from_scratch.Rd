@@ -5,7 +5,8 @@
 \title{generates data under the PLN model with a certain type of dependency structure, and draws the structure.}
 \usage{
 data_from_scratch(type, p = 20, n = 50, r = 5, covariates = NULL,
-  prob = log(p)/p, dens = log(p)/p, draw = FALSE)
+  prob = log(p)/p, dens = log(p)/p, signed = FALSE, v = 0.01,
+  draw = FALSE)
 }
 \arguments{
 \item{type}{type of graph, either "tree", "erdos", "cluster" or "scale-free"}
@@ -22,6 +23,10 @@ data_from_scratch(type, p = 20, n = 50, r = 5, covariates = NULL,
 
 \item{dens}{density of edges for cluster graphs}
 
+\item{signed}{boolean: should the graph be composed of positive and negative partial correlations ?}
+
+\item{v}{noise parameter of the precision matrix}
+
 \item{draw}{boolean, plots the graph if set to TRUE}
 }
 \value{
@@ -35,5 +40,6 @@ a list containing
 generates data under the PLN model with a certain type of dependency structure, and draws the structure.
 }
 \examples{
+set.seed(1)
 data_from_scratch("tree",p=10,draw=TRUE)
 }
