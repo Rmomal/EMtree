@@ -132,7 +132,7 @@ draw_network<-function(adj_matrix,title="", size=4, curv=0.2,width=1, alpha=FALS
 #' @examples
 #'n=30
 #'p=10
-#'S=5
+#'S=3
 #'Y=data_from_scratch("tree",p=p,n=n)$data
 #'X = data.frame(rnorm(n),rbinom(n,1,0.7))
 #'threemodels=ComparEMtree(Y,X,models=list(1,2,c(1,2)),

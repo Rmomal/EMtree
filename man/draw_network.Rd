@@ -46,6 +46,6 @@ draw_network(adj_matrix, title = "", size = 4, curv = 0.2,
 Plots a natwork
 }
 \examples{
-adj_matrix= SimCluster(10,2,0.5, 0.1)
-draw_network(adj_matrix,"Cluster graph", layout="kk")
+adj_matrix= SimCluster(p=30,k=3,dens=0.4, r=50)$G
+draw_network(adj_matrix,"Cluster graph", layout="fr",curv=0.1)
 }
