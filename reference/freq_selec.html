@@ -135,16 +135,16 @@
 <span class='no'>Y</span><span class='kw'>=</span><span class='fu'><a href='data_from_scratch.html'>data_from_scratch</a></span>(<span class='st'>"tree"</span>,<span class='kw'>p</span><span class='kw'>=</span><span class='no'>p</span>)$<span class='no'>data</span>
 <span class='no'>resample_prob</span><span class='kw'>=</span><span class='fu'><a href='ResampleEMtree.html'>ResampleEMtree</a></span>(<span class='no'>Y</span>, <span class='kw'>S</span><span class='kw'>=</span><span class='no'>S</span>,<span class='kw'>cores</span> <span class='kw'>=</span> <span class='fl'>1</span>)$<span class='no'>Pmat</span></div><div class='output co'>#&gt; 
 #&gt; S= 1  
-#&gt; Convergence took 0.06 secs  and  3  iterations. 
+#&gt; Convergence took 0.07 secs  and  3  iterations. 
 #&gt; S= 2  
-#&gt; Convergence took 0.06 secs  and  3  iterations. 
-#&gt; S= 3  
 #&gt; Convergence took 0.05 secs  and  3  iterations. 
+#&gt; S= 3  
+#&gt; Convergence took 0.11 secs  and  3  iterations. 
 #&gt; S= 4  
-#&gt; Convergence took 0.09 secs  and  3  iterations. 
+#&gt; Convergence took 0.05 secs  and  3  iterations. 
 #&gt; S= 5  
-#&gt; Convergence took 0.05 secs  and  3  iterations. </div><div class='input'><span class='no'>edges_freq</span><span class='kw'>&lt;-</span><span class='fu'>freq_selec</span>(<span class='no'>resample_prob</span>,<span class='kw'>Pt</span><span class='kw'>=</span><span class='fl'>0.3</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='no'>edges_freq</span>)</div><div class='output co'>#&gt;  num [1:10, 1:10] 0 0 0.8 0 0 0 0 0.2 0 0 ...</div></pre>
+#&gt; Convergence took 0.07 secs  and  3  iterations. </div><div class='input'><span class='no'>edges_freq</span><span class='kw'>&lt;-</span><span class='fu'>freq_selec</span>(<span class='no'>resample_prob</span>,<span class='kw'>Pt</span><span class='kw'>=</span><span class='fl'>0.3</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='no'>edges_freq</span>)</div><div class='output co'>#&gt;  num [1:10, 1:10] 0 0 0 0 1 0.4 0 0 0 0 ...</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
