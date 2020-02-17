@@ -73,7 +73,7 @@ Kirshner<-function(W){
 #'
 #' @examples W = matrix(c(1,1,3,1,1,1,3,1,1),3,3,byrow=TRUE)
 #' EdgeProba(W)
-EdgeProba <- function(W){
+EdgeProba <- function(W, verbatim=FALSE){
   it=-1
   Wcum = SumTree(W)
   if(!isSymmetric(W)){cat('Pb: W non symmpetric!')}
@@ -81,7 +81,7 @@ EdgeProba <- function(W){
     #handles numerical issues with matrix tree theorem
     it=it+1
     borne=30-it
-    message(cat("W corrected, bound=",borne))
+   if(verbatim) message(cat("W corrected, bound=",borne))
 
     W.log=log(F_Sym2Vec(W))
     W.center=W.log-mean(W.log)

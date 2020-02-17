@@ -4,7 +4,7 @@
 \alias{EdgeProba}
 \title{Computing edges conditional probabilities}
 \usage{
-EdgeProba(W)
+EdgeProba(W, verbatim = FALSE)
 }
 \arguments{
 \item{W}{squared weight matrix}

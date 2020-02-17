@@ -6,17 +6,18 @@ warnings_are_errors: false
 
 r_check_args: --as-cran
 
-brew_packages:
-  - gcc
-
 use_bioc: true
-bioc_required: true
 
 
 matrix:
   include:
     - os: osx
       r: bioc-release
+      addons:
+        homebrew:
+          packages:
+            -gcc
+          update: true
     - os: linux
       r: bioc-release
       r_packages:
