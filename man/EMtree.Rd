@@ -4,19 +4,19 @@
 \alias{EMtree}
 \title{Computes edges probability}
 \usage{
-EMtree(PLNobject, maxIter = 30, cond.tol = 1e-10, verbatim = TRUE,
-  plot = FALSE)
+EMtree(PLN.Cor, maxIter = 30, cond.tol = 1e-10, PLN = TRUE,
+  verbatim = TRUE, plot = FALSE)
 }
 \arguments{
-\item{PLNobject}{an object resulting from the use of the `PLN` function from package `PLNmodels`}
+\item{PLN.Cor}{Either an object resulting from the use of the `PLN` function from package `PLNmodels`, or an estimation of Gaussian data correlation matrix.}
 
 \item{maxIter}{Maximum number of iterations for EMtree}
 
 \item{cond.tol}{Tolerence parameter for the conditionement of psi matrix}
 
-\item{verbatim}{talks if set to TRUE}
+\item{verbatim}{Talks if set to TRUE}
 
-\item{plot}{plots likelihood if set to TRUE}
+\item{plot}{Plots likelihood if set to TRUE}
 }
 \value{
 \itemize{
@@ -36,5 +36,6 @@ n=30
 p=10
 Y=data_from_scratch("tree",p=p)$data
 PLN_Y = PLNmodels::PLN(Y~1)
-EMtree(PLN_Y,verbatim=TRUE, plot=TRUE)
+CorY=cov2cor(PLN_Y$model_par$Sigma)
+EMtree(PLN.Cor=PLN_Y,verbatim=TRUE, plot=TRUE)
 }

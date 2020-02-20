@@ -159,9 +159,9 @@ generator_PLN<-function(Sigma,covariates=NULL, n=50){
 
     mc<-ncol(m)
     beta<-matrix(runif(p*mc),mc,p)
-    prod=m %*% beta
+    prod=m %*% beta+2
   }else{
-    prod=0
+    prod=2 # constant for signal
   }
   Z<- rmvnorm(n, rep(0,nrow(Sigma)), Sigma)
   Y = matrix(rpois(n*p, exp(Z+prod )), n, p)

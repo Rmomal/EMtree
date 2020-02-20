@@ -3,8 +3,7 @@
 EMtree
 ======
 
-[![Travis build status](https://travis-ci.org/Rmomal/EMtree.svg?branch=master)](https://travis-ci.org/Rmomal/EMtree) [![Codecov test coverage](https://codecov.io/gh/Rmomal/EMtree/branch/master/graph/badge.svg)](https://codecov.io/gh/Rmomal/EMtree?branch=master)
-[![DOI](https://zenodo.org/badge/166967948.svg)](https://zenodo.org/badge/latestdoi/166967948)
+[![Travis build status](https://travis-ci.org/Rmomal/EMtree.svg?branch=master)](https://travis-ci.org/Rmomal/EMtree) [![Codecov test coverage](https://codecov.io/gh/Rmomal/EMtree/branch/master/graph/badge.svg)](https://codecov.io/gh/Rmomal/EMtree?branch=master) [![DOI](https://zenodo.org/badge/166967948.svg)](https://zenodo.org/badge/latestdoi/166967948)
 
 > EMtree infers interaction networks from abundance data. It uses averages over spanning trees within a Poisson log-Normal Model ([PLNmodels](https://github.com/jchiquet/PLNmodels%3E)), and involves plotting funcitonalities (using `ggraph` and `tydigraph`).
 
@@ -83,7 +82,6 @@ model<-PLN(counts ~ covar$site)
 library(EMtree)
 set.seed(3)
 output<-EMtree(model,  maxIter = 10, plot=TRUE)
-#> [1] 0.7157895
 #> 
 #> Likelihoods: 81.60106 , 81.68395 , 81.684 ,
 ```
@@ -91,18 +89,17 @@ output<-EMtree(model,  maxIter = 10, plot=TRUE)
 <img src="man/figures/README-output-1.png" style="display: block; margin: auto;" />
 
     #> 
-    #> Convergence took 0.64 secs  and  3  iterations.
+    #> Convergence took 0.4 secs  and  3  iterations.
     #> Likelihood difference = 5.399854e-05 
     #> Betas difference = 2.305752e-09
     str(output)
-    #> List of 6
+    #> List of 5
     #>  $ edges_prob  : num [1:33, 1:33] 0.00 6.78e-05 3.17e-03 7.09e-02 2.84e-03 ...
     #>  $ edges_weight: num [1:33, 1:33] 0 0.000946 0.000946 0.000947 0.000946 ...
     #>  $ logpY       : num [1:3] 81.6 81.7 81.7
     #>  $ maxIter     : num 3
-    #>  $ timeEM      : 'difftime' num 0.642226934432983
+    #>  $ timeEM      : 'difftime' num 0.398315906524658
     #>   ..- attr(*, "units")= chr "secs"
-    #>  $ alpha       : num 0.716
 
 ### Foster robustness with resampling :
 
@@ -137,45 +134,36 @@ str(resample_output)
 
 ``` r
 library(parallel)
-tested_models=list("date","site",c("date","site"))
+tested_models=list(1,2,c(1,2))
 models_names=c("date","site","date + site")
 compare_output<-ComparEMtree(counts, covar_matrix=covar, models=tested_models, m_names=models_names, Pt=0.15,  S=3, maxIter=5,cond.tol=1e-8,cores=1)
 #> 
 #> model  date
-#> S= 1  [1] 0.2894737
-#> 
-#> Convergence took 0.24 secs  and  5  iterations.  0.2894737
-#> S= 2  [1] 0.2763158
-#> 
-#> Convergence took 0.19 secs  and  4  iterations.  0.2763158
-#> S= 3  [1] 0.2368421
-#> 
-#> Convergence took 0.24 secs  and  5  iterations.  0.2368421
+#> S= 1  
+#> Convergence took 0.16 secs  and  3  iterations. 
+#> S= 2  
+#> Convergence took 0.19 secs  and  4  iterations. 
+#> S= 3  
+#> Convergence took 0.18 secs  and  4  iterations. 
 #> model  site
-#> S= 1  [1] 0.7236842
-#> 
-#> Convergence took 0.21 secs  and  5  iterations.  0.7236842
-#> S= 2  [1] 0.6052632
-#> 
-#> Convergence took 0.14 secs  and  3  iterations.  0.6052632
-#> S= 3  [1] 0.6973684
-#> 
-#> Convergence took 0.21 secs  and  5  iterations.  0.6973684
+#> S= 1  
+#> Convergence took 0.23 secs  and  5  iterations. 
+#> S= 2  
+#> Convergence took 0.15 secs  and  3  iterations. 
+#> S= 3  
+#> Convergence took 0.21 secs  and  5  iterations. 
 #> model  date + site
-#> S= 1  [1] 0.9473684
-#> 
-#> Convergence took 0.22 secs  and  5  iterations.  0.9473684
-#> S= 2  [1] 0.9868421
-#> 
-#> Convergence took 0.21 secs  and  5  iterations.  0.9868421
-#> S= 3  [1] 0.9868421
-#> 
-#> Convergence took 0.21 secs  and  5  iterations.  0.9868421
+#> S= 1  
+#> Convergence took 0.22 secs  and  5  iterations. 
+#> S= 2  
+#> Convergence took 0.14 secs  and  3  iterations. 
+#> S= 3  
+#> Convergence took 0.22 secs  and  5  iterations.
 
 str(compare_output)
 #> Classes 'tbl_df', 'tbl' and 'data.frame':    1584 obs. of  4 variables:
-#>  $ node1 : chr  "2" "3" "3" "4" ...
-#>  $ node2 : chr  "1" "1" "2" "1" ...
+#>  $ node1 : chr  "1" "1" "2" "1" ...
+#>  $ node2 : chr  "2" "3" "3" "4" ...
 #>  $ model : chr  "date" "date" "date" "date" ...
 #>  $ weight: num  0 0 0 0 0 ...
 ```
@@ -227,20 +215,20 @@ draw_network(df,"Site", layout="nicely")$graph_data
 #> # Node Data: 33 x 8 (active)
 #>     btw bool_btw bool_deg   deg title  name label finalcolor
 #>   <dbl> <lgl>    <lgl>    <dbl> <chr> <int> <chr> <lgl>     
-#> 1  27.8 FALSE    TRUE         8 Site      1 ""    FALSE     
-#> 2  34.5 FALSE    TRUE         4 Site      2 ""    FALSE     
-#> 3   0   FALSE    TRUE         2 Site      3 ""    FALSE     
+#> 1  16.3 FALSE    TRUE         8 Site      1 ""    FALSE     
+#> 2  11   FALSE    TRUE         4 Site      2 ""    FALSE     
+#> 3   2   FALSE    TRUE         2 Site      3 ""    FALSE     
 #> 4   0   FALSE    TRUE         4 Site      4 ""    FALSE     
 #> 5   0   FALSE    TRUE         3 Site      5 ""    FALSE     
-#> 6  28.5 FALSE    TRUE         4 Site      6 ""    FALSE     
+#> 6  23.5 FALSE    TRUE         4 Site      6 ""    FALSE     
 #> # … with 27 more rows
 #> #
 #> # Edge Data: 88 x 6
 #>    from    to weight btw.weights neibs title
 #>   <int> <int>  <dbl>       <dbl> <lgl> <chr>
-#> 1     1     4    0.2         5   FALSE Site 
-#> 2     1     7    0.4         2.5 FALSE Site 
-#> 3     1     8    0.2         5   FALSE Site 
+#> 1     1     4    0.2        1.79 FALSE Site 
+#> 2     1     7    0.4        1.25 FALSE Site 
+#> 3     1     8    0.2        1.79 FALSE Site 
 #> # … with 85 more rows
 ```
 
@@ -250,7 +238,6 @@ Comparing network by eye is difficult. In particular, choosing the right layout 
 
 ``` r
 compar_graphs(compare_output,alpha=TRUE)$G
-#> Using `nicely` as default layout
 ```
 
 <img src="man/figures/README-unnamed-chunk-7-1.png" style="display: block; margin: auto;" />
@@ -259,7 +246,6 @@ However, the user can decide another layout. The nodes position is preserved alo
 
 ``` r
 compar_graphs(compare_output,alpha=FALSE, layout="nicely", curv=0.1, base_model="site")$G
-#> Using `nicely` as default layout
 ```
 
 <img src="man/figures/README-unnamed-chunk-8-1.png" style="display: block; margin: auto;" />

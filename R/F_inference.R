@@ -194,17 +194,17 @@ FitBetaStatic <- function(beta.init, psi, maxIter=50, eps1 = 1e-6,eps2=1e-4, ver
         iter," iterations.")
   }
 
-  return(list(edges_prob=P, edges_weight=beta, logpY=logpY,maxIter=iter, timeEM=time))
+  return(list(edges_prob=P, edges_weight=beta, logpY=logpY,maxIter=iter, norm.cst = SumTree(beta), timeEM=time))
 }
 
 #########################################################################
 #' Computes edges probability
 #'
-#' @param PLNobject  an object resulting from the use of the `PLN` function from package `PLNmodels`
+#' @param PLN.Cor Either an object resulting from the use of the `PLN` function from package `PLNmodels`, or an estimation of Gaussian data correlation matrix.
 #' @param maxIter Maximum number of iterations for EMtree
 #' @param cond.tol Tolerence parameter for the conditionement of psi matrix
-#' @param verbatim talks if set to TRUE
-#' @param plot plots likelihood if set to TRUE
+#' @param verbatim Talks if set to TRUE
+#' @param plot Plots likelihood if set to TRUE
 #'
 #' @return
 #' \itemize{
@@ -221,11 +221,16 @@ FitBetaStatic <- function(beta.init, psi, maxIter=50, eps1 = 1e-6,eps2=1e-4, ver
 #' p=10
 #' Y=data_from_scratch("tree",p=p)$data
 #' PLN_Y = PLNmodels::PLN(Y~1)
-#' EMtree(PLN_Y,verbatim=TRUE, plot=TRUE)
-EMtree<-function(PLNobject,  maxIter=30, cond.tol=1e-10, verbatim=TRUE, plot=FALSE){
-  CorY=cov2cor(PLNobject$model_par$Sigma)
+#' CorY=cov2cor(PLN_Y$model_par$Sigma)
+#' EMtree(PLN.Cor=PLN_Y,verbatim=TRUE, plot=TRUE)
+EMtree<-function(PLN.Cor,  maxIter=30, cond.tol=1e-10, PLN=TRUE, verbatim=TRUE, plot=FALSE){
+  if(PLN){
+    CorY=cov2cor(PLN.Cor$model_par$Sigma)
+  }else{
+    CorY = PLN.Cor
+  }
   p = ncol(CorY)
-  n=PLNobject$n
+  n=PLN.Cor$n
   alpha.psi = Psi_alpha(CorY, n, cond.tol=cond.tol)
   psi = alpha.psi$psi
 

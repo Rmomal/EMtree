@@ -24,7 +24,7 @@ x=SetLambda(P,M)
 FitEM = FitBetaStatic(beta.init=beta, psi=psi, maxIter = 6,
                       verbatim=TRUE, plot=TRUE)
 PLNobj = PLN(Y~1)
-EM=EMtree(PLNobject =PLNobj, plot=FALSE, verbatim=FALSE)
+EM=EMtree(PLN.Cor =PLNobj, plot=FALSE, verbatim=FALSE)
 resampl=ResampleEMtree(Y, S=S,cores = 1)
 
 X = data.frame(V1=rnorm(n),V2=rbinom(n,1,0.7))
