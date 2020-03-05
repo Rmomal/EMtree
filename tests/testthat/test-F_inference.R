@@ -42,6 +42,11 @@ test_that("equiv versions of likelihood", {
 test_that("FitEM", {
   expect_equal(FitEM$logpY[FitEM$maxIter]>FitEM$logpY[FitEM$maxIter-1],TRUE)
 })
+test_that("EMtree() raise an error for PLN.Cor argument", {
+  expect_error(EMtree(covar, plot = FALSE, verbatim = FALSE))
+  expect_error(EMtree(EMtree(cov2cor(PLNobj$model_par$Sigma)[1:9,], plot = FALSE, verbatim = FALSE)))
+  expect_error(EMtree(EMtree(cov2cor(PLNobj$model_par$Sigma)[,1:9], plot = FALSE, verbatim = FALSE)))
+})
 test_that("EMtree.logpY", {
   expect_equal(EM$logpY[EM$maxIter]>EM$logpY[EM$maxIter-1],TRUE)
 })
