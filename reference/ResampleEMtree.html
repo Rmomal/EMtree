@@ -167,18 +167,18 @@ resampling.</p><ul>
 <span class='no'>X</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='no'>n</span>),<span class='fu'><a href='https://rdrr.io/r/stats/Binomial.html'>rbinom</a></span>(<span class='no'>n</span>,<span class='fl'>1</span>,<span class='fl'>0.7</span>))
 <span class='no'>resample</span><span class='kw'>=</span><span class='fu'>ResampleEMtree</span>(<span class='no'>Y</span>,<span class='kw'>covar_matrix</span><span class='kw'>=</span><span class='no'>X</span>, <span class='kw'>S</span><span class='kw'>=</span><span class='no'>S</span>,<span class='kw'>cores</span> <span class='kw'>=</span> <span class='fl'>1</span>)</div><div class='output co'>#&gt; 
 #&gt; S= 1  
-#&gt; Convergence took 0.32 secs  and  30  iterations. 
+#&gt; Convergence took 0.05 secs  and  3  iterations. 
 #&gt; S= 2  
-#&gt; Convergence took 0.1 secs  and  9  iterations. 
+#&gt; Convergence took 0.05 secs  and  3  iterations. 
 #&gt; S= 3  
-#&gt; Convergence took 0.34 secs  and  30  iterations. 
+#&gt; Convergence took 0.06 secs  and  3  iterations. 
 #&gt; S= 4  
-#&gt; Convergence took 0.31 secs  and  30  iterations. 
+#&gt; Convergence took 0.05 secs  and  3  iterations. 
 #&gt; S= 5  
-#&gt; Convergence took 0.33 secs  and  30  iterations. </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='no'>resample</span>)</div><div class='output co'>#&gt; List of 3
-#&gt;  $ Pmat   : num [1:5, 1:45] 0.026 0.01 0.0306 0.0948 0.0174 ...
-#&gt;  $ maxIter: num [1:5] 30 9 30 30 30
-#&gt;  $ times  : 'difftime' num [1:5] 0.320543527603149 0.0999858379364014 0.336575508117676 0.309838533401489 ...
+#&gt; Convergence took 0.06 secs  and  3  iterations. </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='no'>resample</span>)</div><div class='output co'>#&gt; List of 3
+#&gt;  $ Pmat   : num [1:5, 1:45] 0.0359 0.0295 0.038 0.0597 0.0326 ...
+#&gt;  $ maxIter: num [1:5] 3 3 3 3 3
+#&gt;  $ times  : 'difftime' num [1:5] 0.0501322746276855 0.0458700656890869 0.0569753646850586 0.0484335422515869 ...
 #&gt;   ..- attr(*, "units")= chr "secs"</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
