@@ -112,8 +112,8 @@
     <p>Computes edges probability</p>
     </div>
 
-    <pre class="usage"><span class='fu'>EMtree</span>(<span class='no'>PLN.Cor</span>, <span class='kw'>maxIter</span> <span class='kw'>=</span> <span class='fl'>30</span>, <span class='kw'>cond.tol</span> <span class='kw'>=</span> <span class='fl'>1e-10</span>, <span class='kw'>PLN</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>verbatim</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+    <pre class="usage"><span class='fu'>EMtree</span>(<span class='no'>PLN.Cor</span>, <span class='kw'>maxIter</span> <span class='kw'>=</span> <span class='fl'>30</span>, <span class='kw'>cond.tol</span> <span class='kw'>=</span> <span class='fl'>1e-10</span>, <span class='kw'>verbatim</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -164,7 +164,7 @@
 #&gt;  DONE!</div><div class='input'><span class='no'>CorY</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/stats/cor.html'>cov2cor</a></span>(<span class='no'>PLN_Y</span>$<span class='no'>model_par</span>$<span class='no'>Sigma</span>)
 <span class='fu'>EMtree</span>(<span class='kw'>PLN.Cor</span><span class='kw'>=</span><span class='no'>PLN_Y</span>,<span class='kw'>verbatim</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; 
 #&gt; Likelihoods: -6.460333 , -6.426246 , -6.426233 , </div><div class='img'><img src='EMtree-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; 
-#&gt; Convergence took 0.06 secs  and  3  iterations.
+#&gt; Convergence took 0.05 secs  and  3  iterations.
 #&gt; Likelihood difference = 1.357268e-05 
 #&gt; Betas difference = 1.595053e-08</div><div class='output co'>#&gt; $edges_prob
 #&gt;             [,1]       [,2]       [,3]       [,4]       [,5]       [,6]
@@ -224,7 +224,7 @@
 #&gt; [1] 2.581255e-10
 #&gt; 
 #&gt; $timeEM
-#&gt; Time difference of 0.06262112 secs
+#&gt; Time difference of 0.0458684 secs
 #&gt; </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
