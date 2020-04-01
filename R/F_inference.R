@@ -106,7 +106,7 @@ Psi_alpha <- function(CorY, n, cond.tol=1e-10){
     a = a+1
     psi.vec = F_Sym2Vec(-alpha.grid[a]*n*log(1 - CorY^2)/2);
     psi.vec = psi.vec - mean(psi.vec)
-    psi = F_Vec2Sym(exp(psi.vec))
+    psi = F_Vec2Sym(exp(psi.vec)) # des 0 à une puissance négative
     lambda = svd(psi)$d
     cond = min(abs(lambda))/max(abs(lambda))
   }
@@ -189,11 +189,7 @@ FitBetaStatic <- function(beta.init, psi, maxIter=50, eps1 = 1e-6,eps2=1e-4, ver
   if(verbatim){
     cat("\nConvergence took",round(time,2), attr(time, "units")," and ",
         iter," iterations.\nLikelihood difference =", diff.loglik, "\nBetas difference =",beta.diff)
-  }else{
-    cat("\nConvergence took",round(time,2), attr(time, "units")," and ",
-        iter," iterations.")
   }
-
   return(list(edges_prob=P, edges_weight=beta, logpY=logpY,maxIter=iter, norm.cst = SumTree(beta), timeEM=time))
 }
 
