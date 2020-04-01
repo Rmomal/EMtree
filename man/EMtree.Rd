@@ -4,8 +4,8 @@
 \alias{EMtree}
 \title{Computes edges probability}
 \usage{
-EMtree(PLN.Cor, maxIter = 30, cond.tol = 1e-10, PLN = TRUE,
-  verbatim = TRUE, plot = FALSE)
+EMtree(PLN.Cor, maxIter = 30, cond.tol = 1e-10, verbatim = TRUE,
+  plot = FALSE)
 }
 \arguments{
 \item{PLN.Cor}{Either an object resulting from the use of the `PLN` function from package `PLNmodels`, or an estimation of Gaussian data correlation matrix.}
