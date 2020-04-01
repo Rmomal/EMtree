@@ -176,11 +176,9 @@ FitBetaStatic <- function(beta.init, psi, maxIter=50, eps1 = 1e-6,eps2=1e-4, ver
     diffPres=logpY[iter]-logpY[iter-1]
     if(iter > 1){diff.loglik =  abs(diffPres)}else{diff.loglik=1}
   }
-
   time<-difftime(Sys.time(),T1)
   logpY = logpY[1:iter]
   if(plot){
-
     g<-tibble(p=logpY) %>% rowid_to_column() %>%
       ggplot(aes(rowid,p))+geom_point()+geom_line()+theme_minimal()+labs(x="Iter",y="Likelihood")
     print(g)
