@@ -219,14 +219,16 @@ FitBetaStatic <- function(beta.init, psi, maxIter=50, eps1 = 1e-6,eps2=1e-4, ver
 #' PLN_Y = PLNmodels::PLN(Y~1)
 #' CorY=cov2cor(PLN_Y$model_par$Sigma)
 #' EMtree(PLN.Cor=PLN_Y,verbatim=TRUE, plot=TRUE)
-EMtree<-function(PLN.Cor,  maxIter=30, cond.tol=1e-10, PLN=TRUE, verbatim=TRUE, plot=FALSE){
-  if(PLN){
+EMtree<-function(PLN.Cor,  maxIter=30, cond.tol=1e-10, verbatim=TRUE, plot=FALSE){
+  if(inherits(PLN.Cor, "PLNfit")){
     CorY=cov2cor(PLN.Cor$model_par$Sigma)
-  }else{
+  }else if(inherits(PLN.Cor, "matrix") & nrow(PLN.Cor) == ncol(PLN.Cor)){
     CorY = PLN.Cor
+  }else{
+    stop("PLN.Cor must be a PLN object or a squarred gaussian correlation matrix")
   }
   p = ncol(CorY)
-  n=PLN.Cor$n
+  n = nrow(CorY)
   alpha.psi = Psi_alpha(CorY, n, cond.tol=cond.tol)
   psi = alpha.psi$psi
 
