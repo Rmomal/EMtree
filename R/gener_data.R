@@ -81,7 +81,7 @@ generator_graph<-function(p = 20, graph = "tree", prob = 0.1, dens=0.3, r=5){
     theta<-SimCluster(p,3,dens,r)
   }
   if (graph == "scale-free") {
-    theta = huge.generator(d=p,graph="scale-free")$theta
+    theta = huge.generator(d=p,graph="scale-free",verbose = FALSE)$theta
 
   }
   if(graph=="tree"){
