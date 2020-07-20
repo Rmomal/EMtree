@@ -28,7 +28,7 @@
 #' @importFrom dplyr mutate filter
 #' @examples adj_matrix= SimCluster(p=30,k=3,dens=0.4, r=50)
 #' draw_network(adj_matrix,"Cluster graph", layout="fr",curv=0.1)
-draw_network<-function(adj_matrix,title="", size=4, curv=0.2,width=1, alpha=FALSE, filter_deg=FALSE,nb=3,layout=NULL,nodes_label=NULL,pal=NULL,
+draw_network<-function(adj_matrix,title="", size=4, curv=0,width=1, alpha=FALSE, filter_deg=FALSE,nb=3,layout=NULL,nodes_label=NULL,pal=NULL,
                        seed=200, groupes=NULL){
   p=nrow(adj_matrix)
   if(is.null(nb)) nb=round(p/8,0)

@@ -66,8 +66,7 @@ SimCluster <- function(p, k, dens, r){
 #'
 #' @param p number of nodes
 #' @param graph type of graph, among "tree","scale-free","cluster" and "erdos"
-#' @param prob edges probability (for erdös-renyi graphs)
-#' @param dens graph density (for cluster graphs)
+#' @param dens graph density (for cluster graphs) or edges probability (for erdös-renyi graphs)
 #' @param r within/between ratio connection probability (needed for cluster graphs)
 #'
 #' @return the adjacency matrix, in sparse format
@@ -75,7 +74,7 @@ SimCluster <- function(p, k, dens, r){
 #' @importFrom  Matrix Matrix
 #' @importFrom huge huge.generator
 #' @examples generator_graph(p=10,graph="tree")
-generator_graph<-function(p = 20, graph = "tree", prob = 0.1, dens=0.3, r=5){
+generator_graph<-function(p = 20, graph = "tree", dens=0.3, r=2){
   theta = matrix(0, p, p)
   if (graph == "cluster") {
     theta<-SimCluster(p,3,dens,r)
@@ -88,7 +87,7 @@ generator_graph<-function(p = 20, graph = "tree", prob = 0.1, dens=0.3, r=5){
     theta<-SpannTree(p)
   }
   if(graph=="erdos"){
-    theta<- erdos(p=p,prob=prob)
+    theta<- erdos(p=p,prob=dens)
   }
   return(theta = Matrix(theta, sparse = TRUE))
 }
@@ -114,6 +113,7 @@ generator_param<-function(G,signed=FALSE,v=0.01){
   lambda = 1
   p=ncol(G)
   sumlignes=rowSums(matrix(G,p,p))
+  if(sum(sumlignes==0)!=0) sumlignes[sumlignes==0]=0.1
   D=diag(sumlignes+v)
   if(signed){
     Gsign = F_Vec2Sym(F_Sym2Vec(G * matrix(2*rbinom(p^2, 1, .3)-1, p, p)))
@@ -130,7 +130,7 @@ generator_param<-function(G,signed=FALSE,v=0.01){
       omega =lambda*D + G
     }
   }
-  sigma = cov2cor(solve(omega))
+  sigma = solve(omega)
   sim=list(sigma=sigma,omega=omega,cste=lambda)
   return(sim)
 }
@@ -140,14 +140,19 @@ generator_param<-function(G,signed=FALSE,v=0.01){
 #' @param covariates a data.frame or matrix containing data covariates. If not NULL, defines the
 #' number of  simulated rows.
 #' @param n number of rows to simulate
+#' @param norm should the parameters be normalized ?
 #'
-#' @return  Y: the simulated counts
+#' @return  \itemize{
+#' \item{if norm=FALSE}{ Y: the simulated counts}
+#' \item{if norm=TRUE}{ \itemize{
+#'       \item{Y:}{simulated counts}
+#'       \item{U:}{ the normalized Gaussian parameters}}}}
 #' @export
 #' @importFrom  mvtnorm rmvnorm
 #' @examples G=generator_graph(p=10,graph="tree")
 #' sigma=generator_param(G=G)$sigma
 #' generator_PLN(as.matrix(sigma))
-generator_PLN<-function(Sigma,covariates=NULL, n=50){
+generator_PLN<-function(Sigma,covariates=NULL, n=50, norm=FALSE){
   p<-ncol(Sigma)
   if(!is.null(covariates)){
     n<-nrow(covariates)
@@ -163,9 +168,19 @@ generator_PLN<-function(Sigma,covariates=NULL, n=50){
   }else{
     prod=2 # constant for signal
   }
-  Z<- rmvnorm(n, rep(0,nrow(Sigma)), Sigma)
-  Y = matrix(rpois(n*p, exp(Z+prod )), n, p)
-  return(Y)
+  if(norm){
+    D<-diag(Sigma)
+    R<-cov2cor(Sigma)
+    U<- rmvnorm(n, rep(0,p), R)
+    matsig=(matrix(rep(sqrt(D),n),n,p, byrow = TRUE))
+    Y = matrix(rpois(n*p, exp(U*matsig+prod )), n, p)
+    sim=list(Y=Y, U=U)
+  }else{
+    Z<- rmvnorm(n, rep(0,nrow(Sigma)), Sigma)
+    Y = matrix(rpois(n*p, exp(Z+prod )), n, p)
+    sim=Y
+  }
+  return(sim)
 }
 #data_from_scratch:
 
@@ -176,9 +191,9 @@ generator_PLN<-function(Sigma,covariates=NULL, n=50){
 #' @param n wanted number of rows (samples/observations)
 #' @param r within/between connectiviy ratio for cluster graphs
 #' @param covariates a data.frame or matrix containing data covariates.
-#' @param prob edge probability for erdos graphs
-#' @param dens density of edges for cluster graphs
+#' @param dens density of edges for cluster graphs or edge probability for erdos graphs
 #' @param draw boolean, plots the graph if set to TRUE
+#' @param norm should the Gaussian parameters be normalized ?
 #' @param signed boolean: should the graph be composed of positive and negative partial correlations ?
 #' @param v noise parameter of the precision matrix
 #' @return a list containing
@@ -192,12 +207,12 @@ generator_PLN<-function(Sigma,covariates=NULL, n=50){
 #' @importFrom ggraph ggraph geom_edge_link geom_node_point
 #' @examples set.seed(1)
 #' data_from_scratch("tree",p=10,draw=TRUE)
-data_from_scratch<-function(type, p=20,n=50, r=5, covariates=NULL,prob=log(p)/p,dens=log(p)/p,
-                            signed=FALSE,v=0.01,draw=FALSE){
+data_from_scratch<-function(type, p=20,n=50, r=5, covariates=NULL,dens=log(p)/p,
+                            norm=FALSE, signed=FALSE,v=0.01,draw=FALSE){
   # make graph
-  graph<- generator_graph(graph=type,p=p,prob=prob,dens=dens,r=r)
+  graph<- generator_graph(graph=type,p=p,dens=dens,r=r)
   param<-generator_param(G=as.matrix(graph),signed=signed,v=v)
-  data<-generator_PLN(param$sigma,covariates,n)
+  data<-generator_PLN(param$sigma,covariates,n, norm=norm)
   if(draw){
     g=as_tbl_graph(as.matrix(graph)) %>%
       ggraph(layout="nicely")+

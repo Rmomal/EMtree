@@ -5,7 +5,7 @@
 \title{generates data under the PLN model with a certain type of dependency structure, and draws the structure.}
 \usage{
 data_from_scratch(type, p = 20, n = 50, r = 5, covariates = NULL,
-  prob = log(p)/p, dens = log(p)/p, signed = FALSE, v = 0.01,
+  dens = log(p)/p, norm = FALSE, signed = FALSE, v = 0.01,
   draw = FALSE)
 }
 \arguments{
@@ -19,9 +19,9 @@ data_from_scratch(type, p = 20, n = 50, r = 5, covariates = NULL,
 
 \item{covariates}{a data.frame or matrix containing data covariates.}
 
-\item{prob}{edge probability for erdos graphs}
+\item{dens}{density of edges for cluster graphs or edge probability for erdos graphs}
 
-\item{dens}{density of edges for cluster graphs}
+\item{norm}{should the Gaussian parameters be normalized ?}
 
 \item{signed}{boolean: should the graph be composed of positive and negative partial correlations ?}
 

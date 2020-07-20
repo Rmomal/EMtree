@@ -4,10 +4,9 @@
 \alias{draw_network}
 \title{Plots a natwork}
 \usage{
-draw_network(adj_matrix, title = "", size = 4, curv = 0.2,
-  width = 1, alpha = FALSE, filter_deg = FALSE, nb = 3,
-  layout = NULL, nodes_label = NULL, pal = NULL, seed = 200,
-  groupes = NULL)
+draw_network(adj_matrix, title = "", size = 4, curv = 0, width = 1,
+  alpha = FALSE, filter_deg = FALSE, nb = 3, layout = NULL,
+  nodes_label = NULL, pal = NULL, seed = 200, groupes = NULL)
 }
 \arguments{
 \item{adj_matrix}{graph adjacency matrix}

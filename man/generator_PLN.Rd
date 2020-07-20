@@ -4,7 +4,7 @@
 \alias{generator_PLN}
 \title{Simulate count data under the Poisson log-Normal model}
 \usage{
-generator_PLN(Sigma, covariates = NULL, n = 50)
+generator_PLN(Sigma, covariates = NULL, n = 50, norm = FALSE)
 }
 \arguments{
 \item{Sigma}{Covariance matrix of the normal hidden layer of parameters}
@@ -13,9 +13,15 @@ generator_PLN(Sigma, covariates = NULL, n = 50)
 number of  simulated rows.}
 
 \item{n}{number of rows to simulate}
+
+\item{norm}{should the parameters be normalized ?}
 }
 \value{
-Y: the simulated counts
+\itemize{
+\item{if norm=FALSE}{ Y: the simulated counts}
+\item{if norm=TRUE}{ \itemize{
+      \item{Y:}{simulated counts}
+      \item{U:}{ the normalized Gaussian parameters}}}}
 }
 \description{
 Simulate count data under the Poisson log-Normal model
