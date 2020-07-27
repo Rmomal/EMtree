@@ -113,8 +113,8 @@
     </div>
 
     <pre class="usage"><span class='fu'>draw_network</span>(<span class='no'>adj_matrix</span>, <span class='kw'>title</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>curv</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>width</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>filter_deg</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>nb</span> <span class='kw'>=</span> <span class='fl'>3</span>, <span class='kw'>layout</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>nodes_label</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>pal</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>seed</span> <span class='kw'>=</span> <span class='fl'>200</span>, <span class='kw'>groupes</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+  <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>filter_deg</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>nb</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>layout</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>nodes_label</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>pal</span> <span class='kw'>=</span> <span class='st'>"#31374f"</span>, <span class='kw'>groupes</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -164,12 +164,12 @@
       <td><p>optional palette.</p></td>
     </tr>
     <tr>
-      <th>seed</th>
-      <td><p>optional seed for graph reproductibility.</p></td>
-    </tr>
-    <tr>
       <th>groupes</th>
       <td><p>optional vector seperating the nodes into groupes</p></td>
+    </tr>
+    <tr>
+      <th>seed</th>
+      <td><p>optional seed for graph reproductibility.</p></td>
     </tr>
     </table>
 
@@ -195,7 +195,7 @@
 #&gt;   &lt;dbl&gt; &lt;lgl&gt;    &lt;lgl&gt;    &lt;dbl&gt; &lt;chr&gt;         &lt;int&gt; &lt;chr&gt; &lt;lgl&gt;     
 #&gt; 1 10.4  FALSE    TRUE        15 Cluster graph     1 ""    FALSE     
 #&gt; 2  0.55 FALSE    TRUE        12 Cluster graph     2 ""    FALSE     
-#&gt; 3 33.9  TRUE     TRUE        10 Cluster graph     3 "3"   TRUE      
+#&gt; 3 33.9  FALSE    TRUE        10 Cluster graph     3 ""    FALSE     
 #&gt; 4 18.3  FALSE    TRUE        10 Cluster graph     4 ""    FALSE     
 #&gt; 5 20.5  FALSE    TRUE        10 Cluster graph     5 ""    FALSE     
 #&gt; 6  1.58 FALSE    TRUE        13 Cluster graph     6 ""    FALSE     
