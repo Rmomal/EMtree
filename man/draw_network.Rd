@@ -5,8 +5,8 @@
 \title{Plots a natwork}
 \usage{
 draw_network(adj_matrix, title = "", size = 4, curv = 0, width = 1,
-  alpha = FALSE, filter_deg = FALSE, nb = 3, layout = NULL,
-  nodes_label = NULL, pal = NULL, seed = 200, groupes = NULL)
+  alpha = FALSE, filter_deg = FALSE, nb = 1, layout = NULL,
+  nodes_label = NULL, pal = "#31374f", groupes = NULL)
 }
 \arguments{
 \item{adj_matrix}{graph adjacency matrix}
@@ -31,9 +31,9 @@ draw_network(adj_matrix, title = "", size = 4, curv = 0, width = 1,
 
 \item{pal}{optional palette.}
 
-\item{seed}{optional seed for graph reproductibility.}
-
 \item{groupes}{optional vector seperating the nodes into groupes}
+
+\item{seed}{optional seed for graph reproductibility.}
 }
 \value{
 \itemize{

@@ -28,8 +28,8 @@
 #' @importFrom dplyr mutate filter
 #' @examples adj_matrix= SimCluster(p=30,k=3,dens=0.4, r=50)
 #' draw_network(adj_matrix,"Cluster graph", layout="fr",curv=0.1)
-draw_network<-function(adj_matrix,title="", size=4, curv=0,width=1, alpha=FALSE, filter_deg=FALSE,nb=3,layout=NULL,nodes_label=NULL,pal=NULL,
-                       seed=200, groupes=NULL){
+draw_network<-function(adj_matrix,title="", size=4, curv=0,width=1, alpha=FALSE, filter_deg=FALSE,nb=1,
+                       layout=NULL,nodes_label=NULL,pal="#31374f",  groupes=NULL){
   p=nrow(adj_matrix)
   if(is.null(nb)) nb=round(p/8,0)
   binary=FALSE
@@ -61,7 +61,7 @@ draw_network<-function(adj_matrix,title="", size=4, curv=0,width=1, alpha=FALSE,
 
   pal_edges <-  ifelse(is.null(pal), viridisLite::viridis(5, option = "C")[c(3,2,4,1)], pal)
  if(!is.null(groupes)){
-   pal_nodes=c("deepskyblue1","deeppink","orange")
+   pal_nodes<-c("#31374f","#adc9e0","#e7bd42")
    res<-res %>%
      activate(nodes)  %>%
      mutate(finalcolor=groupes)
@@ -84,10 +84,10 @@ draw_network<-function(adj_matrix,title="", size=4, curv=0,width=1, alpha=FALSE,
     geom_edge_arc(aes(edge_width=weight,color = title), strength = curv, show.legend = FALSE)
   }
   g<-g+
-    geom_node_point(aes(color = finalcolor, size = bool_btw), show.legend = FALSE) +
+    geom_node_point(aes(color = finalcolor, size = groupes), show.legend = FALSE) +
     scale_edge_colour_manual(values = pal_edges) +
     scale_color_manual(values = pal_nodes)+
-    scale_size_manual(values = c(2,6))+
+    scale_size_manual(values = c(2,5,6))+
     geom_node_text(aes(label = label), color = "black", size = size) +#,nudge_x = 0.3
     labs(title = title) + theme(plot.title = element_text(hjust = 0.5))
 
