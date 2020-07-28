@@ -2,7 +2,7 @@
 % Please edit documentation in R/F_inference.R
 \name{FitBetaStatic}
 \alias{FitBetaStatic}
-\title{internal function}
+\title{EMtree core computing function}
 \usage{
 FitBetaStatic(beta.init, psi, maxIter = 50, eps1 = 1e-06,
   eps2 = 1e-04, verbatim = TRUE, plot = FALSE)
@@ -15,13 +15,13 @@ wase be deduced from the correlation matrix.}
 
 \item{maxIter}{maximum number of iterations}
 
-\item{eps1}{variation higher bound of beta weights}
+\item{eps1}{higher bound of beta weights variation}
 
-\item{eps2}{variation higher bound of log likelihood}
+\item{eps2}{higher bound of log likelihood variation}
 
-\item{verbatim}{boolean}
+\item{verbatim}{boolean for verbosity}
 
-\item{plot}{boolean}
+\item{plot}{boolean for plotting of the likelihood trajectory}
 }
 \value{
 \itemize{
@@ -33,7 +33,7 @@ wase be deduced from the correlation matrix.}
 }
 }
 \description{
-internal function
+EMtree core computing function
 }
 \examples{
 n=30

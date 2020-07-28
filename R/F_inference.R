@@ -74,7 +74,6 @@ SetLambda <- function(P, M, eps = 1e-6){
     x = (x.max+x.min)/2;
     f = F.x(x)
   }
-  if(abs( 1 - sum(P / (x+M)))>2) browser()
   return(x)
 }
 
@@ -118,16 +117,16 @@ Psi_alpha <- function(CorY, n, cond.tol=1e-10){
 }
 
 #########################################################################
-#' internal function
+#' EMtree core computing function
 #'
 #' @param beta.init initialization of beta weights
 #' @param psi psi matrix, filled with ratios of bivariate probabilities over marginals, which can in the Gaussian
 #' wase be deduced from the correlation matrix.
 #' @param maxIter maximum number of iterations
-#' @param eps1 variation higher bound of beta weights
-#' @param eps2 variation higher bound of log likelihood
-#' @param verbatim boolean
-#' @param plot boolean
+#' @param eps1  higher bound of beta weights variation
+#' @param eps2  higher bound of log likelihood variation
+#' @param verbatim boolean for verbosity
+#' @param plot boolean for plotting of the likelihood trajectory
 #'
 #' @return
 #' \itemize{

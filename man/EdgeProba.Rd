@@ -2,7 +2,7 @@
 % Please edit documentation in R/FunctionsTree.R
 \name{EdgeProba}
 \alias{EdgeProba}
-\title{Computing edges conditional probabilities}
+\title{Computing edge probabilities}
 \usage{
 EdgeProba(W, verbatim = FALSE)
 }
@@ -15,7 +15,7 @@ EdgeProba(W, verbatim = FALSE)
 Edges conditional probabilities computed directly, without using the Kirshner function.
 }
 \description{
-Computing edges conditional probabilities
+Computing edge probabilities
 }
 \examples{
 W = matrix(c(1,1,3,1,1,1,3,1,1),3,3,byrow=TRUE)

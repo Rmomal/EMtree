@@ -1,6 +1,6 @@
 
 
-#' Plots a natwork
+#' Plots a network
 #'
 #' @param adj_matrix graph adjacency matrix
 #' @param title graph title

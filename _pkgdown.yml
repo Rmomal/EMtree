@@ -1,1 +1,46 @@
 destination: docs
+navbar:
+  type: inverse
+  right:
+    - icon: fa-github
+      href: https://github.com/Rmomal/EMtree
+
+reference:
+- title: Main user functions
+  desc: ~
+  contents:
+  - '`EMtree`'
+  - '`ResampleEMtree`'
+  - '`ComparEMtree`'
+  - '`freq_selec`'
+  - '`data_from_scratch`'
+- title: Tools
+  desc:  ~
+  contents:
+  - '`Laplacian`'
+  - '`SumTree`'
+  - '`EdgeProba`'
+
+- title: Computing functions
+  desc:  ~
+  contents:
+  - '`FitBetaStatistic`'
+  - '`Meila`'
+  - '`Psi_alpha`'
+
+- title: For simulations
+  desc: ~
+  contents:
+  - '`generator_PLN`'
+  - '`generator_graph`'
+  - '`generator_param`'
+  - '`SimCluster`'
+  - '`SpannTree`'
+  - '`erdos`'
+- title: Visualizatoins
+  desc: ~
+  contents:
+  - '`draw_network`'
+  - '`compar_graphs`'
+
+

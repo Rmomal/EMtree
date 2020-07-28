@@ -2,7 +2,7 @@
 % Please edit documentation in R/F_Graphs.R
 \name{draw_network}
 \alias{draw_network}
-\title{Plots a natwork}
+\title{Plots a network}
 \usage{
 draw_network(adj_matrix, title = "", size = 4, curv = 0, width = 1,
   alpha = FALSE, filter_deg = FALSE, nb = 1, layout = NULL,
@@ -42,7 +42,7 @@ draw_network(adj_matrix, title = "", size = 4, curv = 0, width = 1,
 }
 }
 \description{
-Plots a natwork
+Plots a network
 }
 \examples{
 adj_matrix= SimCluster(p=30,k=3,dens=0.4, r=50)

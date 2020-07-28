@@ -47,15 +47,12 @@ Meila <- function(W){
   return(M)
 }
 
-#' Computing edges marginal probabilities
+#' Computing edge probabilities using Kirshner (07) formula
 #'
 #' @param W Squared weight matrix
 #'
 #' @return Edges probabilities as defined in Kirshner 2007
-#' @export
-#'
-#' @examples W = matrix(c(1,1,3,1,1,1,3,1,1),3,3,byrow=TRUE)
-#' Kirshner(W)
+#' @nord
 Kirshner<-function(W){
   M=Meila(W)
   Pk = W * M
@@ -64,7 +61,7 @@ Kirshner<-function(W){
 }
 
 
-#' Computing edges conditional probabilities
+#' Computing edge probabilities
 #'
 #' @param W squared weight matrix
 #' @param verebatim controls verbosity

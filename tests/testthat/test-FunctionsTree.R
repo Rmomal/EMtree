@@ -24,6 +24,4 @@ test_that("EdgeProba", {
 test_that("Meila", {
   expect_equal(Meila(simpleW2), res)
 })
-test_that("Kirshner", {
-  expect_equal(Kirshner(simpleW2), res)
-})
+

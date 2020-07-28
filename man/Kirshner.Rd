@@ -2,7 +2,7 @@
 % Please edit documentation in R/FunctionsTree.R
 \name{Kirshner}
 \alias{Kirshner}
-\title{Computing edges marginal probabilities}
+\title{Computing edge probabilities using Kirshner (07) formula}
 \usage{
 Kirshner(W)
 }
@@ -13,9 +13,5 @@ Kirshner(W)
 Edges probabilities as defined in Kirshner 2007
 }
 \description{
-Computing edges marginal probabilities
-}
-\examples{
-W = matrix(c(1,1,3,1,1,1,3,1,1),3,3,byrow=TRUE)
-Kirshner(W)
+Computing edge probabilities using Kirshner (07) formula
 }
