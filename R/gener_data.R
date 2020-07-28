@@ -184,7 +184,7 @@ generator_PLN<-function(Sigma,covariates=NULL, n=50, norm=FALSE){
 }
 #data_from_scratch:
 
-#' generates data under the PLN model with a certain type of dependency structure, and draws the structure.
+#' generates data under the PLN model with a certain type of dependency structure
 #'
 #' @param type type of graph, either "tree", "erdos", "cluster" or "scale-free"
 #' @param p wanted number of columns (species)

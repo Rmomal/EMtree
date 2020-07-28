@@ -2,7 +2,7 @@
 % Please edit documentation in R/gener_data.R
 \name{data_from_scratch}
 \alias{data_from_scratch}
-\title{generates data under the PLN model with a certain type of dependency structure, and draws the structure.}
+\title{generates data under the PLN model with a certain type of dependency structure}
 \usage{
 data_from_scratch(type, p = 20, n = 50, r = 5, covariates = NULL,
   dens = log(p)/p, norm = FALSE, signed = FALSE, v = 0.01,
@@ -37,7 +37,7 @@ a list containing
 }
 }
 \description{
-generates data under the PLN model with a certain type of dependency structure, and draws the structure.
+generates data under the PLN model with a certain type of dependency structure
 }
 \examples{
 set.seed(1)
