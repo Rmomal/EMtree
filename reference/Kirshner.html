@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Computing edges marginal probabilities — Kirshner • EMtree</title>
+<title>Computing edge probabilities using Kirshner (07) formula — Kirshner • EMtree</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Computing edges marginal probabilities — Kirshner" />
-<meta property="og:description" content="Computing edges marginal probabilities" />
+<meta property="og:title" content="Computing edge probabilities using Kirshner (07) formula — Kirshner" />
+<meta property="og:description" content="Computing edge probabilities using Kirshner (07) formula" />
 
 
 
@@ -61,7 +61,7 @@
   <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
-      <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
@@ -89,7 +89,12 @@
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/Rmomal/EMtree">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -103,13 +108,13 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Computing edges marginal probabilities</h1>
+    <h1>Computing edge probabilities using Kirshner (07) formula</h1>
     
     <div class="hidden name"><code>Kirshner.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Computing edges marginal probabilities</p>
+    <p>Computing edge probabilities using Kirshner (07) formula</p>
     </div>
 
     <pre class="usage"><span class='fu'>Kirshner</span>(<span class='no'>W</span>)</pre>
@@ -127,12 +132,6 @@
 
     <p>Edges probabilities as defined in Kirshner 2007</p>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>W</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>3</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>3</span>,<span class='fl'>1</span>,<span class='fl'>1</span>),<span class='fl'>3</span>,<span class='fl'>3</span>,<span class='kw'>byrow</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
-<span class='fu'>Kirshner</span>(<span class='no'>W</span>)</div><div class='output co'>#&gt;           [,1]      [,2]      [,3]
-#&gt; [1,] 0.0000000 0.5714286 0.8571429
-#&gt; [2,] 0.5714286 0.0000000 0.5714286
-#&gt; [3,] 0.8571429 0.5714286 0.0000000</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

@@ -60,7 +60,7 @@
   <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-index">
       <header>
-      <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
@@ -88,7 +88,12 @@
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/Rmomal/EMtree">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -116,7 +121,81 @@
     <tbody>
       <tr>
         <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
+          <h2 id="section-main-user-functions" class="hasAnchor"><a href="#section-main-user-functions" class="anchor"></a>Main user functions</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="EMtree.html">EMtree()</a></code> </p>
+        </td>
+        <td><p>Computes edges probability</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="ResampleEMtree.html">ResampleEMtree()</a></code> </p>
+        </td>
+        <td><p>Resampling procedure for  edges probability</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="ComparEMtree.html">ComparEMtree()</a></code> </p>
+        </td>
+        <td><p>Runs EMtree for several covariates choices</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="freq_selec.html">freq_selec()</a></code> </p>
+        </td>
+        <td><p>Computes edges selection frequency after resampling procedure</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="data_from_scratch.html">data_from_scratch()</a></code> </p>
+        </td>
+        <td><p>generates data under the PLN model with a certain type of dependency structure, and draws the structure.</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-tools" class="hasAnchor"><a href="#section-tools" class="anchor"></a>Tools</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="Laplacian.html">Laplacian()</a></code> </p>
+        </td>
+        <td><p>Compute a matrix Laplacian</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="SumTree.html">SumTree()</a></code> </p>
+        </td>
+        <td><p>Summing over trees (Matrix-tree thm)</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="EdgeProba.html">EdgeProba()</a></code> </p>
+        </td>
+        <td><p>Computing edge probabilities</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-computing-functions" class="hasAnchor"><a href="#section-computing-functions" class="anchor"></a>Computing functions</h2>
           <p class="section-desc"></p>
         </th>
       </tr>
@@ -142,19 +221,19 @@
         <td>
           <p><code><a href="EdgeProba.html">EdgeProba()</a></code> </p>
         </td>
-        <td><p>Computing edges conditional probabilities</p></td>
+        <td><p>Computing edge probabilities</p></td>
       </tr><tr>
         
         <td>
           <p><code><a href="FitBetaStatic.html">FitBetaStatic()</a></code> </p>
         </td>
-        <td><p>internal function</p></td>
+        <td><p>EMtree core computing function</p></td>
       </tr><tr>
         
         <td>
           <p><code><a href="Kirshner.html">Kirshner()</a></code> </p>
         </td>
-        <td><p>Computing edges marginal probabilities</p></td>
+        <td><p>Computing edge probabilities using Kirshner (07) formula</p></td>
       </tr><tr>
         
         <td>
@@ -214,7 +293,7 @@
         <td>
           <p><code><a href="draw_network.html">draw_network()</a></code> </p>
         </td>
-        <td><p>Plots a natwork</p></td>
+        <td><p>Plots a network</p></td>
       </tr><tr>
         
         <td>
@@ -245,6 +324,80 @@
           <p><code><a href="generator_param.html">generator_param()</a></code> </p>
         </td>
         <td><p>Generate simulation parameters from a graph adjacency matrix</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-for-simulations" class="hasAnchor"><a href="#section-for-simulations" class="anchor"></a>For simulations</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="generator_PLN.html">generator_PLN()</a></code> </p>
+        </td>
+        <td><p>Simulate count data under the Poisson log-Normal model</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="generator_graph.html">generator_graph()</a></code> </p>
+        </td>
+        <td><p>Simulate several types of graphs</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="generator_param.html">generator_param()</a></code> </p>
+        </td>
+        <td><p>Generate simulation parameters from a graph adjacency matrix</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="SimCluster.html">SimCluster()</a></code> </p>
+        </td>
+        <td><p>Simulates a cluster graph</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="SpannTree.html">SpannTree()</a></code> </p>
+        </td>
+        <td><p>Simulates a spanning tree graph from `vegan`package</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="erdos.html">erdos()</a></code> </p>
+        </td>
+        <td><p>Simulates an Erdös-Renyi graph</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-visualizatoins" class="hasAnchor"><a href="#section-visualizatoins" class="anchor"></a>Visualizatoins</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="draw_network.html">draw_network()</a></code> </p>
+        </td>
+        <td><p>Plots a network</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="compar_graphs.html">compar_graphs()</a></code> </p>
+        </td>
+        <td><p>Plots networks from several models</p></td>
       </tr>
     </tbody>
     </table>
