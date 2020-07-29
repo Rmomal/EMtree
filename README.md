@@ -15,7 +15,7 @@ Installation
 ``` r
 required_CRAN <- c("Matrix", "purrr","parallel",  "mvtnorm", "vegan","huge",
                    "ggplot2", "magrittr", "dplyr","tidyr", "tibble",
-                   "PLNmodels","ggraph", "tidygraph")
+                   "PLNmodels","ggraph", "tidygraph", "ade4", "viridisLite")
 not_installed_CRAN <- setdiff(required_CRAN, rownames(installed.packages()))
 if (length(not_installed_CRAN) > 0) install.packages(not_installed_CRAN)
 ```

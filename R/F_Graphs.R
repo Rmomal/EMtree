@@ -26,6 +26,7 @@
 #' @importFrom tibble tibble rownames_to_column
 #' @importFrom ggplot2 aes theme labs scale_color_manual scale_size_manual
 #' @importFrom dplyr mutate filter
+#' @importFrom viridisLite viridis
 #' @examples adj_matrix= SimCluster(p=30,k=3,dens=0.4, r=50)
 #' draw_network(adj_matrix,"Cluster graph", layout="fr",curv=0.1)
 draw_network<-function(adj_matrix,title="", size=4, curv=0,width=1, alpha=FALSE, filter_deg=FALSE,nb=1,
@@ -129,6 +130,7 @@ draw_network<-function(adj_matrix,title="", size=4, curv=0,width=1, alpha=FALSE,
 #' @importFrom ggplot2 element_rect element_text aes theme labs scale_color_manual scale_size_manual
 #' @importFrom dplyr mutate filter
 #' @importFrom purrr map reduce
+#' @importFrom viridisLite viridis
 #' @examples
 #'n=30
 #'p=10
