@@ -52,7 +52,7 @@ Meila <- function(W){
 #' @param W Squared weight matrix
 #'
 #' @return Edges probabilities as defined in Kirshner 2007
-#' @nord
+#' @noRd
 Kirshner<-function(W){
   M=Meila(W)
   Pk = W * M

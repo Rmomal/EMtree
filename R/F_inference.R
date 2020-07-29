@@ -145,8 +145,8 @@ Psi_alpha <- function(CorY, n, cond.tol=1e-10){
 #' Y=data_from_scratch("tree",p=p,n=n)$data
 #' beta = matrix(1/10,10,10)
 #' psi=Psi_alpha(cor(Y), n)$psi
-#' FitEM = FitBetaStatic(beta.init=beta, psi=psi, maxIter = 6, verbatim=TRUE, plot=TRUE)
-FitBetaStatic <- function(beta.init, psi, maxIter=50, eps1 = 1e-6,eps2=1e-4, verbatim=TRUE,plot=FALSE){
+#' FitEM = FitBeta(beta.init=beta, psi=psi, maxIter = 6, verbatim=TRUE, plot=TRUE)
+FitBeta <- function(beta.init, psi, maxIter=50, eps1 = 1e-6,eps2=1e-4, verbatim=TRUE,plot=FALSE){
   options(nwarnings = 1)
   beta.tol = 1e-4
   beta.min = 1e-16
@@ -231,7 +231,7 @@ EMtree<-function(PLN.Cor,  maxIter=30, cond.tol=1e-10, verbatim=TRUE, plot=FALSE
 
   beta.unif = matrix(1, p, p); diag(beta.unif) = 0; beta.unif = beta.unif / sum(beta.unif)
 
-  FitEM = FitBetaStatic(beta.init=beta.unif, psi=psi, maxIter = maxIter,
+  FitEM = FitBeta(beta.init=beta.unif, psi=psi, maxIter = maxIter,
                         verbatim=verbatim, plot=plot)
 
   return(FitEM)

@@ -3,7 +3,7 @@
 export(ComparEMtree)
 export(EMtree)
 export(EdgeProba)
-export(FitBetaStatic)
+export(FitBeta)
 export(Laplacian)
 export(Meila)
 export(Psi_alpha)

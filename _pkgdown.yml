@@ -33,7 +33,7 @@ reference:
 - title: Computing functions
   desc:  ~
   contents:
-  - '`FitBetaStatistic`'
+  - '`FitBeta`'
   - '`Meila`'
   - '`Psi_alpha`'
 - title: For simulations
