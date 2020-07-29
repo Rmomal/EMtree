@@ -77,7 +77,7 @@ library(viridis)
 set.seed(200)
 edges_prob<- output$edges_prob
 edges_prob[edges_prob<2/p]<-0
-draw_network(edges_prob,title="Site", pal="dodgerblue3", layout="nicely",curv=0.1)$G
+draw_network(edges_prob,title="Site", pal_edges="dodgerblue3", layout="nicely",curv=0.1)$G
 
 ```
 
@@ -100,13 +100,13 @@ draw_network(df,"Site", layout="nicely")$graph_data
 Comparing network by eye is difficult. In particular, choosing the right layout to do so is often troublesome. Here by default, the circle layout is used so that differences in density are easily seen.
 
 ```{r, fig.height=3.5, fig.width=10}
-compar_graphs(compare_output,alpha=TRUE)$G
+compar_graphs(compare_output,shade=TRUE)$G
 ```
 
 However, the user can decide another layout. The nodes position is preserved along the networks.
 
 ```{r, fig.height=3.5, fig.width=10}
-compar_graphs(compare_output,alpha=FALSE, layout="nicely", curv=0.1, base_model="site")$G
+compar_graphs(compare_output,shade=FALSE, layout="nicely", curv=0.1, base_model="site")$G
 ```
 
 

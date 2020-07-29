@@ -4,7 +4,7 @@
 \alias{compar_graphs}
 \title{Plots networks from several models}
 \usage{
-compar_graphs(allNets, curv = 0.2, width = 1, alpha = TRUE, Ft = 0,
+compar_graphs(allNets, curv = 0.2, width = 1, shade = TRUE, Ft = 0,
   nodes_label = NULL, seed = 123, nb = 3, layout = "circle",
   base_model = NULL)
 }
@@ -15,7 +15,7 @@ compar_graphs(allNets, curv = 0.2, width = 1, alpha = TRUE, Ft = 0,
 
 \item{width}{maximum width for the edges}
 
-\item{alpha}{if TRUE, sets to transparent the edges non-linked to nodes with high betweenness}
+\item{shade}{if TRUE, shades the edges non-linked to nodes with high betweenness}
 
 \item{Ft}{Frequency threshold}
 

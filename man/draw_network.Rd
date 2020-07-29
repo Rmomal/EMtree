@@ -5,8 +5,9 @@
 \title{Plots a network}
 \usage{
 draw_network(adj_matrix, title = "", size = 4, curv = 0, width = 1,
-  alpha = FALSE, filter_deg = FALSE, nb = 1, layout = NULL,
-  nodes_label = NULL, pal = "#31374f", groupes = NULL)
+  shade = FALSE, filter_deg = FALSE, btw_rank = 2, layout = NULL,
+  nodes_label = NULL, nodes_size = c(2, 5), pal_edges = NULL,
+  pal_nodes = NULL, groupes = NULL)
 }
 \arguments{
 \item{adj_matrix}{graph adjacency matrix}
@@ -19,19 +20,21 @@ draw_network(adj_matrix, title = "", size = 4, curv = 0, width = 1,
 
 \item{width}{maximum width for the edges}
 
-\item{alpha}{if TRUE, sets to transparent the edges non-linked to nodes with high betweenness}
+\item{shade}{if TRUE, shades the edges unlinked to nodes with high betweenness}
 
 \item{filter_deg}{selects nodes with a higher degree than filter_deg}
 
-\item{nb}{sets the number of nodes selected by thresholding the beetweenness scores}
+\item{btw_rank}{betweenness rank +1 of highlighted nodes. If set to 1, none are highlighted.}
 
 \item{layout}{optional ggraph layout.}
 
 \item{nodes_label}{optional labels for nodes.}
 
-\item{pal}{optional palette.}
+\item{nodes_size}{size of nodes, possibility to specify a size per group}
 
 \item{groupes}{optional vector seperating the nodes into groupes}
+
+\item{pal}{optional palette.}
 }
 \value{
 \itemize{
@@ -43,6 +46,6 @@ draw_network(adj_matrix, title = "", size = 4, curv = 0, width = 1,
 Plots a network
 }
 \examples{
-adj_matrix= SimCluster(p=30,k=3,dens=0.4, r=50)
-draw_network(adj_matrix,"Cluster graph", layout="fr",curv=0.1)
+adj_matrix= SimCluster(20,2,0.4, 10)
+draw_network(adj_matrix,"Cluster graph", layout="fr", shade=TRUE)
 }
