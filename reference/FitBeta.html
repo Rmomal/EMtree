@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>EMtree core computing function — FitBetaStatic • EMtree</title>
+<title>EMtree core computing function — FitBeta • EMtree</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,7 @@
 
 
 
-<meta property="og:title" content="EMtree core computing function — FitBetaStatic" />
+<meta property="og:title" content="EMtree core computing function — FitBeta" />
 <meta property="og:description" content="EMtree core computing function" />
 
 
@@ -79,13 +79,28 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+  <a>
+    <span class="fa fa-home"></span>
      
   </a>
 </li>
 <li>
+  <a href="../index.html">Home</a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Vignettes
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/Fatala_Net.html">Fatala fishes</a>
+    </li>
+  </ul>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -110,15 +125,15 @@
     <div class="page-header">
     <h1>EMtree core computing function</h1>
     
-    <div class="hidden name"><code>FitBetaStatic.Rd</code></div>
+    <div class="hidden name"><code>FitBeta.Rd</code></div>
     </div>
 
     <div class="ref-description">
     <p>EMtree core computing function</p>
     </div>
 
-    <pre class="usage"><span class='fu'>FitBetaStatic</span>(<span class='no'>beta.init</span>, <span class='no'>psi</span>, <span class='kw'>maxIter</span> <span class='kw'>=</span> <span class='fl'>50</span>, <span class='kw'>eps1</span> <span class='kw'>=</span> <span class='fl'>1e-06</span>,
-  <span class='kw'>eps2</span> <span class='kw'>=</span> <span class='fl'>1e-04</span>, <span class='kw'>verbatim</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+    <pre class="usage"><span class='fu'>FitBeta</span>(<span class='no'>beta.init</span>, <span class='no'>psi</span>, <span class='kw'>maxIter</span> <span class='kw'>=</span> <span class='fl'>50</span>, <span class='kw'>eps1</span> <span class='kw'>=</span> <span class='fl'>1e-06</span>, <span class='kw'>eps2</span> <span class='kw'>=</span> <span class='fl'>1e-04</span>,
+  <span class='kw'>verbatim</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -173,8 +188,8 @@ wase be deduced from the correlation matrix.</p></td>
 <span class='no'>Y</span><span class='kw'>=</span><span class='fu'><a href='data_from_scratch.html'>data_from_scratch</a></span>(<span class='st'>"tree"</span>,<span class='kw'>p</span><span class='kw'>=</span><span class='no'>p</span>,<span class='kw'>n</span><span class='kw'>=</span><span class='no'>n</span>)$<span class='no'>data</span>
 <span class='no'>beta</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fl'>1</span>/<span class='fl'>10</span>,<span class='fl'>10</span>,<span class='fl'>10</span>)
 <span class='no'>psi</span><span class='kw'>=</span><span class='fu'><a href='Psi_alpha.html'>Psi_alpha</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/cor.html'>cor</a></span>(<span class='no'>Y</span>), <span class='no'>n</span>)$<span class='no'>psi</span>
-<span class='no'>FitEM</span> <span class='kw'>=</span> <span class='fu'>FitBetaStatic</span>(<span class='kw'>beta.init</span><span class='kw'>=</span><span class='no'>beta</span>, <span class='kw'>psi</span><span class='kw'>=</span><span class='no'>psi</span>, <span class='kw'>maxIter</span> <span class='kw'>=</span> <span class='fl'>6</span>, <span class='kw'>verbatim</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; 
-#&gt; Likelihoods: 23.50851 , 23.54995 , 23.54996 , </div><div class='img'><img src='FitBetaStatic-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; 
+<span class='no'>FitEM</span> <span class='kw'>=</span> <span class='fu'>FitBeta</span>(<span class='kw'>beta.init</span><span class='kw'>=</span><span class='no'>beta</span>, <span class='kw'>psi</span><span class='kw'>=</span><span class='no'>psi</span>, <span class='kw'>maxIter</span> <span class='kw'>=</span> <span class='fl'>6</span>, <span class='kw'>verbatim</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; 
+#&gt; Likelihoods: 23.50851 , 23.54995 , 23.54996 , </div><div class='img'><img src='FitBeta-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; 
 #&gt; Convergence took 0.05 secs  and  3  iterations.
 #&gt; Likelihood difference = 9.538491e-06 
 #&gt; Betas difference = 2.162571e-08</div></pre>

@@ -41,13 +41,28 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+  <a>
+    <span class="fa fa-home"></span>
      
   </a>
 </li>
 <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
   <a href="reference/index.html">Reference</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Vignettes
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+<li>
+      <a href="articles/Fatala_Net.html">Fatala fishes</a>
+    </li>
+  </ul>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
@@ -74,218 +89,35 @@
 <a href="#emtree" class="anchor"></a>EMtree</h1></div>
 
 <blockquote>
-<p>EMtree infers interaction networks from abundance data. It uses averages over spanning trees within a Poisson log-Normal Model (<a href="https://github.com/jchiquet/PLNmodels%3E">PLNmodels</a>), and involves plotting funcitonalities (using <code>ggraph</code> and <code>tydigraph</code>).</p>
+<p><code>EMtree</code> infers interaction networks from abundance data, implementing the procedure described in <a href="https://besjournals.onlinelibrary.wiley.com/doi/abs/10.1111/2041-210X.13380">Momal <em>et al.</em></a>. This package uses averages over spanning trees within a Poisson log-Normal Model (<a href="https://github.com/jchiquet/PLNmodels%3E">PLNmodels</a>), and involves plotting funcitonalities (using <code>ggraph</code> and <code>tydigraph</code>).</p>
 </blockquote>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
+<div id="cran-dependencies" class="section level3">
+<h3 class="hasAnchor">
+<a href="#cran-dependencies" class="anchor"></a>CRAN dependencies</h3>
+<div class="sourceCode" id="cb1"><pre class="r"><span class="no">required_CRAN</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Matrix"</span>, <span class="st">"purrr"</span>,<span class="st">"parallel"</span>,  <span class="st">"mvtnorm"</span>, <span class="st">"vegan"</span>,<span class="st">"huge"</span>,
+                   <span class="st">"ggplot2"</span>, <span class="st">"magrittr"</span>, <span class="st">"dplyr"</span>,<span class="st">"tidyr"</span>, <span class="st">"tibble"</span>,
+                   <span class="st">"PLNmodels"</span>,<span class="st">"ggraph"</span>, <span class="st">"tidygraph"</span>, <span class="st">"ade4"</span>, <span class="st">"viridisLite"</span>)
+<span class="no">not_installed_CRAN</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sets.html">setdiff</a></span>(<span class="no">required_CRAN</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(<span class="fu"><a href="https://rdrr.io/r/utils/installed.packages.html">installed.packages</a></span>()))
+<span class="kw">if</span> (<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="no">not_installed_CRAN</span>) <span class="kw">&gt;</span> <span class="fl">0</span>) <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="no">not_installed_CRAN</span>)</pre></div>
+</div>
+<div id="installation-of-emtree" class="section level3">
+<h3 class="hasAnchor">
+<a href="#installation-of-emtree" class="anchor"></a>Installation of <code>EMtree</code>
+</h3>
 <p>You can install the development version of EMtree:</p>
-<div class="sourceCode" id="cb1"><pre class="r"><span class="kw pkg">devtools</span><span class="kw ns">::</span><span class="fu">install_github</span>(<span class="st">"Rmomal/EMtree"</span>)</pre></div>
+<div class="sourceCode" id="cb2"><pre class="r"><span class="kw pkg">devtools</span><span class="kw ns">::</span><span class="fu">install_github</span>(<span class="st">"Rmomal/EMtree"</span>)</pre></div>
 </div>
-<div id="example-with-fatala-river-fishes" class="section level2">
+</div>
+<div id="reference" class="section level2">
 <h2 class="hasAnchor">
-<a href="#example-with-fatala-river-fishes" class="anchor"></a>Example with Fatala river fishes</h2>
-<p>This is a basic example which shows you how to infer a network, using Barans95 data from the <code>ade4</code> package.</p>
-<div id="data" class="section level3">
-<h3 class="hasAnchor">
-<a href="#data" class="anchor"></a>Data</h3>
-<div class="sourceCode" id="cb2"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">ade4</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">tidyverse</span>)
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="no">baran95</span>)
-<span class="no">counts</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span>(<span class="no">baran95</span>$<span class="no">fau</span>)
-<span class="no">covar</span> <span class="kw">=</span> <span class="fu">as_tibble</span>(<span class="no">baran95</span>$<span class="no">plan</span>)
-
-<span class="no">n</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(<span class="no">counts</span>)
-<span class="no">p</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span>(<span class="no">counts</span>)</pre></div>
-<div class="sourceCode" id="cb3"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">counts</span>)
-<span class="co">#&gt;   AMA CAS CHI CHL CJO CST CTR CWA CYS DAF EFI ELA GDE GME HFA HFO IAF LFA</span>
-<span class="co">#&gt; 1   0   2   0   3   0   0   0   0   0   0  71   1   5   6   0   0   7   3</span>
-<span class="co">#&gt; 2   0   1   0   0   0   0   0   0   0   0 118   2   3   0   0   0   8   1</span>
-<span class="co">#&gt; 3   0   2   0   3   0   0   0   0   0   0  69   0   6   2   0   0   8   3</span>
-<span class="co">#&gt; 4   0   0   0   2   0   0   0   0   0   0  56   0   0   0   0   0   1   0</span>
-<span class="co">#&gt; 5   0   0   0   0   0   0   0   0   3   0   0   1   1   0   0   0   2   2</span>
-<span class="co">#&gt; 6   0   0   0   0   0   0   0   0   5   0   0   0   2   0   0   0   0   0</span>
-<span class="co">#&gt;   LGR LNI PAA PBR PEL PJU PLE PMO POQ PPA PQQ PTY SEB TIN TLE</span>
-<span class="co">#&gt; 1   3   0   0   5   2   9  26   0   4   0   0   0  22   0   2</span>
-<span class="co">#&gt; 2   7   0   0   0   0   0 113   0   1   0   0   1  18   0   1</span>
-<span class="co">#&gt; 3   0   0   0   1   0   3   0   0   1   0   0   0   3   0   0</span>
-<span class="co">#&gt; 4   2   0   0   0   0   0   0   0   0   0   0   0  15   0   0</span>
-<span class="co">#&gt; 5   5   0   0   0   3   0   0   0   4   0   0   3   0   0   0</span>
-<span class="co">#&gt; 6   9   0   0   2   4   4   0   2   0   0   0   1   0   0   0</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">covar</span>)
-<span class="co">#&gt; # A tibble: 6 x 2</span>
-<span class="co">#&gt;   date  site </span>
-<span class="co">#&gt;   &lt;fct&gt; &lt;fct&gt;</span>
-<span class="co">#&gt; 1 apr93 km03 </span>
-<span class="co">#&gt; 2 apr93 km03 </span>
-<span class="co">#&gt; 3 apr93 km03 </span>
-<span class="co">#&gt; 4 apr93 km03 </span>
-<span class="co">#&gt; 5 apr93 km17 </span>
-<span class="co">#&gt; 6 apr93 km17</span></pre></div>
-</div>
-<div id="fit-pln-model" class="section level3">
-<h3 class="hasAnchor">
-<a href="#fit-pln-model" class="anchor"></a>Fit PLN model</h3>
-<p>This creates a <code>PLNmodels</code> object</p>
-<div class="sourceCode" id="cb4"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">PLNmodels</span>)
-<span class="no">model</span><span class="kw">&lt;-</span><span class="fu"><a href="https://rdrr.io/pkg/PLNmodels/man/PLN.html">PLN</a></span>(<span class="no">counts</span> ~ <span class="no">covar</span>$<span class="no">site</span>)
-<span class="co">#&gt; </span>
-<span class="co">#&gt;  Initialization...</span>
-<span class="co">#&gt;  Adjusting a PLN model with full covariance model</span>
-<span class="co">#&gt;  Post-treatments...</span>
-<span class="co">#&gt;  DONE!</span></pre></div>
-</div>
-<div id="run-emtree-function" class="section level3">
-<h3 class="hasAnchor">
-<a href="#run-emtree-function" class="anchor"></a>Run EMtree function</h3>
-<div class="sourceCode" id="cb5"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">EMtree</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="fl">3</span>)
-<span class="no">output</span><span class="kw">&lt;-</span><span class="fu"><a href="reference/EMtree.html">EMtree</a></span>(<span class="no">model</span>,  <span class="kw">maxIter</span> <span class="kw">=</span> <span class="fl">10</span>, <span class="kw">plot</span><span class="kw">=</span><span class="fl">TRUE</span>)
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Likelihoods: 81.60106 , 81.68395 , 81.684 ,</span></pre></div>
-<p><img src="reference/figures/README-output-1.png" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="co">#&gt; Convergence took 0.4 secs  and  3  iterations.</span></a>
-<a class="sourceLine" id="cb6-3" data-line-number="3"><span class="co">#&gt; Likelihood difference = 5.399854e-05 </span></a>
-<a class="sourceLine" id="cb6-4" data-line-number="4"><span class="co">#&gt; Betas difference = 2.305752e-09</span></a>
-<a class="sourceLine" id="cb6-5" data-line-number="5"><span class="kw">str</span>(output)</a>
-<a class="sourceLine" id="cb6-6" data-line-number="6"><span class="co">#&gt; List of 5</span></a>
-<a class="sourceLine" id="cb6-7" data-line-number="7"><span class="co">#&gt;  $ edges_prob  : num [1:33, 1:33] 0.00 6.78e-05 3.17e-03 7.09e-02 2.84e-03 ...</span></a>
-<a class="sourceLine" id="cb6-8" data-line-number="8"><span class="co">#&gt;  $ edges_weight: num [1:33, 1:33] 0 0.000946 0.000946 0.000947 0.000946 ...</span></a>
-<a class="sourceLine" id="cb6-9" data-line-number="9"><span class="co">#&gt;  $ logpY       : num [1:3] 81.6 81.7 81.7</span></a>
-<a class="sourceLine" id="cb6-10" data-line-number="10"><span class="co">#&gt;  $ maxIter     : num 3</span></a>
-<a class="sourceLine" id="cb6-11" data-line-number="11"><span class="co">#&gt;  $ timeEM      : 'difftime' num 0.398315906524658</span></a>
-<a class="sourceLine" id="cb6-12" data-line-number="12"><span class="co">#&gt;   ..- attr(*, "units")= chr "secs"</span></a></code></pre></div>
-</div>
-<div id="foster-robustness-with-resampling" class="section level3">
-<h3 class="hasAnchor">
-<a href="#foster-robustness-with-resampling" class="anchor"></a>Foster robustness with resampling :</h3>
-<div class="sourceCode" id="cb7"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">parallel</span>)
-<span class="no">resample_output</span><span class="kw">&lt;-</span><span class="fu"><a href="reference/ResampleEMtree.html">ResampleEMtree</a></span>(<span class="kw">counts</span><span class="kw">=</span><span class="no">counts</span>, <span class="kw">covar_matrix</span> <span class="kw">=</span> <span class="no">covar</span>$<span class="no">site</span> , <span class="kw">S</span><span class="kw">=</span><span class="fl">5</span>, <span class="kw">maxIter</span><span class="kw">=</span><span class="fl">10</span>,<span class="kw">cond.tol</span><span class="kw">=</span><span class="fl">1e-8</span>, <span class="kw">cores</span><span class="kw">=</span><span class="fl">1</span>)
-<span class="co">#&gt; </span>
-<span class="co">#&gt; S= 1  [1] 0.7236842</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Convergence took 0.23 secs  and  5  iterations.  0.7236842</span>
-<span class="co">#&gt; S= 2  [1] 0.6052632</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Convergence took 0.16 secs  and  3  iterations.  0.6052632</span>
-<span class="co">#&gt; S= 3  [1] 0.6973684</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Convergence took 0.32 secs  and  7  iterations.  0.6973684</span>
-<span class="co">#&gt; S= 4  [1] 0.7894737</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Convergence took 0.13 secs  and  3  iterations.  0.7894737</span>
-<span class="co">#&gt; S= 5  [1] 0.8815789</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Convergence took 0.26 secs  and  6  iterations.  0.8815789</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">resample_output</span>)
-<span class="co">#&gt; List of 3</span>
-<span class="co">#&gt;  $ Pmat   : num [1:5, 1:528] 3.86e-03 5.74e-03 4.27e-04 5.08e-05 2.41e-05 ...</span>
-<span class="co">#&gt;  $ maxIter: num [1:5] 5 3 7 3 6</span>
-<span class="co">#&gt;  $ times  : 'difftime' num [1:5] 0.230384111404419 0.160486936569214 0.315670013427734 0.13437294960022 ...</span>
-<span class="co">#&gt;   ..- attr(*, "units")= chr "secs"</span></pre></div>
-</div>
-<div id="several-models-with-resampling" class="section level3">
-<h3 class="hasAnchor">
-<a href="#several-models-with-resampling" class="anchor"></a>Several models with resampling :</h3>
-<div class="sourceCode" id="cb8"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">parallel</span>)
-<span class="no">tested_models</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="fl">1</span>,<span class="fl">2</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">2</span>))
-<span class="no">models_names</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"date"</span>,<span class="st">"site"</span>,<span class="st">"date + site"</span>)
-<span class="no">compare_output</span><span class="kw">&lt;-</span><span class="fu"><a href="reference/ComparEMtree.html">ComparEMtree</a></span>(<span class="no">counts</span>, <span class="kw">covar_matrix</span><span class="kw">=</span><span class="no">covar</span>, <span class="kw">models</span><span class="kw">=</span><span class="no">tested_models</span>, <span class="kw">m_names</span><span class="kw">=</span><span class="no">models_names</span>, <span class="kw">Pt</span><span class="kw">=</span><span class="fl">0.15</span>,  <span class="kw">S</span><span class="kw">=</span><span class="fl">3</span>, <span class="kw">maxIter</span><span class="kw">=</span><span class="fl">5</span>,<span class="kw">cond.tol</span><span class="kw">=</span><span class="fl">1e-8</span>,<span class="kw">cores</span><span class="kw">=</span><span class="fl">1</span>)
-<span class="co">#&gt; </span>
-<span class="co">#&gt; model  date</span>
-<span class="co">#&gt; S= 1  </span>
-<span class="co">#&gt; Convergence took 0.16 secs  and  3  iterations. </span>
-<span class="co">#&gt; S= 2  </span>
-<span class="co">#&gt; Convergence took 0.19 secs  and  4  iterations. </span>
-<span class="co">#&gt; S= 3  </span>
-<span class="co">#&gt; Convergence took 0.18 secs  and  4  iterations. </span>
-<span class="co">#&gt; model  site</span>
-<span class="co">#&gt; S= 1  </span>
-<span class="co">#&gt; Convergence took 0.23 secs  and  5  iterations. </span>
-<span class="co">#&gt; S= 2  </span>
-<span class="co">#&gt; Convergence took 0.15 secs  and  3  iterations. </span>
-<span class="co">#&gt; S= 3  </span>
-<span class="co">#&gt; Convergence took 0.21 secs  and  5  iterations. </span>
-<span class="co">#&gt; model  date + site</span>
-<span class="co">#&gt; S= 1  </span>
-<span class="co">#&gt; Convergence took 0.22 secs  and  5  iterations. </span>
-<span class="co">#&gt; S= 2  </span>
-<span class="co">#&gt; Convergence took 0.14 secs  and  3  iterations. </span>
-<span class="co">#&gt; S= 3  </span>
-<span class="co">#&gt; Convergence took 0.22 secs  and  5  iterations.</span>
-
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">compare_output</span>)
-<span class="co">#&gt; Classes 'tbl_df', 'tbl' and 'data.frame':    1584 obs. of  4 variables:</span>
-<span class="co">#&gt;  $ node1 : chr  "1" "1" "2" "1" ...</span>
-<span class="co">#&gt;  $ node2 : chr  "2" "3" "3" "4" ...</span>
-<span class="co">#&gt;  $ model : chr  "date" "date" "date" "date" ...</span>
-<span class="co">#&gt;  $ weight: num  0 0 0 0 0 ...</span></pre></div>
-</div>
-<div id="graphics" class="section level3">
-<h3 class="hasAnchor">
-<a href="#graphics" class="anchor"></a>Graphics</h3>
-<div id="from-emtree-output" class="section level4">
-<h4 class="hasAnchor">
-<a href="#from-emtree-output" class="anchor"></a>From <code>EMtree</code> output</h4>
-<p>Simple network:</p>
-<div class="sourceCode" id="cb9"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">ggraph</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">tidygraph</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">viridis</span>)
-
-<span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="fl">200</span>)
-<span class="no">edges_prob</span><span class="kw">&lt;-</span> <span class="no">output</span>$<span class="no">edges_prob</span>
-<span class="no">edges_prob</span>[<span class="no">edges_prob</span><span class="kw">&lt;</span><span class="fl">2</span>/<span class="no">p</span>]<span class="kw">&lt;-</span><span class="fl">0</span>
-<span class="fu"><a href="reference/draw_network.html">draw_network</a></span>(<span class="no">edges_prob</span>,<span class="kw">title</span><span class="kw">=</span><span class="st">"Site"</span>, <span class="kw">pal</span><span class="kw">=</span><span class="st">"dodgerblue3"</span>, <span class="kw">layout</span><span class="kw">=</span><span class="st">"nicely"</span>,<span class="kw">curv</span><span class="kw">=</span><span class="fl">0.1</span>)$<span class="no">G</span></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-5-1.png" style="display: block; margin: auto;"></p>
-</div>
-<div id="from-resampleemtree-output" class="section level4">
-<h4 class="hasAnchor">
-<a href="#from-resampleemtree-output" class="anchor"></a>From <code>ResampleEMtree</code> output</h4>
-<div class="sourceCode" id="cb10"><pre class="r">
-<span class="no">df</span><span class="kw">&lt;-</span><span class="fu"><a href="reference/freq_selec.html">freq_selec</a></span>(<span class="no">resample_output</span>$<span class="no">Pmat</span>,<span class="kw">Pt</span><span class="kw">=</span><span class="fl">2</span>/<span class="no">p</span>+<span class="fl">0.1</span>)
-
-<span class="fu"><a href="reference/draw_network.html">draw_network</a></span>(<span class="no">df</span>,<span class="st">"Site"</span>, <span class="kw">layout</span><span class="kw">=</span><span class="st">"nicely"</span>)$<span class="no">G</span></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-6-1.png" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb11"><pre class="r">
-<span class="no">df</span>[<span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span>(<span class="no">df</span><span class="kw">&lt;</span><span class="fl">1e-6</span>)]<span class="kw">=</span><span class="fl">0</span>
-<span class="fu"><a href="reference/draw_network.html">draw_network</a></span>(<span class="no">df</span>,<span class="st">"Site"</span>, <span class="kw">layout</span><span class="kw">=</span><span class="st">"nicely"</span>)$<span class="no">G</span></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-6-2.png" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb12"><pre class="r"><span class="fu"><a href="reference/draw_network.html">draw_network</a></span>(<span class="no">df</span>,<span class="st">"Site"</span>, <span class="kw">layout</span><span class="kw">=</span><span class="st">"nicely"</span>)$<span class="no">graph_data</span>
-<span class="co">#&gt; # A tbl_graph: 33 nodes and 88 edges</span>
-<span class="co">#&gt; #</span>
-<span class="co">#&gt; # An undirected simple graph with 1 component</span>
-<span class="co">#&gt; #</span>
-<span class="co">#&gt; # Node Data: 33 x 8 (active)</span>
-<span class="co">#&gt;     btw bool_btw bool_deg   deg title  name label finalcolor</span>
-<span class="co">#&gt;   &lt;dbl&gt; &lt;lgl&gt;    &lt;lgl&gt;    &lt;dbl&gt; &lt;chr&gt; &lt;int&gt; &lt;chr&gt; &lt;lgl&gt;     </span>
-<span class="co">#&gt; 1  16.3 FALSE    TRUE         8 Site      1 ""    FALSE     </span>
-<span class="co">#&gt; 2  11   FALSE    TRUE         4 Site      2 ""    FALSE     </span>
-<span class="co">#&gt; 3   2   FALSE    TRUE         2 Site      3 ""    FALSE     </span>
-<span class="co">#&gt; 4   0   FALSE    TRUE         4 Site      4 ""    FALSE     </span>
-<span class="co">#&gt; 5   0   FALSE    TRUE         3 Site      5 ""    FALSE     </span>
-<span class="co">#&gt; 6  23.5 FALSE    TRUE         4 Site      6 ""    FALSE     </span>
-<span class="co">#&gt; # … with 27 more rows</span>
-<span class="co">#&gt; #</span>
-<span class="co">#&gt; # Edge Data: 88 x 6</span>
-<span class="co">#&gt;    from    to weight btw.weights neibs title</span>
-<span class="co">#&gt;   &lt;int&gt; &lt;int&gt;  &lt;dbl&gt;       &lt;dbl&gt; &lt;lgl&gt; &lt;chr&gt;</span>
-<span class="co">#&gt; 1     1     4    0.2        1.79 FALSE Site </span>
-<span class="co">#&gt; 2     1     7    0.4        1.25 FALSE Site </span>
-<span class="co">#&gt; 3     1     8    0.2        1.79 FALSE Site </span>
-<span class="co">#&gt; # … with 85 more rows</span></pre></div>
-</div>
-<div id="facet-for-plotting-several-models-in-one-shot" class="section level4">
-<h4 class="hasAnchor">
-<a href="#facet-for-plotting-several-models-in-one-shot" class="anchor"></a>Facet for plotting several models in one shot</h4>
-<p>Comparing network by eye is difficult. In particular, choosing the right layout to do so is often troublesome. Here by default, the circle layout is used so that differences in density are easily seen.</p>
-<div class="sourceCode" id="cb13"><pre class="r"><span class="fu"><a href="reference/compar_graphs.html">compar_graphs</a></span>(<span class="no">compare_output</span>,<span class="kw">alpha</span><span class="kw">=</span><span class="fl">TRUE</span>)$<span class="no">G</span></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-7-1.png" style="display: block; margin: auto;"></p>
-<p>However, the user can decide another layout. The nodes position is preserved along the networks.</p>
-<div class="sourceCode" id="cb14"><pre class="r"><span class="fu"><a href="reference/compar_graphs.html">compar_graphs</a></span>(<span class="no">compare_output</span>,<span class="kw">alpha</span><span class="kw">=</span><span class="fl">FALSE</span>, <span class="kw">layout</span><span class="kw">=</span><span class="st">"nicely"</span>, <span class="kw">curv</span><span class="kw">=</span><span class="fl">0.1</span>, <span class="kw">base_model</span><span class="kw">=</span><span class="st">"site"</span>)$<span class="no">G</span></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-8-1.png" style="display: block; margin: auto;"></p>
-</div>
-</div>
+<a href="#reference" class="anchor"></a>Reference</h2>
+<p>Please cite our work using the following reference:</p>
+<ul>
+<li>Momal, Raphaëlle, Stéphane Robin, and Christophe Ambroise. “Tree‐based inference of species interaction networks from abundance data.” <em>Methods in Ecology and Evolution</em> 11.5 (2020): 621-632.</li>
+</ul>
 </div>
 </div>
   </div>
