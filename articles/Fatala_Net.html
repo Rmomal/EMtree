@@ -152,7 +152,7 @@
 ## Likelihoods: -45.40118 , -45.33161 , -45.33147 , -45.33139 ,</code></pre>
 <p><img src="Fatala_Net_files/figure-html/output-1.png" width="700"></p>
 <pre><code>## 
-## Convergence took 0.23 secs  and  4  iterations.
+## Convergence took 0.22 secs  and  4  iterations.
 ## Likelihood difference = 8.032151e-05 
 ## Betas difference = 2.251246e-09</code></pre>
 <div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">output</span>)</pre></body></html></div>
@@ -162,7 +162,7 @@
 ##  $ logpY       : num [1:4] -45.4 -45.3 -45.3 -45.3
 ##  $ maxIter     : num 4
 ##  $ norm.cst    : num 2.07e-50
-##  $ timeEM      : 'difftime' num 0.231255054473877
+##  $ timeEM      : 'difftime' num 0.215882301330566
 ##   ..- attr(*, "units")= chr "secs"</code></pre>
 </div>
 <div id="foster-robustness-with-resampling" class="section level2">
@@ -179,7 +179,7 @@
 <pre><code>## List of 3
 ##  $ Pmat   : num [1:5, 1:528] 0.00118 0.00288 0.00504 0.01934 0.00641 ...
 ##  $ maxIter: num [1:5] 3 6 3 6 6
-##  $ times  : 'difftime' num [1:5] 0.169563293457031 0.296403169631958 0.167448997497559 0.291896343231201 ...
+##  $ times  : 'difftime' num [1:5] 0.160723686218262 0.278316020965576 0.158704042434692 0.279284477233887 ...
 ##   ..- attr(*, "units")= chr "secs"</code></pre>
 </div>
 <div id="several-models-with-resampling" class="section level2">
@@ -223,7 +223,7 @@
 <span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="fl">200</span>)
 <span class="no">edges_prob</span><span class="kw">&lt;-</span> <span class="no">output</span>$<span class="no">edges_prob</span>
 <span class="no">edges_prob</span>[<span class="no">edges_prob</span><span class="kw">&lt;</span><span class="fl">2</span>/<span class="no">p</span>]<span class="kw">&lt;-</span><span class="fl">0</span>
-<span class="fu"><a href="../reference/draw_network.html">draw_network</a></span>(<span class="no">edges_prob</span>,<span class="kw">title</span><span class="kw">=</span><span class="st">"Site"</span>, <span class="kw">pal</span><span class="kw">=</span><span class="st">"dodgerblue3"</span>, <span class="kw">layout</span><span class="kw">=</span><span class="st">"nicely"</span>,<span class="kw">curv</span><span class="kw">=</span><span class="fl">0.1</span>)$<span class="no">G</span></pre></body></html></div>
+<span class="fu"><a href="../reference/draw_network.html">draw_network</a></span>(<span class="no">edges_prob</span>,<span class="kw">title</span><span class="kw">=</span><span class="st">"Site"</span>, <span class="kw">pal_edges</span><span class="kw">=</span><span class="st">"dodgerblue3"</span>, <span class="kw">layout</span><span class="kw">=</span><span class="st">"nicely"</span>,<span class="kw">curv</span><span class="kw">=</span><span class="fl">0.1</span>)$<span class="no">G</span></pre></body></html></div>
 <p><img src="Fatala_Net_files/figure-html/unnamed-chunk-5-1.png" width="432"></p>
 </div>
 <div id="from-resampleemtree-output" class="section level3">
@@ -264,10 +264,10 @@
 <h3 class="hasAnchor">
 <a href="#facet-for-plotting-several-models-in-one-shot" class="anchor"></a>Facet for plotting several models in one shot</h3>
 <p>Comparing network by eye is difficult. In particular, choosing the right layout to do so is often troublesome. Here by default, the circle layout is used so that differences in density are easily seen.</p>
-<div class="sourceCode" id="cb26"><html><body><pre class="r"><span class="fu"><a href="../reference/compar_graphs.html">compar_graphs</a></span>(<span class="no">compare_output</span>,<span class="kw">alpha</span><span class="kw">=</span><span class="fl">TRUE</span>)$<span class="no">G</span></pre></body></html></div>
+<div class="sourceCode" id="cb26"><html><body><pre class="r"><span class="fu"><a href="../reference/compar_graphs.html">compar_graphs</a></span>(<span class="no">compare_output</span>,<span class="kw">shade</span><span class="kw">=</span><span class="fl">TRUE</span>)$<span class="no">G</span></pre></body></html></div>
 <p><img src="Fatala_Net_files/figure-html/unnamed-chunk-7-1.png" width="960"></p>
 <p>However, the user can decide another layout. The nodes position is preserved along the networks.</p>
-<div class="sourceCode" id="cb27"><html><body><pre class="r"><span class="fu"><a href="../reference/compar_graphs.html">compar_graphs</a></span>(<span class="no">compare_output</span>,<span class="kw">alpha</span><span class="kw">=</span><span class="fl">FALSE</span>, <span class="kw">layout</span><span class="kw">=</span><span class="st">"nicely"</span>, <span class="kw">curv</span><span class="kw">=</span><span class="fl">0.1</span>, <span class="kw">base_model</span><span class="kw">=</span><span class="st">"site"</span>)$<span class="no">G</span></pre></body></html></div>
+<div class="sourceCode" id="cb27"><html><body><pre class="r"><span class="fu"><a href="../reference/compar_graphs.html">compar_graphs</a></span>(<span class="no">compare_output</span>,<span class="kw">shade</span><span class="kw">=</span><span class="fl">FALSE</span>, <span class="kw">layout</span><span class="kw">=</span><span class="st">"nicely"</span>, <span class="kw">curv</span><span class="kw">=</span><span class="fl">0.1</span>, <span class="kw">base_model</span><span class="kw">=</span><span class="st">"site"</span>)$<span class="no">G</span></pre></body></html></div>
 <p><img src="Fatala_Net_files/figure-html/unnamed-chunk-8-1.png" width="960"></p>
 </div>
 </div>
