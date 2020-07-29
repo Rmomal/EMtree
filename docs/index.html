@@ -99,7 +99,7 @@
 <a href="#cran-dependencies" class="anchor"></a>CRAN dependencies</h3>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">required_CRAN &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Matrix"</span>, <span class="st">"purrr"</span>,<span class="st">"parallel"</span>,  <span class="st">"mvtnorm"</span>, <span class="st">"vegan"</span>,<span class="st">"huge"</span>,
                    <span class="st">"ggplot2"</span>, <span class="st">"magrittr"</span>, <span class="st">"dplyr"</span>,<span class="st">"tidyr"</span>, <span class="st">"tibble"</span>,
-                   <span class="st">"PLNmodels"</span>,<span class="st">"ggraph"</span>, <span class="st">"tidygraph"</span>)
+                   <span class="st">"PLNmodels"</span>,<span class="st">"ggraph"</span>, <span class="st">"tidygraph"</span>, <span class="st">"ade4"</span>, <span class="st">"viridisLite"</span>)
 not_installed_CRAN &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/sets.html">setdiff</a></span>(required_CRAN, <span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(<span class="kw"><a href="https://rdrr.io/r/utils/installed.packages.html">installed.packages</a></span>()))
 <span class="cf">if</span> (<span class="kw"><a href="https://rdrr.io/r/base/length.html">length</a></span>(not_installed_CRAN) <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>) <span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(not_installed_CRAN)</code></pre></div>
 </div>
