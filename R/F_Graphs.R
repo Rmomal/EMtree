@@ -13,7 +13,8 @@
 #' @param layout optional ggraph layout.
 #' @param nodes_label optional labels for nodes.
 #' @param nodes_size size of nodes, possibility to specify a size per group
-#' @param pal optional palette.
+#' @param pal_edges optional palette for edges
+#' @param pal_nodes optional palette for nodes
 #' @param groupes optional vector seperating the nodes into groupes
 #'
 #' @return \itemize{
@@ -27,6 +28,7 @@
 #' @importFrom ggplot2 aes theme labs scale_color_manual scale_size_manual
 #' @importFrom dplyr mutate filter
 #' @importFrom viridisLite viridis
+#' @importFrom tibble as_tibble
 #' @examples adj_matrix= SimCluster(20,2,0.4, 10)
 #' draw_network(adj_matrix,"Cluster graph", layout="fr", shade=TRUE)
 draw_network<-function(adj_matrix,title="", size=4, curv=0,width=1, shade=FALSE, filter_deg=FALSE,btw_rank=2,
@@ -63,7 +65,7 @@ draw_network<-function(adj_matrix,title="", size=4, curv=0,width=1, shade=FALSE,
    if(is.null(pal_nodes)) pal_nodes<-c("#31374f","#adc9e0","#e7bd42")
  }else{
    groupes=unlist(res %>%
-     activate(nodes)  %>% dplyr::select(bool_btw) %>% as_tibble())
+     activate(nodes)  %>% dplyr::select(bool_btw) %>% tibble::as_tibble())
    if(is.null(pal_nodes)) pal_nodes<-c("#31374f","#e7bd42")
  }
   res<-res %>%

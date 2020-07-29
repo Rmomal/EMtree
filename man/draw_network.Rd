@@ -32,9 +32,11 @@ draw_network(adj_matrix, title = "", size = 4, curv = 0, width = 1,
 
 \item{nodes_size}{size of nodes, possibility to specify a size per group}
 
-\item{groupes}{optional vector seperating the nodes into groupes}
+\item{pal_edges}{optional palette for edges}
 
-\item{pal}{optional palette.}
+\item{pal_nodes}{optional palette for nodes}
+
+\item{groupes}{optional vector seperating the nodes into groupes}
 }
 \value{
 \itemize{
