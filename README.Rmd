@@ -17,117 +17,29 @@ knitr::opts_chunk$set(
 [![Codecov test coverage](https://codecov.io/gh/Rmomal/EMtree/branch/master/graph/badge.svg)](https://codecov.io/gh/Rmomal/EMtree?branch=master)
 [![DOI](https://zenodo.org/badge/166967948.svg)](https://zenodo.org/badge/latestdoi/166967948)
 
-> EMtree infers interaction networks from abundance data. It uses averages over spanning trees within a Poisson log-Normal Model ([PLNmodels](https://github.com/jchiquet/PLNmodels>)), and involves plotting funcitonalities (using `ggraph` and `tydigraph`).
+> `EMtree` infers interaction networks from abundance data, implementing the procedure described in [Momal *et al.*](https://besjournals.onlinelibrary.wiley.com/doi/abs/10.1111/2041-210X.13380). This package uses averages over spanning trees within a Poisson log-Normal Model ([PLNmodels](https://github.com/jchiquet/PLNmodels>)), and involves plotting funcitonalities (using `ggraph` and `tydigraph`).
 
 ## Installation
 
+### CRAN dependencies
+
+```{r,eval=FALSE}
+required_CRAN <- c("Matrix", "purrr","parallel",  "mvtnorm", "vegan","huge",
+                   "ggplot2", "magrittr", "dplyr","tidyr", "tibble",
+                   "PLNmodels","ggraph", "tidygraph")
+not_installed_CRAN <- setdiff(required_CRAN, rownames(installed.packages()))
+if (length(not_installed_CRAN) > 0) install.packages(not_installed_CRAN)
+```
+
+### Installation of `EMtree`
 You can install the development version of EMtree:
 
 ``` r
 devtools::install_github("Rmomal/EMtree")
 ```
 
-## Example with Fatala river fishes
+## Reference
+Please cite our work using the following reference:
 
-This is a basic example which shows you how to infer a network, using Barans95 data from the `ade4` package.
-
-### Data
-
-
-```{r fish_data , message=FALSE}
-library(ade4)
-library(tidyverse)
-data(baran95)
-counts = as.matrix(baran95$fau)
-covar = as_tibble(baran95$plan)
-
-n = nrow(counts)
-p = ncol(counts)
-```
-```{r}
-head(counts)
-head(covar)
-```
-
-### Fit PLN model
-This creates a `PLNmodels` object
-```{r}
-library(PLNmodels)
-model<-PLN(counts ~ covar$site)
-```
-
-### Run EMtree function
-
-```{r output}
-library(EMtree)
-set.seed(3)
-output<-EMtree(model,  maxIter = 10, plot=TRUE)
-str(output)
-```
-
-### Foster robustness with resampling :
-
-
-```{r, cache=TRUE}
-library(parallel)
-resample_output<-ResampleEMtree(counts=counts, covar_matrix = covar$site , S=5, maxIter=10,cond.tol=1e-8, cores=1)
-str(resample_output)
-```
-
-### Several models with resampling :
-
-
-```{r, cache=FALSE}
-library(parallel)
-tested_models=list(1,2,c(1,2))
-models_names=c("date","site","date + site")
-compare_output<-ComparEMtree(counts, covar_matrix=covar, models=tested_models, m_names=models_names, Pt=0.15,  S=3, maxIter=5,cond.tol=1e-8,cores=1)
-
-str(compare_output)
-```
-### Graphics
-#### From `EMtree` output
-
-Simple network:
-
-```{r, fig.asp=1, fig.width=4.5, fig.fullwidth=FALSE, message=FALSE}
-library(ggraph)
-library(tidygraph)
-library(viridis)
-
-set.seed(200)
-edges_prob<- output$edges_prob
-edges_prob[edges_prob<2/p]<-0
-draw_network(edges_prob,title="Site", pal="dodgerblue3", layout="nicely",curv=0.1)$G
-
-```
-
-#### From `ResampleEMtree` output
-
-```{r, fig.height=4.5, fig.width=4.5}
-
-df<-freq_selec(resample_output$Pmat,Pt=2/p+0.1)
-
-draw_network(df,"Site", layout="nicely")$G
-
-df[which(df<1e-6)]=0
-draw_network(df,"Site", layout="nicely")$G
-draw_network(df,"Site", layout="nicely")$graph_data
-
-```
-
-#### Facet for plotting several models in one shot
-
-Comparing network by eye is difficult. In particular, choosing the right layout to do so is often troublesome. Here by default, the circle layout is used so that differences in density are easily seen.
-
-```{r, fig.height=3.5, fig.width=10}
-compar_graphs(compare_output,alpha=TRUE)$G
-```
-
-However, the user can decide another layout. The nodes position is preserved along the networks.
-
-```{r}
-compar_graphs(compare_output,alpha=FALSE, layout="nicely", curv=0.1, base_model="site")$G
-```
-
+- Momal, Raphaëlle, Stéphane Robin, and Christophe Ambroise. "Tree‐based inference of species interaction networks from abundance data." *Methods in Ecology and Evolution* 11.5 (2020): 621-632.
 

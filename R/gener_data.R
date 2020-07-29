@@ -81,7 +81,6 @@ generator_graph<-function(p = 20, graph = "tree", dens=0.3, r=2){
   }
   if (graph == "scale-free") {
     theta = huge.generator(d=p,graph="scale-free",verbose = FALSE)$theta
-
   }
   if(graph=="tree"){
     theta<-SpannTree(p)

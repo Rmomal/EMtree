@@ -1,0 +1,113 @@
+---
+title: "Fatala fishes"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Fatala fishes}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+ 
+This is a basic example which shows you how to infer a network, using Barans95 data from the `ade4` package.
+
+## Data
+
+
+```{r fish_data , message=FALSE}
+library(ade4)
+library(tidyverse)
+data(baran95)
+counts = as.matrix(baran95$fau)
+covar = as_tibble(baran95$plan)
+
+n = nrow(counts)
+p = ncol(counts)
+```
+```{r}
+head(counts)
+head(covar)
+```
+
+## Fit PLN model
+This creates a `PLNmodels` object
+```{r}
+library(PLNmodels)
+model<-PLN(counts ~ covar$site)
+```
+
+## Run EMtree function
+
+```{r output}
+library(EMtree)
+set.seed(3)
+output<-EMtree(model,  maxIter = 10, plot=TRUE)
+str(output)
+```
+
+## Foster robustness with resampling :
+
+
+```{r, cache=TRUE}
+library(parallel)
+resample_output<-ResampleEMtree(counts=counts, covar_matrix = covar$site , S=5, maxIter=10,cond.tol=1e-8, cores=1)
+str(resample_output)
+```
+
+## Several models with resampling :
+
+
+```{r, cache=FALSE}
+library(parallel)
+tested_models=list(1,2,c(1,2))
+models_names=c("date","site","date + site")
+compare_output<-ComparEMtree(counts, covar_matrix=covar, models=tested_models, m_names=models_names, Pt=0.15,  S=3, maxIter=5,cond.tol=1e-8,cores=1)
+
+str(compare_output)
+```
+
+## Visuals
+### From `EMtree` output
+
+Simple network:
+
+```{r, fig.asp=1, fig.width=4.5, fig.fullwidth=FALSE, message=FALSE}
+library(ggraph)
+library(tidygraph)
+library(viridis)
+
+set.seed(200)
+edges_prob<- output$edges_prob
+edges_prob[edges_prob<2/p]<-0
+draw_network(edges_prob,title="Site", pal="dodgerblue3", layout="nicely",curv=0.1)$G
+
+```
+
+### From `ResampleEMtree` output
+
+```{r, fig.height=4.5, fig.width=4.5}
+
+df<-freq_selec(resample_output$Pmat,Pt=2/p+0.1)
+
+draw_network(df,"Site", layout="nicely")$G
+
+df[which(df<1e-6)]=0
+draw_network(df,"Site", layout="nicely")$G
+draw_network(df,"Site", layout="nicely")$graph_data
+
+```
+
+### Facet for plotting several models in one shot
+
+Comparing network by eye is difficult. In particular, choosing the right layout to do so is often troublesome. Here by default, the circle layout is used so that differences in density are easily seen.
+
+```{r, fig.height=3.5, fig.width=10}
+compar_graphs(compare_output,alpha=TRUE)$G
+```
+
+However, the user can decide another layout. The nodes position is preserved along the networks.
+
+```{r, fig.height=3.5, fig.width=10}
+compar_graphs(compare_output,alpha=FALSE, layout="nicely", curv=0.1, base_model="site")$G
+```
+
+

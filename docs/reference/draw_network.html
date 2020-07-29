@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Title — draw_network • EMtree</title>
+<title>Plots a network — draw_network • EMtree</title>
 
 
 <!-- jquery -->
@@ -18,13 +18,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+<!-- headroom.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -33,8 +35,8 @@
 
 
 
-<meta property="og:title" content="Title — draw_network" />
-<meta property="og:description" content="Title" />
+<meta property="og:title" content="Plots a network — draw_network" />
+<meta property="og:description" content="Plots a network" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -50,12 +52,13 @@
 <![endif]-->
 
 
+
   </head>
 
   <body>
     <div class="container template-reference-topic">
       <header>
-      <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
@@ -74,16 +77,33 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa fas fa-home fa-lg"></span>
      
   </a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/Fatala_Net.html">Fatala fishes</a>
+    </li>
+  </ul>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/Rmomal/EMtree">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -91,23 +111,24 @@
 </div><!--/.navbar -->
 
       
+
       </header>
 
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Title</h1>
+    <h1>Plots a network</h1>
     
     <div class="hidden name"><code>draw_network.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Title</p>
+    <p>Plots a network</p>
     </div>
 
-    <pre class="usage"><span class='fu'>draw_network</span>(<span class='no'>adj_matrix</span>, <span class='kw'>title</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>curv</span> <span class='kw'>=</span> <span class='fl'>0.2</span>,
-  <span class='kw'>filter_deg</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>layout</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>nodes_label</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>pal</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>seed</span> <span class='kw'>=</span> <span class='fl'>200</span>)</pre>
+    <pre class="usage"><span class='fu'>draw_network</span>(<span class='no'>adj_matrix</span>, <span class='kw'>title</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>curv</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>width</span> <span class='kw'>=</span> <span class='fl'>1</span>,
+  <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>filter_deg</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>nb</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>layout</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>nodes_label</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>pal</span> <span class='kw'>=</span> <span class='st'>"#31374f"</span>, <span class='kw'>groupes</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -129,12 +150,24 @@
       <td><p>edges curvature</p></td>
     </tr>
     <tr>
+      <th>width</th>
+      <td><p>maximum width for the edges</p></td>
+    </tr>
+    <tr>
+      <th>alpha</th>
+      <td><p>if TRUE, sets to transparent the edges non-linked to nodes with high betweenness</p></td>
+    </tr>
+    <tr>
       <th>filter_deg</th>
       <td><p>selects nodes with a higher degree than filter_deg</p></td>
     </tr>
     <tr>
+      <th>nb</th>
+      <td><p>sets the number of nodes selected by thresholding the beetweenness scores</p></td>
+    </tr>
+    <tr>
       <th>layout</th>
-      <td><p>optional igraph layout.</p></td>
+      <td><p>optional ggraph layout.</p></td>
     </tr>
     <tr>
       <th>nodes_label</th>
@@ -145,6 +178,10 @@
       <td><p>optional palette.</p></td>
     </tr>
     <tr>
+      <th>groupes</th>
+      <td><p>optional vector seperating the nodes into groupes</p></td>
+    </tr>
+    <tr>
       <th>seed</th>
       <td><p>optional seed for graph reproductibility.</p></td>
     </tr>
@@ -152,11 +189,40 @@
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>plots a network</p>
+    
+<ul>
+<li><p>G the network as a ggplot2 object, with highlighted high betweenness nodes</p></li>
+<li><p>graph_data data needed for plotting the network</p></li>
+</ul>
+
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>adj_matrix</span><span class='kw'>=</span> <span class='fu'><a href='SimCluster.html'>SimCluster</a></span>(<span class='fl'>10</span>,<span class='fl'>2</span>,<span class='fl'>0.5</span>, <span class='fl'>0.1</span>)
-<span class='fu'>draw_network</span>(<span class='no'>adj_matrix</span>,<span class='st'>"Cluster graph"</span>, <span class='kw'>layout</span><span class='kw'>=</span><span class='st'>"kk"</span>)</div><div class='img'><img src='draw_network-1.png' alt='' width='700' height='433' /></div></pre>
+    <pre class="examples"><div class='input'><span class='no'>adj_matrix</span><span class='kw'>=</span> <span class='fu'><a href='SimCluster.html'>SimCluster</a></span>(<span class='kw'>p</span><span class='kw'>=</span><span class='fl'>30</span>,<span class='kw'>k</span><span class='kw'>=</span><span class='fl'>3</span>,<span class='kw'>dens</span><span class='kw'>=</span><span class='fl'>0.4</span>, <span class='kw'>r</span><span class='kw'>=</span><span class='fl'>50</span>)
+<span class='fu'>draw_network</span>(<span class='no'>adj_matrix</span>,<span class='st'>"Cluster graph"</span>, <span class='kw'>layout</span><span class='kw'>=</span><span class='st'>"fr"</span>,<span class='kw'>curv</span><span class='kw'>=</span><span class='fl'>0.1</span>)</div><div class='output co'>#&gt; $G</div><div class='img'><img src='draw_network-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; 
+#&gt; $graph_data
+#&gt; <span style='color: #949494;'># A tbl_graph: 30 nodes and 163 edges
+#&gt; #
+#&gt; # An undirected simple graph with 1 component
+#&gt; #
+#&gt; # Node Data: 30 x 8 (active)</span><span>
+#&gt;     btw bool_btw bool_deg   deg title          name label finalcolor
+#&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;lgl&gt;</span><span>    </span><span style='color: #949494;font-style: italic;'>&lt;lgl&gt;</span><span>    </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #949494;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;lgl&gt;</span><span>     
+#&gt; </span><span style='color: #BCBCBC;'>1</span><span> 10.4  FALSE    TRUE        15 Cluster graph     1 </span><span style='color: #949494;'>""</span><span>    FALSE     
+#&gt; </span><span style='color: #BCBCBC;'>2</span><span>  0.55 FALSE    TRUE        12 Cluster graph     2 </span><span style='color: #949494;'>""</span><span>    FALSE     
+#&gt; </span><span style='color: #BCBCBC;'>3</span><span> 33.9  FALSE    TRUE        10 Cluster graph     3 </span><span style='color: #949494;'>""</span><span>    FALSE     
+#&gt; </span><span style='color: #BCBCBC;'>4</span><span> 18.3  FALSE    TRUE        10 Cluster graph     4 </span><span style='color: #949494;'>""</span><span>    FALSE     
+#&gt; </span><span style='color: #BCBCBC;'>5</span><span> 20.5  FALSE    TRUE        10 Cluster graph     5 </span><span style='color: #949494;'>""</span><span>    FALSE     
+#&gt; </span><span style='color: #BCBCBC;'>6</span><span>  1.58 FALSE    TRUE        13 Cluster graph     6 </span><span style='color: #949494;'>""</span><span>    FALSE     
+#&gt; </span><span style='color: #949494;'># … with 24 more rows</span><span>
+#&gt; </span><span style='color: #949494;'>#
+#&gt; # Edge Data: 163 x 6</span><span>
+#&gt;    from    to weight btw.weights neibs title        
+#&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;int&gt;</span><span>  </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>       </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;lgl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>        
+#&gt; </span><span style='color: #BCBCBC;'>1</span><span>     1     2      1       0.693 FALSE Cluster graph
+#&gt; </span><span style='color: #BCBCBC;'>2</span><span>     1     6      1       0.693 FALSE Cluster graph
+#&gt; </span><span style='color: #BCBCBC;'>3</span><span>     1     7      1       0.693 FALSE Cluster graph
+#&gt; </span><span style='color: #949494;'># … with 160 more rows</span><span>
+#&gt; </div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -169,19 +235,23 @@
   </div>
 </div>
 
+
       <footer>
       <div class="copyright">
   <p>Developed by Raphaëlle Momal.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
+
       </footer>
    </div>
 
   
 
+
   </body>
 </html>
+
 

@@ -1,6 +1,16 @@
 destination: docs
 navbar:
   type: inverse
+  left:
+    - icon: fa-home
+    - text: "Home"
+      href: index.html
+    - text: "Reference"
+      href: "reference/index.html"
+    - text: "Vignettes"
+      menu:
+      - text: "Fatala fishes"
+        href: articles/Fatala_Net.html
   right:
     - icon: fa-github
       href: https://github.com/Rmomal/EMtree
@@ -20,14 +30,12 @@ reference:
   - '`Laplacian`'
   - '`SumTree`'
   - '`EdgeProba`'
-
 - title: Computing functions
   desc:  ~
   contents:
   - '`FitBetaStatistic`'
   - '`Meila`'
   - '`Psi_alpha`'
-
 - title: For simulations
   desc: ~
   contents:
