@@ -13,7 +13,6 @@
 #' @param layout optional ggraph layout.
 #' @param nodes_label optional labels for nodes.
 #' @param pal optional palette.
-#' @param seed optional seed for graph reproductibility.
 #' @param groupes optional vector seperating the nodes into groupes
 #'
 #' @return \itemize{

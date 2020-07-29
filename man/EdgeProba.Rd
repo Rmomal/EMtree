@@ -9,7 +9,7 @@ EdgeProba(W, verbatim = FALSE)
 \arguments{
 \item{W}{squared weight matrix}
 
-\item{verebatim}{controls verbosity}
+\item{verbatim}{controls verbosity}
 }
 \value{
 Edges conditional probabilities computed directly, without using the Kirshner function.

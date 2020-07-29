@@ -32,8 +32,6 @@ draw_network(adj_matrix, title = "", size = 4, curv = 0, width = 1,
 \item{pal}{optional palette.}
 
 \item{groupes}{optional vector seperating the nodes into groupes}
-
-\item{seed}{optional seed for graph reproductibility.}
 }
 \value{
 \itemize{

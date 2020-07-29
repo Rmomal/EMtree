@@ -48,7 +48,6 @@ str(output)
 
 
 ```{r, cache=TRUE}
-library(parallel)
 resample_output<-ResampleEMtree(counts=counts, covar_matrix = covar$site , S=5, maxIter=10,cond.tol=1e-8, cores=1)
 str(resample_output)
 ```

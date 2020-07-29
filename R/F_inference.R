@@ -139,6 +139,7 @@ Psi_alpha <- function(CorY, n, cond.tol=1e-10){
 #' @export
 #' @importFrom tibble tibble rowid_to_column
 #' @importFrom ggplot2 ggplot geom_point geom_line theme_minimal labs aes
+#' @importFrom stats optim
 #' @examples n=30
 #' p=10
 #' S=5
@@ -163,7 +164,7 @@ FitBeta <- function(beta.init, psi, maxIter=50, eps1 = 1e-6,eps2=1e-4, verbatim=
     P = EdgeProba(beta.old*psi)
     init=F_Sym2Vec(beta.old)
     long=length(F_Sym2Vec(beta.old))
-    gamma = optim(log(init), F_NegLikelihood_Trans, gr=F_NegGradient_Trans,method='BFGS', log.psi, P)$par
+    gamma = stats::optim(log(init), F_NegLikelihood_Trans, gr=F_NegGradient_Trans,method='BFGS', log.psi, P)$par
     beta=exp(gamma)
     beta[which(beta< beta.min)] = beta.min
     beta=F_Vec2Sym(beta)
@@ -285,7 +286,7 @@ ResampleEMtree <- function(counts, covar_matrix=NULL  , O=NULL, v=0.8, S=1e2, ma
     X=as.matrix(covar_matrix)
   }
 
-  obj<-mclapply(1:S,function(b){
+  obj<-parallel::mclapply(1:S,function(b){
     cat("\nS=",b," ")
     set.seed(b)
 

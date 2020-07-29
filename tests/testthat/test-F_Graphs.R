@@ -21,7 +21,7 @@ M=Meila(beta)
 x=SetLambda(P,M)
 
 ##########################
-FitEM = FitBetaStatic(beta.init=beta, psi=psi, maxIter = 6,
+FitEM = FitBeta(beta.init=beta, psi=psi, maxIter = 6,
                       verbatim=TRUE, plot=TRUE)
 PLNobj = PLN(Y~1)
 EM=EMtree(PLN.Cor =PLNobj, plot=FALSE, verbatim=FALSE)

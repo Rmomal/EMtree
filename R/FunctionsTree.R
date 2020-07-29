@@ -64,7 +64,7 @@ Kirshner<-function(W){
 #' Computing edge probabilities
 #'
 #' @param W squared weight matrix
-#' @param verebatim controls verbosity
+#' @param verbatim controls verbosity
 #'
 #' @return Edges conditional probabilities computed directly, without using the Kirshner function.
 #' @export

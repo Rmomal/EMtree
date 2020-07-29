@@ -43,7 +43,7 @@ erdos<-function(p,prob){
 #'
 #' @return the adjacency matrix of size p x p
 #' @export
-#'
+#' @importFrom stats rmultinom
 #' @examples SimCluster(10,2,0.5, 10)
 SimCluster <- function(p, k, dens, r){
   beta = dens / (r / k + (k - 1) / k)
@@ -53,7 +53,7 @@ SimCluster <- function(p, k, dens, r){
     beta = dens / (r / k + (k - 1) / k)
     alpha = r * beta
   }
-  Z = t(rmultinom(p, 1, rep(1 / k, k)))
+  Z = t(stats::rmultinom(p, 1, rep(1 / k, k)))
   groupe=Z%*%1:k
   Z = Z %*% t(Z)
   diag(Z) = 0
