@@ -103,7 +103,7 @@ generator_graph<-function(p = 20, graph = "tree", dens=0.3, r=2){
 #'  \item{cste: }{the constant that was needed to load the diagonal of omega and esure its positive definitiveness}
 #' }
 #' @export
-#'
+#' @importFrom stats rbinom
 #' @examples G=generator_graph(p=10,graph="tree")
 #' generator_param(G=G)
 #'
@@ -115,7 +115,7 @@ generator_param<-function(G,signed=FALSE,v=0.01){
   if(sum(sumlignes==0)!=0) sumlignes[sumlignes==0]=0.1
   D=diag(sumlignes+v)
   if(signed){
-    Gsign = F_Vec2Sym(F_Sym2Vec(G * matrix(2*rbinom(p^2, 1, .3)-1, p, p)))
+    Gsign = F_Vec2Sym(F_Sym2Vec(G * matrix(2*stats::rbinom(p^2, 1, .3)-1, p, p)))
     omega = lambda*D + Gsign
     while(min(eigen(omega)$values) < 1e-10 & lambda<1e3){
       lambda = 1.1*lambda
@@ -148,6 +148,7 @@ generator_param<-function(G,signed=FALSE,v=0.01){
 #'       \item{U:}{ the normalized Gaussian parameters}}}}
 #' @export
 #' @importFrom  mvtnorm rmvnorm
+#' @importFrom stats as.formula model.matrix cov2cor rpois runif
 #' @examples G=generator_graph(p=10,graph="tree")
 #' sigma=generator_param(G=G)$sigma
 #' generator_PLN(as.matrix(sigma))
@@ -158,25 +159,25 @@ generator_PLN<-function(Sigma,covariates=NULL, n=50, norm=FALSE){
     c<-ncol(covariates)
 
     string<-paste0("~", paste(colnames(covariates), collapse=" + "))
-    formula<-as.formula(string)
-    m<- model.matrix(formula,covariates)[,-1]
+    formula<-stats::as.formula(string)
+    m<- stats::model.matrix(formula,covariates)[,-1]
 
     mc<-ncol(m)
-    beta<-matrix(runif(p*mc),mc,p)
+    beta<-matrix(stats::runif(p*mc),mc,p)
     prod=m %*% beta+2
   }else{
     prod=2 # constant for signal
   }
   if(norm){
     D<-diag(Sigma)
-    R<-cov2cor(Sigma)
-    U<- rmvnorm(n, rep(0,p), R)
+    R<-stats::cov2cor(Sigma)
+    U<- mvtnorm::rmvnorm(n, rep(0,p), R)
     matsig=(matrix(rep(sqrt(D),n),n,p, byrow = TRUE))
-    Y = matrix(rpois(n*p, exp(U*matsig+prod )), n, p)
+    Y = matrix(stats::rpois(n*p, exp(U*matsig+prod )), n, p)
     sim=list(Y=Y, U=U)
   }else{
-    Z<- rmvnorm(n, rep(0,nrow(Sigma)), Sigma)
-    Y = matrix(rpois(n*p, exp(Z+prod )), n, p)
+    Z<- mvtnorm::rmvnorm(n, rep(0,nrow(Sigma)), Sigma)
+    Y = matrix(stats::rpois(n*p, exp(Z+prod )), n, p)
     sim=Y
   }
   return(sim)

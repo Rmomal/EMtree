@@ -15,7 +15,7 @@ This is a basic example which shows you how to infer a network, using Barans95 d
 
 ```{r fish_data , message=FALSE}
 library(ade4)
-library(tidyverse)
+library(tibble)
 data(baran95)
 counts = as.matrix(baran95$fau)
 covar = as_tibble(baran95$plan)

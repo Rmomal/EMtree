@@ -363,6 +363,7 @@ ResampleEMtree <- function(counts, covar_matrix=NULL  , O=NULL, v=0.8, S=1e2, ma
 #' @importFrom tidyr gather  unnest
 #' @importFrom dplyr mutate filter
 #' @importFrom tibble tibble rownames_to_column
+#' @importFrom  stats formula model.matrix
 #' @examples
 #'n=30
 #'p=10
@@ -377,8 +378,8 @@ ComparEMtree <- function(counts, covar_matrix, models, m_names, O=NULL, Pt=0.1, 
 
     covariates=colnames(covar_matrix)[models[[x]]]
     chaine=paste0("~-1+",paste(covariates,collapse="+"))
-    formule=formula(chaine)
-    matcovar=model.matrix(formule,covar_matrix)
+    formule=stats::formula(chaine)
+    matcovar=stats::model.matrix(formule,covar_matrix)
 
     ResampleEMtree(counts,matcovar,O=O, v=v, S=S, maxIter, cond.tol=cond.tol,cores=cores)$Pmat
   })
