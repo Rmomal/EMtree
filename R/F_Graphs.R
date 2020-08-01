@@ -105,8 +105,7 @@ draw_network<-function(adj_matrix,title="", size=4, curv=0,width=1, shade=FALSE,
 #' @param width maximum width for the edges
 #' @param shade if TRUE, shades the edges non-linked to nodes with high betweenness
 #' @param Ft Frequency threshold
-#' @param seed optional seed for graph reproductibility
-#' @param nb sets the number of nodes selected by thresholding the beetweenness scores
+#' @param btw_rank betweenness rank +1 of highlighted nodes. If set to 1, none are highlighted.
 #' @param layout choice of layout for all networks among available layouts in `ggraph`. Default is "circle"
 #' @param base_model choice of referent model for the layout construction
 #' @param nodes_label optional label for the nodes
@@ -131,9 +130,9 @@ draw_network<-function(adj_matrix,title="", size=4, curv=0,width=1, shade=FALSE,
 #'X = data.frame(rnorm(n),rbinom(n,1,0.7))
 #'threemodels=ComparEMtree(Y,X,models=list(1,2,c(1,2)),
 #'m_names=list("1","2","both"),Pt=0.3,S=S, cores=1)
-#'compar_graphs(threemodels)
-compar_graphs<-function(allNets, curv=0.2, width=1, shade=TRUE,Ft=0,
-                        nodes_label=NULL,seed=123, nb=3, layout="circle", base_model=NULL){
+#'compare_graphs(threemodels)
+compare_graphs<-function(allNets, curv=0.2, width=1, shade=TRUE,Ft=0, nodes_label=NULL,
+                         btw_rank=2, layout="circle", base_model=NULL){
 
    mods=unique(allNets$model)
   if(is.null(base_model)) base_model = allNets$model[1]
@@ -144,8 +143,6 @@ if(is.null(nodes_label)){
   nb_sp = max(as.numeric(allNets$node2))
   nodes_label=1:nb_sp
 }
-
-
   spliT<-data.frame(allNets) %>%
     base::split(allNets$model) %>%
     tibble(P=map(.,function(x){
@@ -155,7 +152,7 @@ if(is.null(nodes_label)){
         activate(edges) %>% filter(weight!=0) %>%
         mutate(btw.weights=log(1+1/weight)) %>%
         activate(nodes) %>%
-        mutate( importance=centrality_degree(),btw=centrality_betweenness(weights = btw.weights),boolbtw=(btw>sort(btw, decreasing = TRUE)[nb]),
+        mutate( importance=centrality_degree(),btw=centrality_betweenness(weights = btw.weights),boolbtw=(btw>sort(btw, decreasing = TRUE)[btw_rank]),
                  mod=mod, names=nodes_label) %>%
         activate(edges) %>%
         mutate(neibs=edge_is_incident(which(.N()$boolbtw)), mod=mod) %>%
@@ -168,10 +165,7 @@ if(is.null(nodes_label)){
   pal_edges <- viridisLite::viridis(5, option = "C")
   pal_nodes<-c("gray15","goldenrod1")
   lay<-create_layout(spliT$P[[base_model]],layout=layout)
-
   set_graph_style(family="sans")
-
-  set.seed(seed)
   plot<- spliT$P %>%
     reduce(bind_graphs) %>%
     activate(nodes) %>%

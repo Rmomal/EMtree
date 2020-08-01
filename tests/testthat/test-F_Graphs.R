@@ -32,7 +32,7 @@ compare=ComparEMtree(Y,X,models=list(1,2),m_names=list("1","2"),Pt=0.3,S=S, core
 
 ##########################
 draw = draw_network(EM$edges_prob)
-comp.gr=compar_graphs(compare, layout="kk")
+comp.gr=compare_graphs(compare, layout="kk")
 
 
 test_that("draw_networktest", {

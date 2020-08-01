@@ -185,8 +185,7 @@ FitBeta <- function(beta.init, psi, maxIter=50, eps1 = 1e-6,eps2=1e-4, verbatim=
   }
   P = EdgeProba(beta.old*psi)
   if(verbatim){
-    cat("\nConvergence took",round(time,2), attr(time, "units")," and ",
-        iter," iterations.\nLikelihood difference =", diff.loglik, "\nBetas difference =",beta.diff)
+    cat("\nConvergence took",round(time,2), attr(time, "units")," and ", iter," iterations.")
   }
   return(list(edges_prob=P, edges_weight=beta, logpY=logpY,maxIter=iter, norm.cst = SumTree(beta), timeEM=time))
 }
@@ -280,7 +279,7 @@ ResampleEMtree <- function(counts, covar_matrix=NULL  , O=NULL, v=0.8, S=1e2, ma
   if(is.null(O)){ O=matrix(1, n, p)}
 
   if(is.null(covar_matrix)){
-    #default
+    #default intercept
     X=matrix(1,nrow=n,ncol=1)
   }else{
     X=as.matrix(covar_matrix)
@@ -301,7 +300,7 @@ ResampleEMtree <- function(counts, covar_matrix=NULL  , O=NULL, v=0.8, S=1e2, ma
       )
         inf1<-EMtree( PLN.sample, maxIter=maxIter, cond.tol=cond.tol,
                       verbatim=FALSE,plot=FALSE)[c("edges_prob","maxIter","timeEM","alpha")]
-        cat(" ",inf1$alpha)
+       # cat(" ",inf1$alpha)
 
         inf<-inf1[c("edges_prob","maxIter","timeEM")]
       },silent=TRUE )
@@ -311,7 +310,7 @@ ResampleEMtree <- function(counts, covar_matrix=NULL  , O=NULL, v=0.8, S=1e2, ma
       return(inf)
   }, mc.cores=cores)
     #parallelization can malfunction.
-    #here chack if all results were correctly computed (correct number of results)
+    #here check if all results were correctly computed (correct number of results)
     #if not compute the missing results sequentially
     lengths<- sapply(obj,function(x){length(x)})
     if(mean(lengths)!=3){
@@ -326,7 +325,7 @@ ResampleEMtree <- function(counts, covar_matrix=NULL  , O=NULL, v=0.8, S=1e2, ma
         suppressWarnings(
           PLN.sample <- PLN(counts.sample ~ -1  + offset(log(O.sample)) + ., data=X.sample, control = list("trace"=0))
         )
-        cat("need 2nd PLN")
+       # cat("need 2nd PLN")
         obj[[x]]<<-EMtree( PLN.sample, maxIter=maxIter, cond.tol=cond.tol,
                            verbatim=FALSE,plot=FALSE)[c("edges_prob","maxIter","timeEM")]
       })
@@ -372,16 +371,15 @@ ResampleEMtree <- function(counts, covar_matrix=NULL  , O=NULL, v=0.8, S=1e2, ma
 #'Y = data_from_scratch(type="tree",p=p,n=n)$data
 #'X = data.frame(rnorm(n),rbinom(n,1,0.7))
 #'ComparEMtree(Y,X,models=list(1,2,c(1,2)),m_names=list("1","2","both"),Pt=0.3,S=S, cores=1)
-ComparEMtree <- function(counts, covar_matrix, models, m_names, O=NULL, Pt=0.1, v=0.8, S=1e2, maxIter=50, cond.tol=1e-14,cores=3){
+ComparEMtree <- function(counts, covar_matrix, models, m_names, O=NULL, Pt=0.1, v=0.8,
+                         S=1e2, maxIter=50, cond.tol=1e-14,cores=3){
 
   Stab.sel<- lapply(seq_along(models),function(x){
     cat("\nmodel ",m_names[[x]])
-
     covariates=colnames(covar_matrix)[models[[x]]]
-    chaine=paste0("~-1+",paste(covariates,collapse="+"))
+    chaine=paste0("~-1+",paste(covariates,collapse="+")) #includes the intercept
     formule=stats::formula(chaine)
     matcovar=stats::model.matrix(formule,covar_matrix)
-
     ResampleEMtree(counts,matcovar,O=O, v=v, S=S, maxIter, cond.tol=cond.tol,cores=cores)$Pmat
   })
   p=ncol(counts)

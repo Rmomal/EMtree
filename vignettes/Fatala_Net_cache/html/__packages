@@ -3,3 +3,8 @@ EMtree
 ade4
 tibble
 PLNmodels
+ggplot2
+ggraph
+tidygraph
+viridisLite
+viridis

@@ -6,107 +6,114 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+```{r, include=FALSE}
+library(parallel)
+library(ggraph)
+library(tidygraph)
+library(viridis)
+```
 
- 
-This is a basic example which shows you how to infer a network, using Barans95 data from the `ade4` package.
+This is a basic example detailing how to infer a network, using fishes counts from the Fatala River (Barans95 data from the `ade4` package).
 
-## Data
+## Fatala fishes dataset
 
+The data is composed of 33 spcies abundances measures in 95 samples.
 
 ```{r fish_data , message=FALSE}
 library(ade4)
 library(tibble)
 data(baran95)
-counts = as.matrix(baran95$fau)
-covar = as_tibble(baran95$plan)
-
-n = nrow(counts)
-p = ncol(counts)
+Y = as.matrix(baran95$fau)
+n = nrow(Y)
+p = ncol(Y)
+head(Y[,1:5])
+str(Y)
 ```
+
+The available covariates are the site and date of the samples. At each date and site, 4 samples were measured, except for kilometer 03 of January 93.
 ```{r}
-head(counts)
-head(covar)
+X = as_tibble(baran95$plan)
+str(X)
+table(X$date, X$site)
 ```
 
-## Fit PLN model
-This creates a `PLNmodels` object
+## Network inference
+
+EMtree infers a network from either a correlation matrix of a multivariate Gaussian, or an object created by PLNmodels from count data.
+Therefore here we first create a  `PLNmodels` object:
 ```{r}
 library(PLNmodels)
-model<-PLN(counts ~ covar$site)
+PLNfit<-PLN(Y ~ X$site)
 ```
 
-## Run EMtree function
+And then run EMtree:
 
 ```{r output}
 library(EMtree)
-set.seed(3)
-output<-EMtree(model,  maxIter = 10, plot=TRUE)
-str(output)
+EMtreeFit<-EMtree(PLNfit,  maxIter = 20, plot=TRUE)
+str(EMtreeFit)
 ```
 
-## Foster robustness with resampling :
+To get a network from afit of `EMtree()`, the probabilities stored in `edges_prob` can be thresholded. We propose the $2/p$ threshold as follows:
+```{r}
+probs<- EMtreeFit$edges_prob
+net<-1*(probs>2/p)
+```
 
-
+To improve the robstness, the function `ResampleEMtree()` implements a statibility selection of EMtree on S sub-samples. This function uses parallel computations with `mclapply()`.  The output Pmat gathers all the infered edges probabilities for each sub-sample.
 ```{r, cache=TRUE}
-resample_output<-ResampleEMtree(counts=counts, covar_matrix = covar$site , S=5, maxIter=10,cond.tol=1e-8, cores=1)
-str(resample_output)
+ResampEmtreeFit<-ResampleEMtree(counts=Y, covar_matrix = X$site , S=5, maxIter=10,cond.tol=1e-8, cores=1)
+str(ResampEmtreeFit)
+```
+Edges selection frequencies can be derived from $Pmat$ with the function `freq_selec()`. A final network can then be obtained by thresholding the frequencies, to keep for example edges that are selected in more than $80\%$ of sub-samples:
+```{r}
+freqs<-freq_selec(ResampEmtreeFit$Pmat,Pt=2/p+0.1)
+resampNet<-1*(freqs>0.8)
 ```
 
-## Several models with resampling :
+## Infer networks under several models:
 
-
+The aim of function `ComparEMtree()` is to run network inference with different covaraites specifications. It uses `ResampleEMtree()` and adjust the different models specified in `model_names` as follows: 
 ```{r, cache=FALSE}
-library(parallel)
 tested_models=list(1,2,c(1,2))
 models_names=c("date","site","date + site")
-compare_output<-ComparEMtree(counts, covar_matrix=covar, models=tested_models, m_names=models_names, Pt=0.15,  S=3, maxIter=5,cond.tol=1e-8,cores=1)
+compare_models<-ComparEMtree(Y, X, models=tested_models, m_names=models_names, Pt=2/p+0.1,  S=3, maxIter=5,cond.tol=1e-8,cores=1)
 
-str(compare_output)
+str(compare_models)
 ```
 
 ## Visuals
-### From `EMtree` output
 
-Simple network:
+Package Emtree provides with plotting functions for network visualizations. They build from the `ggraph` and `'tidygraph` packages.
+
+### Simple networks
+The function `draw_network()` takes a weighted matrix an input, and represent a network with edges widths proportional to the input weights. Several layouts are available (see the `ggraph` documentation). Highlighting of nodes possessing among the highest betweenness centrality measure is done with the parameter `btw_rank`.
+
+ 
 
 ```{r, fig.asp=1, fig.width=4.5, fig.fullwidth=FALSE, message=FALSE}
-library(ggraph)
-library(tidygraph)
-library(viridis)
-
-set.seed(200)
-edges_prob<- output$edges_prob
-edges_prob[edges_prob<2/p]<-0
-draw_network(edges_prob,title="Site", pal_edges="dodgerblue3", layout="nicely",curv=0.1)$G
-
+probs[probs<2/p]=0 
+draw_network(probs,title="Site", pal_edges="dodgerblue3", layout="nicely",btw_rank=3)$G
 ```
 
-### From `ResampleEMtree` output
-
+From the selected edges frequencies:
 ```{r, fig.height=4.5, fig.width=4.5}
-
-df<-freq_selec(resample_output$Pmat,Pt=2/p+0.1)
-
-draw_network(df,"Site", layout="nicely")$G
-
-df[which(df<1e-6)]=0
-draw_network(df,"Site", layout="nicely")$G
-draw_network(df,"Site", layout="nicely")$graph_data
+draw_network(resampNet,"Site", layout="nicely")$G 
 
 ```
 
-### Facet for plotting several models in one shot
+### Facets of several networks
 
-Comparing network by eye is difficult. In particular, choosing the right layout to do so is often troublesome. Here by default, the circle layout is used so that differences in density are easily seen.
+The function`compare_graphs()` draws a facet plot of the output networks from `ComparEMtree()`.  Comparing network by eye is difficult, on particular choosing the right layout to do so is often troublesome. Here by default, the circle layout is used so that differences in density and sensitive nodes are easily seen.
 
-```{r, fig.height=3.5, fig.width=10}
-compar_graphs(compare_output,shade=TRUE)$G
+```{r,  fig.height=3.5, fig.width=8}
+compare_graphs(compare_models,shade=TRUE)$G
 ```
 
-However, the user can decide another layout. The nodes position is preserved along the networks.
+However, if another layout is preferred, the nodes position is preserved along the facet and defined by choosing the `base_model`.
 
-```{r, fig.height=3.5, fig.width=10}
-compar_graphs(compare_output,shade=FALSE, layout="nicely", curv=0.1, base_model="site")$G
+```{r,  fig.height=3.5,fig.width=8}
+compare_graphs(compare_models,shade=FALSE, layout="nicely", curv=0.1, base_model="site")$G
 ```
 
 
