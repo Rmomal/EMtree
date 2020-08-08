@@ -68,16 +68,17 @@ SimCluster <- function(p, k, dens, r){
 #' @param graph type of graph, among "tree","scale-free","cluster" and "erdos"
 #' @param dens graph density (for cluster graphs) or edges probability (for erdös-renyi graphs)
 #' @param r within/between ratio connection probability (needed for cluster graphs)
+#' @param k number of groups in cluster graphs
 #'
 #' @return the adjacency matrix, in sparse format
 #' @export
 #' @importFrom  Matrix Matrix
 #' @importFrom huge huge.generator
 #' @examples generator_graph(p=10,graph="tree")
-generator_graph<-function(p = 20, graph = "tree", dens=0.3, r=2){
+generator_graph<-function(p = 20, graph = "tree", dens=0.3, r=2, k=3){
   theta = matrix(0, p, p)
   if (graph == "cluster") {
-    theta<-SimCluster(p,3,dens,r)
+    theta<-SimCluster(p,k=k,dens,r)
   }
   if (graph == "scale-free") {
     theta = huge.generator(d=p,graph="scale-free",verbose = FALSE)$theta

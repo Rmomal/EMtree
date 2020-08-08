@@ -4,7 +4,7 @@
 \alias{generator_graph}
 \title{Simulate several types of graphs}
 \usage{
-generator_graph(p = 20, graph = "tree", dens = 0.3, r = 2)
+generator_graph(p = 20, graph = "tree", dens = 0.3, r = 2, k = 3)
 }
 \arguments{
 \item{p}{number of nodes}
@@ -14,6 +14,8 @@ generator_graph(p = 20, graph = "tree", dens = 0.3, r = 2)
 \item{dens}{graph density (for cluster graphs) or edges probability (for erdös-renyi graphs)}
 
 \item{r}{within/between ratio connection probability (needed for cluster graphs)}
+
+\item{k}{number of groups in cluster graphs}
 }
 \value{
 the adjacency matrix, in sparse format

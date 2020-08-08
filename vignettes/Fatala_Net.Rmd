@@ -17,7 +17,7 @@ This is a basic example detailing how to infer a network, using fishes counts fr
 
 ## Fatala fishes dataset
 
-The data is composed of 33 spcies abundances measures in 95 samples.
+The data is composed of 33 species abundances measures in 95 samples.
 
 ```{r fish_data , message=FALSE}
 library(ade4)
@@ -65,7 +65,7 @@ To improve the robstness, the function `ResampleEMtree()` implements a statibili
 ResampEmtreeFit<-ResampleEMtree(counts=Y, covar_matrix = X$site , S=5, maxIter=10,cond.tol=1e-8, cores=1)
 str(ResampEmtreeFit)
 ```
-Edges selection frequencies can be derived from $Pmat$ with the function `freq_selec()`. A final network can then be obtained by thresholding the frequencies, to keep for example edges that are selected in more than $80\%$ of sub-samples:
+Edges selection frequencies can be derived from the `Pmat`output with the function `freq_selec()`. A final network can then be obtained by thresholding the frequencies, to keep for example edges that are selected in more than $80\%$ of sub-samples:
 ```{r}
 freqs<-freq_selec(ResampEmtreeFit$Pmat,Pt=2/p+0.1)
 resampNet<-1*(freqs>0.8)
@@ -73,7 +73,7 @@ resampNet<-1*(freqs>0.8)
 
 ## Infer networks under several models:
 
-The aim of function `ComparEMtree()` is to run network inference with different covaraites specifications. It uses `ResampleEMtree()` and adjust the different models specified in `model_names` as follows: 
+The aim of function `ComparEMtree()` is to run network inference with different covariates specifications. It uses `ResampleEMtree()` and adjust the different models specified in `model_names` as follows: 
 ```{r, cache=FALSE}
 tested_models=list(1,2,c(1,2))
 models_names=c("date","site","date + site")
