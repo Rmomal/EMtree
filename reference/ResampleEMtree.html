@@ -188,15 +188,10 @@ resampling.</p><ul>
 <span class='no'>S</span><span class='kw'>=</span><span class='fl'>5</span>
 <span class='no'>Y</span><span class='kw'>=</span><span class='fu'><a href='data_from_scratch.html'>data_from_scratch</a></span>(<span class='st'>"tree"</span>,<span class='kw'>p</span><span class='kw'>=</span><span class='no'>p</span>,<span class='kw'>n</span><span class='kw'>=</span><span class='no'>n</span>)$<span class='no'>data</span>
 <span class='no'>X</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='no'>n</span>),<span class='fu'><a href='https://rdrr.io/r/stats/Binomial.html'>rbinom</a></span>(<span class='no'>n</span>,<span class='fl'>1</span>,<span class='fl'>0.7</span>))
-<span class='no'>resample</span><span class='kw'>=</span><span class='fu'>ResampleEMtree</span>(<span class='no'>Y</span>,<span class='kw'>covar_matrix</span><span class='kw'>=</span><span class='no'>X</span>, <span class='kw'>S</span><span class='kw'>=</span><span class='no'>S</span>,<span class='kw'>cores</span> <span class='kw'>=</span> <span class='fl'>1</span>)</div><div class='output co'>#&gt; 
-#&gt; S= 1   
-#&gt; S= 2   
-#&gt; S= 3   
-#&gt; S= 4   
-#&gt; S= 5   </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='no'>resample</span>)</div><div class='output co'>#&gt; List of 3
+<span class='no'>resample</span><span class='kw'>=</span><span class='fu'>ResampleEMtree</span>(<span class='no'>Y</span>,<span class='kw'>covar_matrix</span><span class='kw'>=</span><span class='no'>X</span>, <span class='kw'>S</span><span class='kw'>=</span><span class='no'>S</span>,<span class='kw'>cores</span> <span class='kw'>=</span> <span class='fl'>1</span>)</div><div class='output co'>#&gt; Computing  5 probability matrices with 1 core(s)... 0.35 secs</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='no'>resample</span>)</div><div class='output co'>#&gt; List of 3
 #&gt;  $ Pmat   : num [1:5, 1:45] 0.595 0.835 0.921 0.86 0.704 ...
 #&gt;  $ maxIter: num [1:5] 3 3 3 3 3
-#&gt;  $ times  : 'difftime' num [1:5] 0.042384147644043 0.045332670211792 0.049189567565918 0.0419120788574219 ...
+#&gt;  $ times  : 'difftime' num [1:5] 0.0433852672576904 0.0462052822113037 0.0504391193389893 0.0430614948272705 ...
 #&gt;   ..- attr(*, "units")= chr "secs"</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
