@@ -33,6 +33,7 @@
 #' draw_network(adj_matrix,"Cluster graph", layout="fr", shade=TRUE)
 draw_network<-function(adj_matrix,title="", size=4, curv=0,width=1, shade=FALSE, filter_deg=FALSE,btw_rank=2,
                        layout=NULL,nodes_label=NULL,nodes_size=c(2,5),pal_edges=NULL, pal_nodes=NULL, groupes=NULL){
+  adj_matrix=as.matrix(adj_matrix)
   p=nrow(adj_matrix) ; binary=FALSE
   if(is.null(nodes_label)){ nodes_label=1:p ; nonames=TRUE}else{nonames=FALSE}
   if(sum(unique(adj_matrix))==1) binary=TRUE

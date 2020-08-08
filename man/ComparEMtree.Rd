@@ -31,8 +31,8 @@ ComparEMtree(counts, covar_matrix, models, m_names, O = NULL, Pt = 0.1,
 \item{cores}{Number of cores, can be greater than 1 if data involves less than about 32 species.}
 }
 \value{
-a tibble in a suitable format for graphical purposes. It has four columns describing each edge of each model: the origin node ("node1"),
-the destination node ("node2"), the model it corresponds to ("model") and its weight ("value").
+a tibble in a suitable format for graphical purposes. It has four columns describing each edge of each model: the endpoints ("node1", "node2"),
+ the model it corresponds to ("model") and its weight ("value").
 }
 \description{
 Runs EMtree for several covariates choices

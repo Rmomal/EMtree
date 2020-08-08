@@ -232,7 +232,7 @@ EMtree<-function(PLN.Cor,  maxIter=30, cond.tol=1e-10, verbatim=TRUE, plot=FALSE
   beta.unif = matrix(1, p, p); diag(beta.unif) = 0; beta.unif = beta.unif / sum(beta.unif)
 
   FitEM = FitBeta(beta.init=beta.unif, psi=psi, maxIter = maxIter,
-                        verbatim=verbatim, plot=plot)
+                  verbatim=verbatim, plot=plot)
 
   return(FitEM)
 }
@@ -269,7 +269,8 @@ EMtree<-function(PLN.Cor,  maxIter=30, cond.tol=1e-10, verbatim=TRUE, plot=FALSE
 #'resample=ResampleEMtree(Y,covar_matrix=X, S=S,cores = 1)
 #'str(resample)
 ResampleEMtree <- function(counts, covar_matrix=NULL  , O=NULL, v=0.8, S=1e2, maxIter=30, cond.tol=1e-14,cores=3){
-
+  cat("Computing ",S,"probability matrices with", cores, "core(s)... ")
+  t1=Sys.time()
   counts=as.matrix(counts)
   n = nrow(counts)
   p = ncol(counts)
@@ -286,58 +287,54 @@ ResampleEMtree <- function(counts, covar_matrix=NULL  , O=NULL, v=0.8, S=1e2, ma
   }
 
   obj<-parallel::mclapply(1:S,function(b){
-    cat("\nS=",b," ")
     set.seed(b)
-
     sample = sample(1:n, V, replace = F)
     counts.sample = counts[sample,]
     X.sample = data.frame(X[sample,])
     O.sample = O[sample,]
+    try({    suppressWarnings(
+      PLN.sample <- PLNmodels::PLN(counts.sample ~ -1  + offset(log(O.sample)) + ., data=X.sample, control = list("trace"=0))
+    )
+      inf1<-EMtree( PLN.sample, maxIter=maxIter, cond.tol=cond.tol,
+                    verbatim=FALSE,plot=FALSE)[c("edges_prob","maxIter","timeEM","alpha")]
 
+      inf<-inf1[c("edges_prob","maxIter","timeEM")]
+    },silent=TRUE )
+    # if error then inf1=NA
 
-      try({    suppressWarnings(
-        PLN.sample <- PLN(counts.sample ~ -1  + offset(log(O.sample)) + ., data=X.sample, control = list("trace"=0))
-      )
-        inf1<-EMtree( PLN.sample, maxIter=maxIter, cond.tol=cond.tol,
-                      verbatim=FALSE,plot=FALSE)[c("edges_prob","maxIter","timeEM","alpha")]
-       # cat(" ",inf1$alpha)
-
-        inf<-inf1[c("edges_prob","maxIter","timeEM")]
-      },silent=TRUE )
-      # if error then inf1=NA
-
-      if(!exists("inf")) inf=list(edges_prob=matrix(NA,1,P),maxIter=0,timeEM=0)
-      return(inf)
+    if(!exists("inf")) inf=list(edges_prob=matrix(NA,1,P),maxIter=0,timeEM=0)
+    return(inf)
   }, mc.cores=cores)
-    #parallelization can malfunction.
-    #here check if all results were correctly computed (correct number of results)
-    #if not compute the missing results sequentially
-    lengths<- sapply(obj,function(x){length(x)})
-    if(mean(lengths)!=3){
-      indices<-which(lengths!=3)
-      lapply(indices, function(x){
-        set.seed(x)
-        sample = sample(1:n, V, replace = F)
-        counts.sample = counts[sample,]
-        X.sample = data.frame(X[sample,])
-        O.sample = O[sample,]
+  #parallelization can malfunction.
+  #here check if all results were correctly computed (correct number of results)
+  #if not compute the missing results sequentially
+  # lengths<- sapply(obj,function(x){length(x)})
+  # if(mean(lengths)!=3){
+  #   indices<-which(lengths!=3)
+  #   lapply(indices, function(x){
+  #     set.seed(x)
+  #     sample = sample(1:n, V, replace = F)
+  #     counts.sample = counts[sample,]
+  #     X.sample = data.frame(X[sample,])
+  #     O.sample = O[sample,]
+  #
+  #     suppressWarnings(
+  #       PLN.sample <- PLN(counts.sample ~ -1  + offset(log(O.sample)) + ., data=X.sample, control = list("trace"=0))
+  #     )
+  #     # cat("need 2nd PLN")
+  #     obj[[x]]<<-EMtree( PLN.sample, maxIter=maxIter, cond.tol=cond.tol,
+  #                        verbatim=FALSE,plot=FALSE)[c("edges_prob","maxIter","timeEM")]
+  #   })
+  #
+  # }
 
-        suppressWarnings(
-          PLN.sample <- PLN(counts.sample ~ -1  + offset(log(O.sample)) + ., data=X.sample, control = list("trace"=0))
-        )
-       # cat("need 2nd PLN")
-        obj[[x]]<<-EMtree( PLN.sample, maxIter=maxIter, cond.tol=cond.tol,
-                           verbatim=FALSE,plot=FALSE)[c("edges_prob","maxIter","timeEM")]
-      })
-
-    }
-
-    Pmat<-do.call(rbind,lapply(obj,function(x){F_Sym2Vec(x$edges_prob)}))
-
-    summaryiter = do.call(c,lapply(obj,function(x){x$maxIter}))
-    times<-do.call(c,lapply(obj,function(x){x$timeEM}))
-
-    return(list(Pmat=Pmat,maxIter=summaryiter,times=times))
+  t2=Sys.time()
+  time=difftime(t2, t1)
+  cat(round(time,2),  attr(time, "units"))
+  Pmat<-do.call(rbind,lapply(obj,function(x){F_Sym2Vec(x$edges_prob)}))
+  summaryiter = do.call(c,lapply(obj,function(x){x$maxIter}))
+  times<-do.call(c,lapply(obj,function(x){x$timeEM}))
+  return(list(Pmat=Pmat,maxIter=summaryiter,times=times))
 }
 
 
@@ -355,8 +352,8 @@ ResampleEMtree <- function(counts, covar_matrix=NULL  , O=NULL, v=0.8, S=1e2, ma
 #' @param cond.tol Tolerance for the psi matrix.
 #' @param cores Number of cores, can be greater than 1 if data involves less than about 32 species.
 #'
-#' @return a tibble in a suitable format for graphical purposes. It has four columns describing each edge of each model: the origin node ("node1"),
-#' the destination node ("node2"), the model it corresponds to ("model") and its weight ("value").
+#' @return a tibble in a suitable format for graphical purposes. It has four columns describing each edge of each model: the endpoints ("node1", "node2"),
+#'  the model it corresponds to ("model") and its weight ("value").
 #' @export
 #' @importFrom parallel mclapply
 #' @importFrom purrr map
@@ -375,12 +372,14 @@ ComparEMtree <- function(counts, covar_matrix, models, m_names, O=NULL, Pt=0.1, 
                          S=1e2, maxIter=50, cond.tol=1e-14,cores=3){
 
   Stab.sel<- lapply(seq_along(models),function(x){
-    cat("\nmodel ",m_names[[x]])
+    cat("model",m_names[[x]],": ")
     covariates=colnames(covar_matrix)[models[[x]]]
     chaine=paste0("~-1+",paste(covariates,collapse="+")) #includes the intercept
     formule=stats::formula(chaine)
     matcovar=stats::model.matrix(formule,covar_matrix)
-    ResampleEMtree(counts,matcovar,O=O, v=v, S=S, maxIter, cond.tol=cond.tol,cores=cores)$Pmat
+    Pmat=ResampleEMtree(counts,matcovar,O=O, v=v, S=S, maxIter, cond.tol=cond.tol,cores=cores)$Pmat
+    cat("\n")
+    return(Pmat)
   })
   p=ncol(counts)
 
