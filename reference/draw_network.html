@@ -132,10 +132,10 @@
     <p>Plots a network</p>
     </div>
 
-    <pre class="usage"><span class='fu'>draw_network</span>(<span class='no'>adj_matrix</span>, <span class='kw'>title</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>curv</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>width</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>shade</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>filter_deg</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>btw_rank</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>layout</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>nodes_label</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>nodes_size</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>, <span class='fl'>5</span>), <span class='kw'>pal_edges</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>pal_nodes</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>groupes</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>draw_network</span>(<span class='kw'>adj_matrix</span>, title = <span class='st'>""</span>, size = <span class='fl'>4</span>, curv = <span class='fl'>0</span>, width = <span class='fl'>1</span>,
+  shade = <span class='fl'>FALSE</span>, filter_deg = <span class='fl'>FALSE</span>, btw_rank = <span class='fl'>2</span>, layout = <span class='kw'>NULL</span>,
+  nodes_label = <span class='kw'>NULL</span>, nodes_size = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>, <span class='fl'>5</span>), pal_edges = <span class='kw'>NULL</span>,
+  pal_nodes = <span class='kw'>NULL</span>, groupes = <span class='kw'>NULL</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -208,32 +208,33 @@
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>adj_matrix</span><span class='kw'>=</span> <span class='fu'><a href='SimCluster.html'>SimCluster</a></span>(<span class='fl'>20</span>,<span class='fl'>2</span>,<span class='fl'>0.4</span>, <span class='fl'>10</span>)
-<span class='fu'>draw_network</span>(<span class='no'>adj_matrix</span>,<span class='st'>"Cluster graph"</span>, <span class='kw'>layout</span><span class='kw'>=</span><span class='st'>"fr"</span>, <span class='kw'>shade</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; $G</div><div class='img'><img src='draw_network-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; 
+    <pre class="examples"><div class='input'><span class='kw'>adj_matrix</span><span class='op'>=</span> <span class='fu'><a href='SimCluster.html'>SimCluster</a></span>(<span class='fl'>20</span>,<span class='fl'>2</span>,<span class='fl'>0.4</span>, <span class='fl'>10</span>)
+<span class='fu'>draw_network</span>(<span class='kw'>adj_matrix</span>,<span class='st'>"Cluster graph"</span>, layout=<span class='st'>"fr"</span>, shade=<span class='fl'>TRUE</span>)
+</div><div class='output co'>#&gt; $G</div><div class='img'><img src='draw_network-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; 
 #&gt; $graph_data
-#&gt; # A tbl_graph: 20 nodes and 72 edges
+#&gt; <span style='color: #555555;'># A tbl_graph: 20 nodes and 72 edges
 #&gt; #
 #&gt; # An undirected simple graph with 1 component
 #&gt; #
-#&gt; # Node Data: 20 x 8 (active)
+#&gt; # Node Data: 20 x 8 (active)</span><span>
 #&gt;      btw bool_btw bool_deg   deg title          name label finalcolor
-#&gt;    &lt;dbl&gt; &lt;lgl&gt;    &lt;lgl&gt;    &lt;dbl&gt; &lt;chr&gt;         &lt;int&gt; &lt;chr&gt; &lt;lgl&gt;     
-#&gt; 1  1.04  FALSE    TRUE         9 Cluster graph     1 ""    FALSE     
-#&gt; 2 12.0   FALSE    TRUE         6 Cluster graph     2 ""    FALSE     
-#&gt; 3 20.4   FALSE    TRUE         7 Cluster graph     3 ""    FALSE     
-#&gt; 4  0.667 FALSE    TRUE         4 Cluster graph     4 ""    FALSE     
-#&gt; 5  0.167 FALSE    TRUE         4 Cluster graph     5 ""    FALSE     
-#&gt; 6 22.1   FALSE    TRUE        10 Cluster graph     6 ""    FALSE     
-#&gt; # … with 14 more rows
-#&gt; #
-#&gt; # Edge Data: 72 x 6
+#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span>     
+#&gt; </span><span style='color: #555555;'>1</span><span>  1.04  FALSE    TRUE         9 Cluster graph     1 </span><span style='color: #555555;'>""</span><span>    FALSE     
+#&gt; </span><span style='color: #555555;'>2</span><span> 12.0   FALSE    TRUE         6 Cluster graph     2 </span><span style='color: #555555;'>""</span><span>    FALSE     
+#&gt; </span><span style='color: #555555;'>3</span><span> 20.4   FALSE    TRUE         7 Cluster graph     3 </span><span style='color: #555555;'>""</span><span>    FALSE     
+#&gt; </span><span style='color: #555555;'>4</span><span>  0.667 FALSE    TRUE         4 Cluster graph     4 </span><span style='color: #555555;'>""</span><span>    FALSE     
+#&gt; </span><span style='color: #555555;'>5</span><span>  0.167 FALSE    TRUE         4 Cluster graph     5 </span><span style='color: #555555;'>""</span><span>    FALSE     
+#&gt; </span><span style='color: #555555;'>6</span><span> 22.1   FALSE    TRUE        10 Cluster graph     6 </span><span style='color: #555555;'>""</span><span>    FALSE     
+#&gt; </span><span style='color: #555555;'># … with 14 more rows</span><span>
+#&gt; </span><span style='color: #555555;'>#
+#&gt; # Edge Data: 72 x 6</span><span>
 #&gt;    from    to weight btw.weights neibs title        
-#&gt;   &lt;int&gt; &lt;int&gt;  &lt;dbl&gt;       &lt;dbl&gt; &lt;lgl&gt; &lt;chr&gt;        
-#&gt; 1     1     6      1       0.693 FALSE Cluster graph
-#&gt; 2     1     9      1       0.693 FALSE Cluster graph
-#&gt; 3     1    11      1       0.693 FALSE Cluster graph
-#&gt; # … with 69 more rows
-#&gt; </div></pre>
+#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>        
+#&gt; </span><span style='color: #555555;'>1</span><span>     1     6      1       0.693 FALSE Cluster graph
+#&gt; </span><span style='color: #555555;'>2</span><span>     1     9      1       0.693 FALSE Cluster graph
+#&gt; </span><span style='color: #555555;'>3</span><span>     1    11      1       0.693 FALSE Cluster graph
+#&gt; </span><span style='color: #555555;'># … with 69 more rows</span><span>
+#&gt; </div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -249,7 +250,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

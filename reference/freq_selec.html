@@ -132,7 +132,7 @@
     <p>Computes edges selection frequency after resampling procedure</p>
     </div>
 
-    <pre class="usage"><span class='fu'>freq_selec</span>(<span class='no'>Pmat</span>, <span class='no'>Pt</span>)</pre>
+    <pre class="usage"><span class='fu'>freq_selec</span>(<span class='kw'>Pmat</span>, <span class='kw'>Pt</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -152,12 +152,14 @@
     <p>p x p matrix of edges selection frequency</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>n</span><span class='kw'>=</span><span class='fl'>30</span>
-<span class='no'>p</span><span class='kw'>=</span><span class='fl'>10</span>
-<span class='no'>S</span><span class='kw'>=</span><span class='fl'>5</span>
-<span class='no'>Y</span><span class='kw'>=</span><span class='fu'><a href='data_from_scratch.html'>data_from_scratch</a></span>(<span class='st'>"tree"</span>,<span class='kw'>p</span><span class='kw'>=</span><span class='no'>p</span>)$<span class='no'>data</span>
-<span class='no'>resample_prob</span><span class='kw'>=</span><span class='fu'><a href='ResampleEMtree.html'>ResampleEMtree</a></span>(<span class='no'>Y</span>, <span class='kw'>S</span><span class='kw'>=</span><span class='no'>S</span>,<span class='kw'>cores</span> <span class='kw'>=</span> <span class='fl'>1</span>)$<span class='no'>Pmat</span></div><div class='output co'>#&gt; Computing  5 probability matrices with 1 core(s)... 0.65 secs</div><div class='input'><span class='no'>edges_freq</span><span class='kw'>&lt;-</span><span class='fu'>freq_selec</span>(<span class='no'>resample_prob</span>,<span class='kw'>Pt</span><span class='kw'>=</span><span class='fl'>0.3</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='no'>edges_freq</span>)</div><div class='output co'>#&gt;  num [1:10, 1:10] 0 0 0 0.4 0 0 0 0 0.2 0 ...</div></pre>
+    <pre class="examples"><div class='input'><span class='kw'>n</span><span class='op'>=</span><span class='fl'>30</span>
+<span class='kw'>p</span><span class='op'>=</span><span class='fl'>10</span>
+<span class='kw'>S</span><span class='op'>=</span><span class='fl'>5</span>
+<span class='kw'>Y</span><span class='op'>=</span><span class='fu'><a href='data_from_scratch.html'>data_from_scratch</a></span>(<span class='st'>"tree"</span>,p=<span class='kw'>p</span>)<span class='op'>$</span><span class='kw'>data</span>
+<span class='kw'>resample_prob</span><span class='op'>=</span><span class='fu'><a href='ResampleEMtree.html'>ResampleEMtree</a></span>(<span class='kw'>Y</span>, S=<span class='kw'>S</span>,cores = <span class='fl'>1</span>)<span class='op'>$</span><span class='kw'>Pmat</span>
+</div><div class='output co'>#&gt; Computing  5 probability matrices with 1 core(s)... 1.06 secs</div><div class='input'><span class='kw'>edges_freq</span><span class='op'>&lt;-</span><span class='fu'>freq_selec</span>(<span class='kw'>resample_prob</span>,Pt=<span class='fl'>0.3</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='kw'>edges_freq</span>)
+</div><div class='output co'>#&gt;  num [1:10, 1:10] 0 0 0.2 0.2 0 0 0 0 0.2 0 ...</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -173,7 +175,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

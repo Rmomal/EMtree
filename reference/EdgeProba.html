@@ -132,7 +132,7 @@
     <p>Computing edge probabilities</p>
     </div>
 
-    <pre class="usage"><span class='fu'>EdgeProba</span>(<span class='no'>W</span>, <span class='kw'>verbatim</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+    <pre class="usage"><span class='fu'>EdgeProba</span>(<span class='kw'>W</span>, verbatim = <span class='fl'>FALSE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -152,8 +152,9 @@
     <p>Edges conditional probabilities computed directly, without using the Kirshner function.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>W</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>3</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>3</span>,<span class='fl'>1</span>,<span class='fl'>1</span>),<span class='fl'>3</span>,<span class='fl'>3</span>,<span class='kw'>byrow</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
-<span class='fu'>EdgeProba</span>(<span class='no'>W</span>)</div><div class='output co'>#&gt;           [,1]      [,2]      [,3]
+    <pre class="examples"><div class='input'><span class='kw'>W</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>3</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>1</span>,<span class='fl'>3</span>,<span class='fl'>1</span>,<span class='fl'>1</span>),<span class='fl'>3</span>,<span class='fl'>3</span>,byrow=<span class='fl'>TRUE</span>)
+<span class='fu'>EdgeProba</span>(<span class='kw'>W</span>)
+</div><div class='output co'>#&gt;           [,1]      [,2]      [,3]
 #&gt; [1,] 0.0000000 0.5714286 0.8571429
 #&gt; [2,] 0.5714286 0.0000000 0.5714286
 #&gt; [3,] 0.8571429 0.5714286 0.0000000</div></pre>
@@ -172,7 +173,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

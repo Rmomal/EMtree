@@ -132,8 +132,8 @@
     <p>Resampling procedure for  edges probability</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ResampleEMtree</span>(<span class='no'>counts</span>, <span class='kw'>covar_matrix</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>O</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>v</span> <span class='kw'>=</span> <span class='fl'>0.8</span>,
-  <span class='kw'>S</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>maxIter</span> <span class='kw'>=</span> <span class='fl'>30</span>, <span class='kw'>cond.tol</span> <span class='kw'>=</span> <span class='fl'>1e-14</span>, <span class='kw'>cores</span> <span class='kw'>=</span> <span class='fl'>3</span>)</pre>
+    <pre class="usage"><span class='fu'>ResampleEMtree</span>(<span class='kw'>counts</span>, covar_matrix = <span class='kw'>NULL</span>, O = <span class='kw'>NULL</span>, v = <span class='fl'>0.8</span>,
+  S = <span class='fl'>100</span>, maxIter = <span class='fl'>30</span>, cond.tol = <span class='fl'>1e-14</span>, cores = <span class='fl'>3</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -183,15 +183,17 @@ resampling.</p><ul>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>n</span><span class='kw'>=</span><span class='fl'>30</span>
-<span class='no'>p</span><span class='kw'>=</span><span class='fl'>10</span>
-<span class='no'>S</span><span class='kw'>=</span><span class='fl'>5</span>
-<span class='no'>Y</span><span class='kw'>=</span><span class='fu'><a href='data_from_scratch.html'>data_from_scratch</a></span>(<span class='st'>"tree"</span>,<span class='kw'>p</span><span class='kw'>=</span><span class='no'>p</span>,<span class='kw'>n</span><span class='kw'>=</span><span class='no'>n</span>)$<span class='no'>data</span>
-<span class='no'>X</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='no'>n</span>),<span class='fu'><a href='https://rdrr.io/r/stats/Binomial.html'>rbinom</a></span>(<span class='no'>n</span>,<span class='fl'>1</span>,<span class='fl'>0.7</span>))
-<span class='no'>resample</span><span class='kw'>=</span><span class='fu'>ResampleEMtree</span>(<span class='no'>Y</span>,<span class='kw'>covar_matrix</span><span class='kw'>=</span><span class='no'>X</span>, <span class='kw'>S</span><span class='kw'>=</span><span class='no'>S</span>,<span class='kw'>cores</span> <span class='kw'>=</span> <span class='fl'>1</span>)</div><div class='output co'>#&gt; Computing  5 probability matrices with 1 core(s)... 0.37 secs</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='no'>resample</span>)</div><div class='output co'>#&gt; List of 3
-#&gt;  $ Pmat   : num [1:5, 1:45] 0.595 0.835 0.921 0.86 0.704 ...
+    <pre class="examples"><div class='input'><span class='kw'>n</span><span class='op'>=</span><span class='fl'>30</span>
+<span class='kw'>p</span><span class='op'>=</span><span class='fl'>10</span>
+<span class='kw'>S</span><span class='op'>=</span><span class='fl'>5</span>
+<span class='kw'>Y</span><span class='op'>=</span><span class='fu'><a href='data_from_scratch.html'>data_from_scratch</a></span>(<span class='st'>"tree"</span>,p=<span class='kw'>p</span>,n=<span class='kw'>n</span>)<span class='op'>$</span><span class='kw'>data</span>
+<span class='kw'>X</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='kw'>n</span>),<span class='fu'><a href='https://rdrr.io/r/stats/Binomial.html'>rbinom</a></span>(<span class='kw'>n</span>,<span class='fl'>1</span>,<span class='fl'>0.7</span>))
+<span class='kw'>resample</span><span class='op'>=</span><span class='fu'>ResampleEMtree</span>(<span class='kw'>Y</span>,covar_matrix=<span class='kw'>X</span>, S=<span class='kw'>S</span>,cores = <span class='fl'>1</span>)
+</div><div class='output co'>#&gt; Computing  5 probability matrices with 1 core(s)... 0.66 secs</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='kw'>resample</span>)
+</div><div class='output co'>#&gt; List of 3
+#&gt;  $ Pmat   : num [1:5, 1:45] 0.595 0.83 0.923 0.857 0.693 ...
 #&gt;  $ maxIter: num [1:5] 3 3 3 3 3
-#&gt;  $ times  : 'difftime' num [1:5] 0.0449919700622559 0.0489273071289062 0.0553352832794189 0.0441691875457764 ...
+#&gt;  $ times  : 'difftime' num [1:5] 0.0802311897277832 0.089343786239624 0.0869176387786865 0.0852251052856445 ...
 #&gt;   ..- attr(*, "units")= chr "secs"</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -208,7 +210,7 @@ resampling.</p><ul>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

@@ -132,7 +132,7 @@
     <p>Simulate count data under the Poisson log-Normal model</p>
     </div>
 
-    <pre class="usage"><span class='fu'>generator_PLN</span>(<span class='no'>Sigma</span>, <span class='kw'>covariates</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>50</span>, <span class='kw'>norm</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+    <pre class="usage"><span class='fu'>generator_PLN</span>(<span class='kw'>Sigma</span>, covariates = <span class='kw'>NULL</span>, n = <span class='fl'>50</span>, norm = <span class='fl'>FALSE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -169,9 +169,10 @@ number of  simulated rows.</p></td>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>G</span><span class='kw'>=</span><span class='fu'><a href='generator_graph.html'>generator_graph</a></span>(<span class='kw'>p</span><span class='kw'>=</span><span class='fl'>10</span>,<span class='kw'>graph</span><span class='kw'>=</span><span class='st'>"tree"</span>)
-<span class='no'>sigma</span><span class='kw'>=</span><span class='fu'><a href='generator_param.html'>generator_param</a></span>(<span class='kw'>G</span><span class='kw'>=</span><span class='no'>G</span>)$<span class='no'>sigma</span>
-<span class='fu'>generator_PLN</span>(<span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>as.matrix</a></span>(<span class='no'>sigma</span>))</div><div class='output co'>#&gt;       [,1]   [,2] [,3]   [,4]   [,5]  [,6]  [,7]  [,8]  [,9] [,10]
+    <pre class="examples"><div class='input'><span class='kw'>G</span><span class='op'>=</span><span class='fu'><a href='generator_graph.html'>generator_graph</a></span>(p=<span class='fl'>10</span>,graph=<span class='st'>"tree"</span>)
+<span class='kw'>sigma</span><span class='op'>=</span><span class='fu'><a href='generator_param.html'>generator_param</a></span>(G=<span class='kw'>G</span>)<span class='op'>$</span><span class='kw'>sigma</span>
+<span class='fu'>generator_PLN</span>(<span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>as.matrix</a></span>(<span class='kw'>sigma</span>))
+</div><div class='output co'>#&gt;       [,1]   [,2] [,3]   [,4]   [,5]  [,6]  [,7]  [,8]  [,9] [,10]
 #&gt;  [1,]    0      0  763      0      0   298  1598     0 16665   280
 #&gt;  [2,]    0      1  168      0      0   268   163     3    67    31
 #&gt;  [3,] 2644   1541    0   7697   3317     0     0 18066     0     0
@@ -237,7 +238,7 @@ number of  simulated rows.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
