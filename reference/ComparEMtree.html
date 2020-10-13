@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">EMtree</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.0</span>
       </span>
     </div>
 
@@ -132,8 +132,19 @@
     <p>Runs EMtree for several covariates choices</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ComparEMtree</span>(<span class='kw'>counts</span>, <span class='kw'>covar_matrix</span>, <span class='kw'>models</span>, <span class='kw'>m_names</span>, O = <span class='kw'>NULL</span>, Pt = <span class='fl'>0.1</span>,
-  v = <span class='fl'>0.8</span>, S = <span class='fl'>100</span>, maxIter = <span class='fl'>50</span>, cond.tol = <span class='fl'>1e-14</span>, cores = <span class='fl'>3</span>)</pre>
+    <pre class="usage"><span class='fu'>ComparEMtree</span>(
+  <span class='kw'>counts</span>,
+  <span class='kw'>covar_matrix</span>,
+  <span class='kw'>models</span>,
+  <span class='kw'>m_names</span>,
+  O = <span class='kw'>NULL</span>,
+  Pt = <span class='fl'>0.1</span>,
+  v = <span class='fl'>0.8</span>,
+  S = <span class='fl'>100</span>,
+  maxIter = <span class='fl'>50</span>,
+  cond.tol = <span class='fl'>1e-14</span>,
+  cores = <span class='fl'>3</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -196,9 +207,9 @@
 <span class='kw'>Y</span> <span class='op'>=</span> <span class='fu'><a href='data_from_scratch.html'>data_from_scratch</a></span>(type=<span class='st'>"tree"</span>,p=<span class='kw'>p</span>,n=<span class='kw'>n</span>)<span class='op'>$</span><span class='kw'>data</span>
 <span class='kw'>X</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='kw'>n</span>),<span class='fu'><a href='https://rdrr.io/r/stats/Binomial.html'>rbinom</a></span>(<span class='kw'>n</span>,<span class='fl'>1</span>,<span class='fl'>0.7</span>))
 <span class='fu'>ComparEMtree</span>(<span class='kw'>Y</span>,<span class='kw'>X</span>,models=<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>)),m_names=<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='st'>"1"</span>,<span class='st'>"2"</span>,<span class='st'>"both"</span>),Pt=<span class='fl'>0.3</span>,S=<span class='kw'>S</span>, cores=<span class='fl'>1</span>)
-</div><div class='output co'>#&gt; model 1 : Computing  3 probability matrices with 1 core(s)... 0.45 secs
-#&gt; model 2 : Computing  3 probability matrices with 1 core(s)... 0.42 secs
-#&gt; model both : Computing  3 probability matrices with 1 core(s)... 0.4 secs</div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 135 x 4</span><span>
+</div><div class='output co'>#&gt; model 1 : Computing  3 probability matrices with 1 core(s)... 2.4 secs
+#&gt; model 2 : Computing  3 probability matrices with 1 core(s)... 0.71 secs
+#&gt; model both : Computing  3 probability matrices with 1 core(s)... 0.55 secs</div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 135 x 4</span><span>
 #&gt;    node1 node2 model weight
 #&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
 #&gt; </span><span style='color: #555555;'> 1</span><span> 1     2     1      0.667

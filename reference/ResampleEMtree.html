@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">EMtree</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.0</span>
       </span>
     </div>
 
@@ -132,8 +132,16 @@
     <p>Resampling procedure for  edges probability</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ResampleEMtree</span>(<span class='kw'>counts</span>, covar_matrix = <span class='kw'>NULL</span>, O = <span class='kw'>NULL</span>, v = <span class='fl'>0.8</span>,
-  S = <span class='fl'>100</span>, maxIter = <span class='fl'>30</span>, cond.tol = <span class='fl'>1e-14</span>, cores = <span class='fl'>3</span>)</pre>
+    <pre class="usage"><span class='fu'>ResampleEMtree</span>(
+  <span class='kw'>counts</span>,
+  covar_matrix = <span class='kw'>NULL</span>,
+  O = <span class='kw'>NULL</span>,
+  v = <span class='fl'>0.8</span>,
+  S = <span class='fl'>100</span>,
+  maxIter = <span class='fl'>30</span>,
+  cond.tol = <span class='fl'>1e-14</span>,
+  cores = <span class='fl'>3</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -189,11 +197,11 @@ resampling.</p><ul>
 <span class='kw'>Y</span><span class='op'>=</span><span class='fu'><a href='data_from_scratch.html'>data_from_scratch</a></span>(<span class='st'>"tree"</span>,p=<span class='kw'>p</span>,n=<span class='kw'>n</span>)<span class='op'>$</span><span class='kw'>data</span>
 <span class='kw'>X</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='kw'>n</span>),<span class='fu'><a href='https://rdrr.io/r/stats/Binomial.html'>rbinom</a></span>(<span class='kw'>n</span>,<span class='fl'>1</span>,<span class='fl'>0.7</span>))
 <span class='kw'>resample</span><span class='op'>=</span><span class='fu'>ResampleEMtree</span>(<span class='kw'>Y</span>,covar_matrix=<span class='kw'>X</span>, S=<span class='kw'>S</span>,cores = <span class='fl'>1</span>)
-</div><div class='output co'>#&gt; Computing  5 probability matrices with 1 core(s)... 0.66 secs</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='kw'>resample</span>)
+</div><div class='output co'>#&gt; Computing  5 probability matrices with 1 core(s)... 0.68 secs</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='kw'>resample</span>)
 </div><div class='output co'>#&gt; List of 3
-#&gt;  $ Pmat   : num [1:5, 1:45] 0.595 0.83 0.923 0.857 0.693 ...
-#&gt;  $ maxIter: num [1:5] 3 3 3 3 3
-#&gt;  $ times  : 'difftime' num [1:5] 0.0802311897277832 0.089343786239624 0.0869176387786865 0.0852251052856445 ...
+#&gt;  $ Pmat   : num [1:5, 1:45] 0.901 0.987 0.999 0.988 0.963 ...
+#&gt;  $ maxIter: num [1:5] 3 3 3 5 3
+#&gt;  $ times  : 'difftime' num [1:5] 0.087376594543457 0.0856959819793701 0.0867416858673096 0.119678497314453 ...
 #&gt;   ..- attr(*, "units")= chr "secs"</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

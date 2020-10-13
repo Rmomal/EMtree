@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">EMtree</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.0</span>
       </span>
     </div>
 
@@ -132,9 +132,17 @@
     <p>Plots networks from several models</p>
     </div>
 
-    <pre class="usage"><span class='fu'>compare_graphs</span>(<span class='kw'>allNets</span>, curv = <span class='fl'>0.2</span>, width = <span class='fl'>1</span>, shade = <span class='fl'>TRUE</span>,
-  Ft = <span class='fl'>0</span>, nodes_label = <span class='kw'>NULL</span>, btw_rank = <span class='fl'>2</span>, layout = <span class='st'>"circle"</span>,
-  base_model = <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>compare_graphs</span>(
+  <span class='kw'>allNets</span>,
+  curv = <span class='fl'>0.2</span>,
+  width = <span class='fl'>1</span>,
+  shade = <span class='fl'>TRUE</span>,
+  Ft = <span class='fl'>0</span>,
+  nodes_label = <span class='kw'>NULL</span>,
+  btw_rank = <span class='fl'>2</span>,
+  layout = <span class='st'>"circle"</span>,
+  base_model = <span class='kw'>NULL</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -194,9 +202,9 @@
 <span class='kw'>X</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='kw'>n</span>),<span class='fu'><a href='https://rdrr.io/r/stats/Binomial.html'>rbinom</a></span>(<span class='kw'>n</span>,<span class='fl'>1</span>,<span class='fl'>0.7</span>))
 <span class='kw'>threemodels</span><span class='op'>=</span><span class='fu'><a href='ComparEMtree.html'>ComparEMtree</a></span>(<span class='kw'>Y</span>,<span class='kw'>X</span>,models=<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>)),
 m_names=<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='st'>"1"</span>,<span class='st'>"2"</span>,<span class='st'>"both"</span>),Pt=<span class='fl'>0.3</span>,S=<span class='kw'>S</span>, cores=<span class='fl'>1</span>)
-</div><div class='output co'>#&gt; model 1 : Computing  3 probability matrices with 1 core(s)... 0.38 secs
-#&gt; model 2 : Computing  3 probability matrices with 1 core(s)... 0.37 secs
-#&gt; model both : Computing  3 probability matrices with 1 core(s)... 0.37 secs</div><div class='input'><span class='fu'>compare_graphs</span>(<span class='kw'>threemodels</span>)
+</div><div class='output co'>#&gt; model 1 : Computing  3 probability matrices with 1 core(s)... 1.89 secs
+#&gt; model 2 : Computing  3 probability matrices with 1 core(s)... 0.36 secs
+#&gt; model both : Computing  3 probability matrices with 1 core(s)... 0.39 secs</div><div class='input'><span class='fu'>compare_graphs</span>(<span class='kw'>threemodels</span>)
 </div><div class='output co'>#&gt; $G</div><div class='img'><img src='compare_graphs-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; 
 #&gt; $graph_data
 #&gt; <span style='color: #555555;'># A tibble: 3 x 2</span><span>

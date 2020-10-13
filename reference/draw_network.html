@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">EMtree</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.0</span>
       </span>
     </div>
 
@@ -132,10 +132,23 @@
     <p>Plots a network</p>
     </div>
 
-    <pre class="usage"><span class='fu'>draw_network</span>(<span class='kw'>adj_matrix</span>, title = <span class='st'>""</span>, size = <span class='fl'>4</span>, curv = <span class='fl'>0</span>, width = <span class='fl'>1</span>,
-  shade = <span class='fl'>FALSE</span>, filter_deg = <span class='fl'>FALSE</span>, btw_rank = <span class='fl'>2</span>, layout = <span class='kw'>NULL</span>,
-  nodes_label = <span class='kw'>NULL</span>, nodes_size = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>, <span class='fl'>5</span>), pal_edges = <span class='kw'>NULL</span>,
-  pal_nodes = <span class='kw'>NULL</span>, groupes = <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>draw_network</span>(
+  <span class='kw'>adj_matrix</span>,
+  title = <span class='st'>""</span>,
+  size = <span class='fl'>4</span>,
+  curv = <span class='fl'>0</span>,
+  width = <span class='fl'>1</span>,
+  shade = <span class='fl'>FALSE</span>,
+  filter_deg = <span class='fl'>FALSE</span>,
+  btw_rank = <span class='fl'>2</span>,
+  layout = <span class='kw'>NULL</span>,
+  stored_layout = <span class='kw'>NULL</span>,
+  nodes_label = <span class='kw'>NULL</span>,
+  nodes_size = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>, <span class='fl'>5</span>),
+  pal_edges = <span class='kw'>NULL</span>,
+  pal_nodes = <span class='kw'>NULL</span>,
+  groupes = <span class='kw'>NULL</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -175,6 +188,10 @@
     <tr>
       <th>layout</th>
       <td><p>optional ggraph layout.</p></td>
+    </tr>
+    <tr>
+      <th>stored_layout</th>
+      <td><p>optional data.frame of point positions from a previous graph, possibly created using ggraph::create_layout()</p></td>
     </tr>
     <tr>
       <th>nodes_label</th>

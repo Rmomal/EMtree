@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">EMtree</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.0</span>
       </span>
     </div>
 
@@ -159,20 +159,20 @@
 <span class="kw">EMtreeFit</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/EMtree.html">EMtree</a></span>(<span class="kw">PLNfit</span>,  maxIter = <span class="fl">20</span>, plot=<span class="fl">TRUE</span>)
 </pre></div>
 <pre><code>## 
-## Likelihoods: -45.41163 , -45.3421 , -45.34196 , -45.34181 , -45.34175 ,</code></pre>
+## Likelihoods: 121.2481 , 121.3227 , 121.323 , 121.3231 , 121.3232 ,</code></pre>
 <p><img src="Fatala_Net_files/figure-html/output-1.png" width="700"></p>
 <pre><code>## 
-## Convergence took 0.47 secs  and  5  iterations.</code></pre>
+## Convergence took 0.48 secs  and  5  iterations.</code></pre>
 <div class="sourceCode" id="cb14"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="kw">EMtreeFit</span>)
 </pre></div>
 <pre><code>## List of 6
-##  $ edges_prob  : num [1:33, 1:33] 0 0.00702 0.02018 0.14708 0.03206 ...
-##  $ edges_weight: num [1:33, 1:33] 0 0.000946 0.000946 0.000948 0.000947 ...
-##  $ logpY       : num [1:5] -45.4 -45.3 -45.3 -45.3 -45.3
+##  $ edges_prob  : num [1:33, 1:33] 0.00 1.34e-05 1.39e-03 5.33e-02 1.11e-03 ...
+##  $ edges_weight: num [1:33, 1:33] 0 0.000946 0.000946 0.000947 0.000946 ...
+##  $ logpY       : num [1:5] 121 121 121 121 121
 ##  $ maxIter     : num 5
 ##  $ norm.cst    : num 2.07e-50
-##  $ timeEM      : 'difftime' num 0.468487977981567
+##  $ timeEM      : 'difftime' num 0.483907699584961
 ##   ..- attr(*, "units")= chr "secs"</code></pre>
 <p>To get a network from afit of <code><a href="../reference/EMtree.html">EMtree()</a></code>, the probabilities stored in <code>edges_prob</code> can be thresholded. We propose the <span class="math inline">\(2/p\)</span> threshold as follows:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit">
@@ -183,17 +183,22 @@
 <div class="sourceCode" id="cb17"><pre class="downlit">
 <span class="kw">ResampEmtreeFit</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/ResampleEMtree.html">ResampleEMtree</a></span>(counts=<span class="kw">Y</span>, covar_matrix = <span class="kw">X</span><span class="op">$</span><span class="kw">site</span> , S=<span class="fl">5</span>, maxIter=<span class="fl">10</span>,cond.tol=<span class="fl">1e-8</span>, cores=<span class="fl">1</span>)
 </pre></div>
-<pre><code>## Computing  5 probability matrices with 1 core(s)... 6.34 secs</code></pre>
+<pre><code>## Computing  5 probability matrices with 1 core(s)... 7.12 secs</code></pre>
 <div class="sourceCode" id="cb19"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="kw">ResampEmtreeFit</span>)
 </pre></div>
 <pre><code>## List of 3
-##  $ Pmat   : num [1:5, 1:528] 0.00118 0.00291 0.00501 0.01936 0.00639 ...
-##  $ maxIter: num [1:5] 3 8 6 6 5
-##  $ times  : 'difftime' num [1:5] 0.418846607208252 0.580155372619629 0.464107990264893 0.453591823577881 ...
+##  $ Pmat   : num [1:5, 1:528] 0.00022 0.00017 0.000572 0.002919 0.000638 ...
+##  $ maxIter: num [1:5] 8 9 6 4 7
+##  $ times  : 'difftime' num [1:5] 0.773567199707031 0.685011386871338 0.466330289840698 0.343677997589111 ...
 ##   ..- attr(*, "units")= chr "secs"</code></pre>
-<p>Edges selection frequencies can be derived from the <code>Pmat</code>output with the function <code><a href="../reference/freq_selec.html">freq_selec()</a></code>. A final network can then be obtained by thresholding the frequencies, to keep for example edges that are selected in more than <span class="math inline">\(80\%\)</span> of sub-samples:</p>
+<p>Another way to specify the covariates matrix is to use the model.matrix() function as follows:</p>
 <div class="sourceCode" id="cb21"><pre class="downlit">
+<span class="kw">built_covar_matrix</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html">model.matrix</a></span>(<span class="op">~</span><span class="kw">X</span><span class="op">$</span><span class="kw">site</span><span class="op">+</span><span class="kw">X</span><span class="op">$</span><span class="kw">date</span>)
+</pre></div>
+<p>Then <code>built_covar_matrix</code> would be the <code>covar_matrix</code> paramter.</p>
+<p>For the sake of the example we continue with the <span class="math inline">\(site\)</span> covariate only. Edges selection frequencies can be derived from the <code>Pmat</code>output with the function <code><a href="../reference/freq_selec.html">freq_selec()</a></code>. A final network can then be obtained by thresholding the frequencies, to keep for example edges that are selected in more than <span class="math inline">\(80\%\)</span> of sub-samples:</p>
+<div class="sourceCode" id="cb22"><pre class="downlit">
 <span class="kw">freqs</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/freq_selec.html">freq_selec</a></span>(<span class="kw">ResampEmtreeFit</span><span class="op">$</span><span class="kw">Pmat</span>,Pt=<span class="fl">2</span><span class="op">/</span><span class="kw">p</span><span class="op">+</span><span class="fl">0.1</span>)
 <span class="kw">resampNet</span><span class="op">&lt;-</span><span class="fl">1</span><span class="op">*</span>(<span class="kw">freqs</span><span class="op">&gt;</span><span class="fl">0.8</span>)
 </pre></div>
@@ -202,15 +207,15 @@
 <h2 class="hasAnchor">
 <a href="#infer-networks-under-several-models" class="anchor"></a>Infer networks under several models:</h2>
 <p>The aim of function <code><a href="../reference/ComparEMtree.html">ComparEMtree()</a></code> is to run network inference with different covariates specifications. It uses <code><a href="../reference/ResampleEMtree.html">ResampleEMtree()</a></code> and adjust the different models specified in <code>model_names</code> as follows:</p>
-<div class="sourceCode" id="cb22"><pre class="downlit">
+<div class="sourceCode" id="cb23"><pre class="downlit">
 <span class="kw">tested_models</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="fl">1</span>,<span class="fl">2</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">2</span>))
 <span class="kw">models_names</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"date"</span>,<span class="st">"site"</span>,<span class="st">"date + site"</span>)
 <span class="kw">compare_models</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/ComparEMtree.html">ComparEMtree</a></span>(<span class="kw">Y</span>, <span class="kw">X</span>, models=<span class="kw">tested_models</span>, m_names=<span class="kw">models_names</span>, Pt=<span class="fl">2</span><span class="op">/</span><span class="kw">p</span><span class="op">+</span><span class="fl">0.1</span>,  S=<span class="fl">3</span>, maxIter=<span class="fl">5</span>,cond.tol=<span class="fl">1e-8</span>,cores=<span class="fl">1</span>)
 </pre></div>
-<pre><code>## model date : Computing  3 probability matrices with 1 core(s)... 6.37 secs
-## model site : Computing  3 probability matrices with 1 core(s)... 3.7 secs
-## model date + site : Computing  3 probability matrices with 1 core(s)... 5.45 secs</code></pre>
-<div class="sourceCode" id="cb24"><pre class="downlit">
+<pre><code>## model date : Computing  3 probability matrices with 1 core(s)... 6.34 secs
+## model site : Computing  3 probability matrices with 1 core(s)... 3.97 secs
+## model date + site : Computing  3 probability matrices with 1 core(s)... 5.83 secs</code></pre>
+<div class="sourceCode" id="cb25"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="kw">compare_models</span>)
 </pre></div>
 <pre><code>## tibble [1,584 × 4] (S3: tbl_df/tbl/data.frame)
@@ -227,30 +232,30 @@
 <h3 class="hasAnchor">
 <a href="#simple-networks" class="anchor"></a>Simple networks</h3>
 <p>The function <code><a href="../reference/draw_network.html">draw_network()</a></code> takes a weighted matrix an input, and represent a network with edges widths proportional to the input weights. Several layouts are available (see the <code>ggraph</code> documentation). Highlighting of nodes possessing among the highest betweenness centrality measure is done with the parameter <code>btw_rank</code>.</p>
-<div class="sourceCode" id="cb26"><pre class="downlit">
+<div class="sourceCode" id="cb27"><pre class="downlit">
 <span class="kw">probs</span>[<span class="kw">probs</span><span class="op">&lt;</span><span class="fl">2</span><span class="op">/</span><span class="kw">p</span>]<span class="op">=</span><span class="fl">0</span> 
 <span class="fu"><a href="../reference/draw_network.html">draw_network</a></span>(<span class="kw">probs</span>,title=<span class="st">"Site"</span>, pal_edges=<span class="st">"dodgerblue3"</span>, layout=<span class="st">"nicely"</span>,btw_rank=<span class="fl">3</span>)<span class="op">$</span><span class="kw">G</span>
 </pre></div>
-<p><img src="Fatala_Net_files/figure-html/unnamed-chunk-8-1.png" width="432"></p>
+<p><img src="Fatala_Net_files/figure-html/unnamed-chunk-9-1.png" width="432"></p>
 <p>From the selected edges frequencies:</p>
-<div class="sourceCode" id="cb27"><pre class="downlit">
+<div class="sourceCode" id="cb28"><pre class="downlit">
 <span class="fu"><a href="../reference/draw_network.html">draw_network</a></span>(<span class="kw">resampNet</span>,<span class="st">"Site"</span>, layout=<span class="st">"nicely"</span>)<span class="op">$</span><span class="kw">G</span> 
 </pre></div>
-<p><img src="Fatala_Net_files/figure-html/unnamed-chunk-9-1.png" width="432"></p>
+<p><img src="Fatala_Net_files/figure-html/unnamed-chunk-10-1.png" width="432"></p>
 </div>
 <div id="facets-of-several-networks" class="section level3">
 <h3 class="hasAnchor">
 <a href="#facets-of-several-networks" class="anchor"></a>Facets of several networks</h3>
 <p>The function<code><a href="../reference/compare_graphs.html">compare_graphs()</a></code> draws a facet plot of the output networks from <code><a href="../reference/ComparEMtree.html">ComparEMtree()</a></code>. Comparing network by eye is difficult, on particular choosing the right layout to do so is often troublesome. Here by default, the circle layout is used so that differences in density and sensitive nodes are easily seen.</p>
-<div class="sourceCode" id="cb28"><pre class="downlit">
+<div class="sourceCode" id="cb29"><pre class="downlit">
 <span class="fu"><a href="../reference/compare_graphs.html">compare_graphs</a></span>(<span class="kw">compare_models</span>,shade=<span class="fl">TRUE</span>)<span class="op">$</span><span class="kw">G</span>
 </pre></div>
-<p><img src="Fatala_Net_files/figure-html/unnamed-chunk-10-1.png" width="768"></p>
+<p><img src="Fatala_Net_files/figure-html/unnamed-chunk-11-1.png" width="768"></p>
 <p>However, if another layout is preferred, the nodes position is preserved along the facet and defined by choosing the <code>base_model</code>.</p>
-<div class="sourceCode" id="cb29"><pre class="downlit">
+<div class="sourceCode" id="cb30"><pre class="downlit">
 <span class="fu"><a href="../reference/compare_graphs.html">compare_graphs</a></span>(<span class="kw">compare_models</span>,shade=<span class="fl">FALSE</span>, layout=<span class="st">"nicely"</span>, curv=<span class="fl">0.1</span>, base_model=<span class="st">"site"</span>)<span class="op">$</span><span class="kw">G</span>
 </pre></div>
-<p><img src="Fatala_Net_files/figure-html/unnamed-chunk-11-1.png" width="768"></p>
+<p><img src="Fatala_Net_files/figure-html/unnamed-chunk-12-1.png" width="768"></p>
 </div>
 </div>
   </div>
