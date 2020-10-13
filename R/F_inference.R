@@ -1,10 +1,4 @@
 
-#########################################################################
-##############
-source("R/FunctionsMatVec.R")
-source("R/FunctionsTree.R")
-
-##############
 F_NegLikelihood <- function(beta.vec, log.psi, P){
   M = Meila(F_Vec2Sym(beta.vec))
   lambda = SetLambda(P, M)
@@ -194,6 +188,7 @@ FitBeta <- function(beta.init, psi, maxIter=50, eps1 = 1e-6,eps2=1e-4, verbatim=
 #' Computes edges probability
 #'
 #' @param PLN.Cor Either an object resulting from the use of the `PLN` function from package `PLNmodels`, or an estimation of Gaussian data correlation matrix.
+#' @param n Number of samples, required if a correlation matrix is supplied
 #' @param maxIter Maximum number of iterations for EMtree
 #' @param cond.tol Tolerence parameter for the conditionement of psi matrix
 #' @param verbatim Talks if set to TRUE
@@ -214,18 +209,17 @@ FitBeta <- function(beta.init, psi, maxIter=50, eps1 = 1e-6,eps2=1e-4, verbatim=
 #' p=10
 #' Y=data_from_scratch("tree",p=p)$data
 #' PLN_Y = PLNmodels::PLN(Y~1)
-#' CorY=cov2cor(PLN_Y$model_par$Sigma)
 #' EMtree(PLN.Cor=PLN_Y,verbatim=TRUE, plot=TRUE)
-EMtree<-function(PLN.Cor,  maxIter=30, cond.tol=1e-10, verbatim=TRUE, plot=FALSE){
+EMtree<-function(PLN.Cor,n=NULL,  maxIter=30, cond.tol=1e-10, verbatim=TRUE, plot=FALSE){
   if(inherits(PLN.Cor, "PLNfit")){
     CorY=cov2cor(PLN.Cor$model_par$Sigma)
+    n=PLN.Cor$n
   }else if(inherits(PLN.Cor, "matrix") & nrow(PLN.Cor) == ncol(PLN.Cor)){
     CorY = PLN.Cor
   }else{
     stop("PLN.Cor must be a PLN object or a squarred gaussian correlation matrix")
   }
   p = ncol(CorY)
-  n = nrow(CorY)
   alpha.psi = Psi_alpha(CorY, n, cond.tol=cond.tol)
   psi = alpha.psi$psi
 

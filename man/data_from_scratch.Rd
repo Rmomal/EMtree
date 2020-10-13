@@ -4,9 +4,18 @@
 \alias{data_from_scratch}
 \title{generates data under the PLN model with a certain type of dependency structure}
 \usage{
-data_from_scratch(type, p = 20, n = 50, r = 5, covariates = NULL,
-  dens = log(p)/p, norm = FALSE, signed = FALSE, v = 0.01,
-  draw = FALSE)
+data_from_scratch(
+  type,
+  p = 20,
+  n = 50,
+  r = 5,
+  covariates = NULL,
+  dens = log(p)/p,
+  norm = FALSE,
+  signed = FALSE,
+  v = 0.01,
+  draw = FALSE
+)
 }
 \arguments{
 \item{type}{type of graph, either "tree", "erdos", "cluster" or "scale-free"}

@@ -4,8 +4,15 @@
 \alias{FitBeta}
 \title{EMtree core computing function}
 \usage{
-FitBeta(beta.init, psi, maxIter = 50, eps1 = 1e-06, eps2 = 1e-04,
-  verbatim = TRUE, plot = FALSE)
+FitBeta(
+  beta.init,
+  psi,
+  maxIter = 50,
+  eps1 = 1e-06,
+  eps2 = 1e-04,
+  verbatim = TRUE,
+  plot = FALSE
+)
 }
 \arguments{
 \item{beta.init}{initialization of beta weights}

@@ -4,7 +4,7 @@ library(usethis)
 usethis::use_package("magrittr")
 usethis::use_package("ade4")
 usethis::use_package("viridis")
-document()
+
 attachment::att_to_description()
 
 test()

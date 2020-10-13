@@ -4,9 +4,17 @@
 \alias{compare_graphs}
 \title{Plots networks from several models}
 \usage{
-compare_graphs(allNets, curv = 0.2, width = 1, shade = TRUE,
-  Ft = 0, nodes_label = NULL, btw_rank = 2, layout = "circle",
-  base_model = NULL)
+compare_graphs(
+  allNets,
+  curv = 0.2,
+  width = 1,
+  shade = TRUE,
+  Ft = 0,
+  nodes_label = NULL,
+  btw_rank = 2,
+  layout = "circle",
+  base_model = NULL
+)
 }
 \arguments{
 \item{allNets}{tibble resulting of ComparEMtree()}

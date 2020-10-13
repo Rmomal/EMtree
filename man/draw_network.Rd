@@ -4,10 +4,23 @@
 \alias{draw_network}
 \title{Plots a network}
 \usage{
-draw_network(adj_matrix, title = "", size = 4, curv = 0, width = 1,
-  shade = FALSE, filter_deg = FALSE, btw_rank = 2, layout = NULL,
-  nodes_label = NULL, nodes_size = c(2, 5), pal_edges = NULL,
-  pal_nodes = NULL, groupes = NULL)
+draw_network(
+  adj_matrix,
+  title = "",
+  size = 4,
+  curv = 0,
+  width = 1,
+  shade = FALSE,
+  filter_deg = FALSE,
+  btw_rank = 2,
+  layout = NULL,
+  stored_layout = NULL,
+  nodes_label = NULL,
+  nodes_size = c(2, 5),
+  pal_edges = NULL,
+  pal_nodes = NULL,
+  groupes = NULL
+)
 }
 \arguments{
 \item{adj_matrix}{graph adjacency matrix}
@@ -27,6 +40,8 @@ draw_network(adj_matrix, title = "", size = 4, curv = 0, width = 1,
 \item{btw_rank}{betweenness rank +1 of highlighted nodes. If set to 1, none are highlighted.}
 
 \item{layout}{optional ggraph layout.}
+
+\item{stored_layout}{optional data.frame of point positions from a previous graph, possibly created using ggraph::create_layout()}
 
 \item{nodes_label}{optional labels for nodes.}
 

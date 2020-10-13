@@ -4,11 +4,19 @@
 \alias{EMtree}
 \title{Computes edges probability}
 \usage{
-EMtree(PLN.Cor, maxIter = 30, cond.tol = 1e-10, verbatim = TRUE,
-  plot = FALSE)
+EMtree(
+  PLN.Cor,
+  n = NULL,
+  maxIter = 30,
+  cond.tol = 1e-10,
+  verbatim = TRUE,
+  plot = FALSE
+)
 }
 \arguments{
 \item{PLN.Cor}{Either an object resulting from the use of the `PLN` function from package `PLNmodels`, or an estimation of Gaussian data correlation matrix.}
+
+\item{n}{Number of samples, required if a correlation matrix is supplied}
 
 \item{maxIter}{Maximum number of iterations for EMtree}
 
@@ -36,6 +44,5 @@ n=30
 p=10
 Y=data_from_scratch("tree",p=p)$data
 PLN_Y = PLNmodels::PLN(Y~1)
-CorY=cov2cor(PLN_Y$model_par$Sigma)
 EMtree(PLN.Cor=PLN_Y,verbatim=TRUE, plot=TRUE)
 }

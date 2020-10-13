@@ -11,6 +11,7 @@
 #' @param filter_deg selects nodes with a higher degree than filter_deg
 #' @param btw_rank betweenness rank +1 of highlighted nodes. If set to 1, none are highlighted.
 #' @param layout optional ggraph layout.
+#' @param stored_layout optional data.frame of point positions from a previous graph, possibly created using ggraph::create_layout()
 #' @param nodes_label optional labels for nodes.
 #' @param nodes_size size of nodes, possibility to specify a size per group
 #' @param pal_edges optional palette for edges
@@ -32,7 +33,7 @@
 #' @examples adj_matrix= SimCluster(20,2,0.4, 10)
 #' draw_network(adj_matrix,"Cluster graph", layout="fr", shade=TRUE)
 draw_network<-function(adj_matrix,title="", size=4, curv=0,width=1, shade=FALSE, filter_deg=FALSE,btw_rank=2,
-                       layout=NULL,nodes_label=NULL,nodes_size=c(2,5),pal_edges=NULL, pal_nodes=NULL, groupes=NULL){
+                       layout=NULL,stored_layout=NULL,nodes_label=NULL,nodes_size=c(2,5),pal_edges=NULL, pal_nodes=NULL, groupes=NULL){
   adj_matrix=as.matrix(adj_matrix)
   p=nrow(adj_matrix) ; binary=FALSE
   if(is.null(nodes_label)){ nodes_label=1:p ; nonames=TRUE}else{nonames=FALSE}
@@ -76,7 +77,14 @@ draw_network<-function(adj_matrix,title="", size=4, curv=0,width=1, shade=FALSE,
   #draw graph
   set_graph_style(family="sans")
   layout = ifelse(is.null(layout), "circle", layout)
-  g=res %>% ggraph(layout = layout)
+
+  if(is.null(stored_layout)){
+    finallayout=create_layout(res,layout=layout)
+  }else{
+    finallayout=stored_layout
+  }
+  g=res %>%
+    ggraph(layout = finallayout[,1:2])
   if(shade){ #shading
     g<-g+
       geom_edge_arc(aes(edge_width=weight, alpha=neibs,color = title), strength = curv, show.legend = FALSE) +

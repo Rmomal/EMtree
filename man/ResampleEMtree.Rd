@@ -4,8 +4,16 @@
 \alias{ResampleEMtree}
 \title{Resampling procedure for  edges probability}
 \usage{
-ResampleEMtree(counts, covar_matrix = NULL, O = NULL, v = 0.8,
-  S = 100, maxIter = 30, cond.tol = 1e-14, cores = 3)
+ResampleEMtree(
+  counts,
+  covar_matrix = NULL,
+  O = NULL,
+  v = 0.8,
+  S = 100,
+  maxIter = 30,
+  cond.tol = 1e-14,
+  cores = 3
+)
 }
 \arguments{
 \item{counts}{Data of observed counts with dimensions n x p, either a matrix, data.frame or tibble.}

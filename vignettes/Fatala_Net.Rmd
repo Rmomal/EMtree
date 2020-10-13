@@ -65,7 +65,14 @@ To improve the robstness, the function `ResampleEMtree()` implements a statibili
 ResampEmtreeFit<-ResampleEMtree(counts=Y, covar_matrix = X$site , S=5, maxIter=10,cond.tol=1e-8, cores=1)
 str(ResampEmtreeFit)
 ```
-Edges selection frequencies can be derived from the `Pmat`output with the function `freq_selec()`. A final network can then be obtained by thresholding the frequencies, to keep for example edges that are selected in more than $80\%$ of sub-samples:
+
+Another way to specify the covariates matrix is to use the model.matrix() function as follows:
+```{r}
+built_covar_matrix=model.matrix(~X$site+X$date)
+```
+Then `built_covar_matrix` would be the `covar_matrix` paramter.
+
+For the sake of the example we continue with the $site$ covariate only. Edges selection frequencies can be derived from the `Pmat`output with the function `freq_selec()`. A final network can then be obtained by thresholding the frequencies, to keep for example edges that are selected in more than $80\%$ of sub-samples:
 ```{r}
 freqs<-freq_selec(ResampEmtreeFit$Pmat,Pt=2/p+0.1)
 resampNet<-1*(freqs>0.8)

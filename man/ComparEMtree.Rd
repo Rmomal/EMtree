@@ -4,8 +4,19 @@
 \alias{ComparEMtree}
 \title{Runs EMtree for several covariates choices}
 \usage{
-ComparEMtree(counts, covar_matrix, models, m_names, O = NULL, Pt = 0.1,
-  v = 0.8, S = 100, maxIter = 50, cond.tol = 1e-14, cores = 3)
+ComparEMtree(
+  counts,
+  covar_matrix,
+  models,
+  m_names,
+  O = NULL,
+  Pt = 0.1,
+  v = 0.8,
+  S = 100,
+  maxIter = 50,
+  cond.tol = 1e-14,
+  cores = 3
+)
 }
 \arguments{
 \item{counts}{Data of observed counts with dimensions n x p, either a matrix, data.frame or tibble.}
