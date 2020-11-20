@@ -15,8 +15,10 @@ F_NegGradient_Trans <- function(gamma, log.psi, P,sum.constraint){
   return(- F_Sym2Vec(P)/beta + (F_Sym2Vec(M) + lambda))
 }
 F_NegLikelihood_Trans <- function(gamma, log.psi, P,sum.constraint, trim=TRUE){
-  if(trim){
-    gamma=gamma-mean(gamma)
+  #cat(paste0("SumTree=",SumTree(F_Vec2Sym(exp(gamma)))),"\nsummary:", summary(gamma),"\n")
+
+   if(trim){#center and trim in log scale, while preventing getting a matrix full of zeros
+  #  if(sum((gamma-mean(gamma))!=0)!=0) gamma=gamma-mean(gamma)
     gamma[which(gamma<(-30))]=-30
     gamma[which(gamma>(40))]=40
   }
@@ -27,6 +29,12 @@ F_NegLikelihood_Trans <- function(gamma, log.psi, P,sum.constraint, trim=TRUE){
     res<-(-sum(F_Sym2Vec(P) * (log(exp(gamma))+ F_Sym2Vec(log.psi))) )+
       log(SumTree(F_Vec2Sym(exp(gamma))))+
       lambda*(sum(exp(gamma))-sum.constraint/2))
+# cat("like val is... ",res," !!\n Detail: a=",
+# -sum(F_Sym2Vec(P) * (log(exp(gamma))+ F_Sym2Vec(log.psi))) ,"/b=",
+# log(SumTree(F_Vec2Sym(exp(gamma)))),"/c=",
+#   lambda*(sum(exp(gamma))-sum.constraint/2),"\n"
+# )
+#cat(paste0("\nSumTree=",SumTree(F_Vec2Sym(exp(gamma)))))
 
   if(is.nan(res)){
     #  cat(max(gamma),": higher bound ")
@@ -50,6 +58,7 @@ binf.constraint<-function(p,min.order=308){
 #########################################################################
 SetLambda <- function(P, M,sum.constraint=1, eps = 1e-6, start=1){
   # F.x has to be increasing. The target value is 0
+
   F.x <- function(x){
     if(x!=0){
       sum.constraint - sum(P / (x+M))
@@ -82,6 +91,7 @@ SetLambda <- function(P, M,sum.constraint=1, eps = 1e-6, start=1){
     x = (x.max+x.min)/2;
     f = F.x(x)
   }
+
   return(x)
 }
 
@@ -262,7 +272,7 @@ EMtree<-function(PLN.Cor, n=NULL,  maxIter=30, unlinked=NULL , random.init=FALSE
   }
 
   if(verbatim){
-    cat("\nConvergence took",round(time,2), attr(time, "units")," and ", FitEM$iter," iterations.")
+    cat("\nConvergence took",round(time,2), attr(time, "units")," and ", FitEM$maxIter," iterations.")
   }
   return(c(list(edges_prob=P, norm.cst = SumTree(beta), timeEM=time),FitEM))
 
