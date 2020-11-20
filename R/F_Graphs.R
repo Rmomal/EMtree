@@ -80,11 +80,15 @@ draw_network<-function(adj_matrix,title="", size=4, curv=0,width=1, shade=FALSE,
 
   if(is.null(stored_layout)){
     finallayout=create_layout(res,layout=layout)
+    g=res %>%
+      ggraph(graph = finallayout)
   }else{
     finallayout=stored_layout
+    g=res %>%
+      ggraph(layout = finallayout)
   }
-  g=res %>%
-    ggraph(layout = finallayout[,1:2])
+
+
   if(shade){ #shading
     g<-g+
       geom_edge_arc(aes(edge_width=weight, alpha=neibs,color = title), strength = curv, show.legend = FALSE) +

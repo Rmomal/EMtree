@@ -11,6 +11,7 @@ library(parallel)
 library(ggraph)
 library(tidygraph)
 library(viridis)
+library(tidyr)
 ```
 
 This is a basic example detailing how to infer a network, using fishes counts from the Fatala River (Barans95 data from the `ade4` package).
@@ -89,9 +90,9 @@ compare_models<-ComparEMtree(Y, X, models=tested_models, m_names=models_names, P
 str(compare_models)
 ```
 
-## Visuals
+## Visualizations
 
-Package Emtree provides with plotting functions for network visualizations. They build from the `ggraph` and `'tidygraph` packages.
+Package EMtree provides with plotting functions for network visualizations. They build from the `ggraph` and `'tidygraph` packages.
 
 ### Simple networks
 The function `draw_network()` takes a weighted matrix an input, and represent a network with edges widths proportional to the input weights. Several layouts are available (see the `ggraph` documentation). Highlighting of nodes possessing among the highest betweenness centrality measure is done with the parameter `btw_rank`.
@@ -100,7 +101,7 @@ The function `draw_network()` takes a weighted matrix an input, and represent a 
 
 ```{r, fig.asp=1, fig.width=4.5, fig.fullwidth=FALSE, message=FALSE}
 probs[probs<2/p]=0 
-draw_network(probs,title="Site", pal_edges="dodgerblue3", layout="nicely",btw_rank=3)$G
+EMtree::draw_network(probs,title="Site", pal_edges="dodgerblue3", layout="nicely",btw_rank=3)$G
 ```
 
 From the selected edges frequencies:

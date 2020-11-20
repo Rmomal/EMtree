@@ -58,6 +58,9 @@ SetLambda <- function(P, M,sum.constraint=1, eps = 1e-6, start=1){
     }
   }
   x.min = ifelse(F.x(0) >0,-start,1e-4);
+  while(F.x(x.min)>F.x(0)){
+    x.min=x.min/2
+  }
   t1<-Sys.time()
   while(F.x(x.min)>0 ){
     x.min = x.min -1
@@ -216,7 +219,7 @@ FitBeta <- function(beta.init, psi, maxIter=50, eps = 1e-6, unlinked=NULL){
 #' EMtree(PLN.Cor=PLN_Y,verbatim=TRUE, plot=TRUE)
 
 
-EMtree<-function(PLN.Cor, n=NULL,  maxIter=30, unlinked=NULL , random.init=TRUE,
+EMtree<-function(PLN.Cor, n=NULL,  maxIter=30, unlinked=NULL , random.init=FALSE,
                  cond.tol=1e-10, eps = 1e-6,
                  verbatim=TRUE, plot=FALSE){
   T1<-Sys.time()
@@ -393,19 +396,19 @@ ComparEMtree <- function(counts, covar_matrix, models, m_names, O=NULL,unlinked=
 
   mat<-data.frame(freq_selec(Stab.sel[[1]],Pt)) # the first element is initialized
   allNets<-tibble(P = list(mat), mods =m_names )  %>%
-    mutate(P=map( seq_along(P), function(x) {
+    mutate(P=purrr::map( seq_along(P), function(x) {
       df<-freq_selec(Stab.sel[[x]],Pt=Pt)
       df[lower.tri(df, diag = TRUE)]<-NA
       df<-data.frame(df)
       colnames(df)<-1:ncol(df)
       df
     })) %>%
-    mutate(P = map(P,~rownames_to_column(.) %>%
+    mutate(P = purrr::map(P,~rownames_to_column(.) %>%
                      gather(key, value , -rowname) %>%filter(!is.na(value))
     ),
     mods=unlist(mods)
     ) %>%
-    unnest(cols = c(P))
+    tidyr::unnest(cols = c(P))
   allNets<-allNets[,c(1,2,4,3)]
   colnames(allNets) = c("node1","node2","model","weight")
   return(allNets)

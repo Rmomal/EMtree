@@ -9,7 +9,7 @@ EMtree(
   n = NULL,
   maxIter = 30,
   unlinked = NULL,
-  random.init = TRUE,
+  random.init = FALSE,
   cond.tol = 1e-10,
   eps = 1e-06,
   verbatim = TRUE,
