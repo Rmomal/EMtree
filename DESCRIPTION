@@ -26,7 +26,8 @@ Imports:
     vegan,
     viridisLite,
     ade4,
-    viridis
+    viridis,
+    gmp
 Suggests: 
     testthat (>= 2.1.0),
     knitr,

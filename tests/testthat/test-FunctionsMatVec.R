@@ -12,3 +12,9 @@ test_that("F_Vec2Sym", {
 test_that("F_Sym2Vec", {
   expect_equal(F_Sym2Vec(B), A)
 })
+
+library(EMtree)
+test_that("F_Sym2Vec", {
+  expect_equal(inverse.gmp(Laplacian(B)[-1,-1]),solve(Laplacian(B)[-1,-1])
+)
+})

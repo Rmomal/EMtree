@@ -50,5 +50,7 @@ generates data under the PLN model with a certain type of dependency structure
 }
 \examples{
 set.seed(1)
-data_from_scratch("tree",p=10,draw=TRUE)
+p=30
+data_from_scratch("tree",p=p,draw=TRUE)
+data_from_scratch("cluster",p=p,r=10, dens=8/p,draw=TRUE)
 }

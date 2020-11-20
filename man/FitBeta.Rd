@@ -2,33 +2,21 @@
 % Please edit documentation in R/F_inference.R
 \name{FitBeta}
 \alias{FitBeta}
-\title{EMtree core computing function}
+\title{Update the beta weights according to the gradient ascent}
 \usage{
-FitBeta(
-  beta.init,
-  psi,
-  maxIter = 50,
-  eps1 = 1e-06,
-  eps2 = 1e-04,
-  verbatim = TRUE,
-  plot = FALSE
-)
+FitBeta(beta.init, psi, maxIter = 50, eps = 1e-06, unlinked = NULL)
 }
 \arguments{
-\item{beta.init}{initialization of beta weights}
+\item{beta.init}{Initial beta weight matrix}
 
-\item{psi}{psi matrix, filled with ratios of bivariate probabilities over marginals, which can in the Gaussian
+\item{psi}{Psi matrix, filled with ratios of bivariate probabilities over marginals, which can in the Gaussian
 wase be deduced from the correlation matrix.}
 
-\item{maxIter}{maximum number of iterations}
+\item{maxIter}{Maximum number of iterations}
 
-\item{eps1}{higher bound of beta weights variation}
+\item{eps}{Precision parameter controlling the convergence of weights beta}
 
-\item{eps2}{higher bound of log likelihood variation}
-
-\item{verbatim}{boolean for verbosity}
-
-\item{plot}{boolean for plotting of the likelihood trajectory}
+\item{unlinked}{An optional vector of nodes which are not linked with each other}
 }
 \value{
 \itemize{
@@ -40,7 +28,7 @@ wase be deduced from the correlation matrix.}
 }
 }
 \description{
-EMtree core computing function
+Update the beta weights according to the gradient ascent
 }
 \examples{
 n=30
@@ -49,5 +37,5 @@ S=5
 Y=data_from_scratch("tree",p=p,n=n)$data
 beta = matrix(1/10,10,10)
 psi=Psi_alpha(cor(Y), n)$psi
-FitEM = FitBeta(beta.init=beta, psi=psi, maxIter = 6, verbatim=TRUE, plot=TRUE)
+FitEM = FitBeta(beta.init=beta, psi=psi, maxIter = 6)
 }

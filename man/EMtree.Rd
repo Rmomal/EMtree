@@ -2,13 +2,16 @@
 % Please edit documentation in R/F_inference.R
 \name{EMtree}
 \alias{EMtree}
-\title{Computes edges probability}
+\title{Core computing function}
 \usage{
 EMtree(
   PLN.Cor,
   n = NULL,
   maxIter = 30,
+  unlinked = NULL,
+  random.init = TRUE,
   cond.tol = 1e-10,
+  eps = 1e-06,
   verbatim = TRUE,
   plot = FALSE
 )
@@ -20,7 +23,13 @@ EMtree(
 
 \item{maxIter}{Maximum number of iterations for EMtree}
 
-\item{cond.tol}{Tolerence parameter for the conditionement of psi matrix}
+\item{unlinked}{An optional vector of nodes which are not linked with each other}
+
+\item{random.init}{A boolean for trying a random initialization of the EM}
+
+\item{cond.tol}{Tolerance parameter for the conditioning of psi matrix}
+
+\item{eps}{Precision parameter controlling the convergence of weights beta}
 
 \item{verbatim}{Talks if set to TRUE}
 
@@ -37,7 +46,7 @@ EMtree(
 }
 }
 \description{
-Computes edges probability
+Core computing function
 }
 \examples{
 n=30

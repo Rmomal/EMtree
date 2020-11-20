@@ -54,10 +54,19 @@ Meila <- function(W){
 #' @return Edges probabilities as defined in Kirshner 2007
 #' @noRd
 Kirshner<-function(W){
-  M=Meila(W)
-  Pk = W * M
-  Pk = .5*(Pk + t(Pk))
-  return(Pk)
+  # W = squared weight matrix
+  # Kirshner (07) formulas
+  p = nrow(W)
+  L = Laplacian(W)[-1,-1]
+  #improve numerical capacity with gmp on error with solve
+  Q=tryCatch({solve(L)},
+             error=function(e){inverse.gmp(L)})
+  Q = rbind(c(0, diag(Q)),
+            cbind(diag(Q), (diag(Q)%o%rep(1, p-1) + rep(1, p-1)%o%diag(Q) - 2*Q)))
+  Q = .5*(Q + t(Q))
+  P = W * Q
+  P = .5*(P + t(P))
+  return(P)
 }
 
 

@@ -10,6 +10,7 @@ ComparEMtree(
   models,
   m_names,
   O = NULL,
+  unlinked = NULL,
   Pt = 0.1,
   v = 0.8,
   S = 100,
@@ -28,6 +29,8 @@ ComparEMtree(
 \item{m_names}{list of names for the models to be compared, for example list("first model","last model")}
 
 \item{O}{Offset matrix with dimensions n x p}
+
+\item{unlinked}{An optional vector of nodes which are not linked with each other}
 
 \item{Pt}{Probability threshold for every sub-sample}
 

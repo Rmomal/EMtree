@@ -1,62 +1,73 @@
 
-F_NegLikelihood <- function(beta.vec, log.psi, P){
+F_NegLikelihood <- function(beta.vec, log.psi, P,sum.constraint){
   M = Meila(F_Vec2Sym(beta.vec))
-  lambda = SetLambda(P, M)
-  return(- sum(F_Sym2Vec(P)*(log(beta.vec)+F_Sym2Vec(log.psi))) +
+  lambda = SetLambda(P, M,sum.constraint)
+  return(- sum(F_Sym2Vec(P)*(log(beta.vec+(beta.vec==0))+F_Sym2Vec(log.psi))) +
            log(SumTree(F_Vec2Sym(beta.vec)))+
-           lambda*(sum(beta.vec)-0.5))
+           lambda*(sum(beta.vec)-sum.constraint/2))
 }
-# gradients with log change of variable
-F_NegLikelihood_Trans <- function(gamma, log.psi, P, trim=TRUE){
+
+F_NegGradient_Trans <- function(gamma, log.psi, P,sum.constraint){
+  beta=exp(gamma)
+  beta[gamma==0]=0
+  M = Meila(F_Vec2Sym(beta))
+  lambda = SetLambda(P, M,sum.constraint)
+  return(- F_Sym2Vec(P)/beta + (F_Sym2Vec(M) + lambda))
+}
+F_NegLikelihood_Trans <- function(gamma, log.psi, P,sum.constraint, trim=TRUE){
   if(trim){
     gamma=gamma-mean(gamma)
     gamma[which(gamma<(-30))]=-30
+    gamma[which(gamma>(40))]=40
   }
   M = Meila(F_Vec2Sym(exp(gamma)))
-  lambda = SetLambda(P, M)
+  lambda = SetLambda(P, M,sum.constraint)
 
-  res<-(-sum(F_Sym2Vec(P) * (log(exp(gamma))+ F_Sym2Vec(log.psi))) )+
-    log(SumTree(F_Vec2Sym(exp(gamma))))+
-    lambda*(sum(exp(gamma))-0.5)
-
-  if(is.nan(res)){
-    cat(max(gamma),": higher bound ")
-    gamma[which(gamma>(30))]=30
-    M = Meila(F_Vec2Sym(exp(gamma)))
-    lambda = SetLambda(P, M)
+  suppressWarnings(
     res<-(-sum(F_Sym2Vec(P) * (log(exp(gamma))+ F_Sym2Vec(log.psi))) )+
       log(SumTree(F_Vec2Sym(exp(gamma))))+
-      lambda*(sum(exp(gamma))-0.5)
-    if(is.nan(res))   cat("\nbeta optimization failed\n")
+      lambda*(sum(exp(gamma))-sum.constraint/2))
+
+  if(is.nan(res)){
+    #  cat(max(gamma),": higher bound ")
+    gamma[which(gamma>(20))]=20
+    gamma[which(gamma<(-20))]=-20
+    M = Meila(F_Vec2Sym(exp(gamma)))
+    lambda = SetLambda(P, M,sum.constraint)
+    res<-(-sum(F_Sym2Vec(P) * (log(exp(gamma))+ F_Sym2Vec(log.psi))) )+
+      log(SumTree(F_Vec2Sym(exp(gamma))))+
+      lambda*(sum(exp(gamma))-sum.constraint/2)
+    if(is.nan(res))   cat("\nbeta optimization failed: ",SumTree(F_Vec2Sym(exp(gamma))),
+                          sum(F_Sym2Vec(P) * (log(exp(gamma))+ F_Sym2Vec(log.psi))) ,
+                          sum(F_Sym2Vec(P)),"\n")
   }
+
   return( res)
 }
-
-F_NegGradient_Trans <- function(gamma, log.psi, P){
-  M = Meila(F_Vec2Sym(exp(gamma)))
-  lambda = SetLambda(P, M)
-  return(- F_Sym2Vec(P)+ exp(gamma)*(F_Sym2Vec(M) + lambda))
+binf.constraint<-function(p,min.order=308){
+  round( p*(p-1)*10^(-min.order/(p-1)))+1
 }
 #########################################################################
-SetLambda <- function(P, M, eps = 1e-6){
+SetLambda <- function(P, M,sum.constraint=1, eps = 1e-6, start=1){
   # F.x has to be increasing. The target value is 0
-  #browser()
   F.x <- function(x){
     if(x!=0){
-      1 - sum(P / (x+M))
+      sum.constraint - sum(P / (x+M))
     }else{
-      1 - (2*sum(P[upper.tri(P)] / M[upper.tri(M)]))
+      sum.constraint - (2*sum(P[upper.tri(P)] / M[upper.tri(M)]))
     }
   }
-  x.min = ifelse(F.x(0) >0,-20,1e-4);
-  while(F.x(x.min)>0){x.min = x.min -x.min/2}
-  x.max = 10
+  x.min = ifelse(F.x(0) >0,-start,1e-4);
+  t1<-Sys.time()
+  while(F.x(x.min)>0 ){
+    x.min = x.min -1
+    if(difftime(Sys.time(),t1)>1) stop("Could not set lambda.")}
+  x.max = start
   while(F.x(x.max)<0){x.max = x.max * 2}
   x = (x.max+x.min)/2
   f.min = F.x(x.min)
   f.max = F.x(x.max)
   f = F.x(x)
-
   while(abs(x.max-x.min) > eps){
     if(f > 0) {
       x.max = x
@@ -70,7 +81,6 @@ SetLambda <- function(P, M, eps = 1e-6){
   }
   return(x)
 }
-
 
 #########################################################################
 #
@@ -111,16 +121,14 @@ Psi_alpha <- function(CorY, n, cond.tol=1e-10){
 }
 
 #########################################################################
-#' EMtree core computing function
+#' Update the beta weights according to the gradient ascent
 #'
-#' @param beta.init initialization of beta weights
-#' @param psi psi matrix, filled with ratios of bivariate probabilities over marginals, which can in the Gaussian
+#' @param beta.init Initial beta weight matrix
+#' @param psi Psi matrix, filled with ratios of bivariate probabilities over marginals, which can in the Gaussian
 #' wase be deduced from the correlation matrix.
-#' @param maxIter maximum number of iterations
-#' @param eps1  higher bound of beta weights variation
-#' @param eps2  higher bound of log likelihood variation
-#' @param verbatim boolean for verbosity
-#' @param plot boolean for plotting of the likelihood trajectory
+#' @param maxIter Maximum number of iterations
+#' @param eps  Precision parameter controlling the convergence of weights beta
+#' @param unlinked An optional vector of nodes which are not linked with each other
 #'
 #' @return
 #' \itemize{
@@ -140,57 +148,53 @@ Psi_alpha <- function(CorY, n, cond.tol=1e-10){
 #' Y=data_from_scratch("tree",p=p,n=n)$data
 #' beta = matrix(1/10,10,10)
 #' psi=Psi_alpha(cor(Y), n)$psi
-#' FitEM = FitBeta(beta.init=beta, psi=psi, maxIter = 6, verbatim=TRUE, plot=TRUE)
-FitBeta <- function(beta.init, psi, maxIter=50, eps1 = 1e-6,eps2=1e-4, verbatim=TRUE,plot=FALSE){
-  options(nwarnings = 1)
+#' FitEM = FitBeta(beta.init=beta, psi=psi, maxIter = 6)
+FitBeta <- function(beta.init, psi, maxIter=50, eps = 1e-6, unlinked=NULL){
   beta.tol = 1e-4
   beta.min = 1e-16
-  beta.old = beta.init / sum(beta.init)
-  log.psi = log(psi)
+  beta.old = beta.init
+  log.psi = log(psi+(psi==0))
   iter = 0
   logpY = rep(0, maxIter)
-  beta.diff = diff.loglik = 2 * eps2
-  if(verbatim) cat("\nLikelihoods: ")
-  T1<-Sys.time()
-  stop=FALSE
-  while (((beta.diff > eps1) || (diff.loglik>eps2) ) && iter < maxIter && !stop){
-    iter = iter+1
-    P = EdgeProba(beta.old*psi)
-    init=F_Sym2Vec(beta.old)
-    long=length(F_Sym2Vec(beta.old))
-    gamma = stats::optim(log(init), F_NegLikelihood_Trans, gr=F_NegGradient_Trans,method='BFGS', log.psi, P)$par
-    beta=exp(gamma)
-    beta[which(beta< beta.min)] = beta.min
-    beta=F_Vec2Sym(beta)
+  beta.diff = diff.loglik = 2 * eps
 
-    logpY[iter] = -F_NegLikelihood(F_Sym2Vec(beta),log.psi,P)
-    if(verbatim) cat(logpY[iter],", ")
+  stop=FALSE
+
+  while (((beta.diff > eps) || (diff.loglik>100*eps) ) && iter < maxIter && !stop){
+    iter = iter+1
+    P=Kirshner(W=beta.old*psi)
+    init=F_Sym2Vec(beta.old)
+
+    #gradient ascent in log scale
+    gamma_init=log(init+(init==0))
+    gamma_init[init==0]=0
+    gamma = stats::optim(gamma_init, F_NegLikelihood_Trans, gr=F_NegGradient_Trans,method='BFGS',
+                         log.psi, P,sum(beta.init), control=list(maxit=300,  abstol=1e-5, reltol=1e-5))$par
+
+    beta=exp(gamma)
+    beta[which(beta< beta.min)] = beta.min # numerical zeros
+    beta=F_Vec2Sym(beta)
+    if(!is.null(unlinked)) beta[unlinked, unlinked]=0
+    logpY[iter] = -F_NegLikelihood(F_Sym2Vec(beta),log.psi,P,sum(beta.init))
     beta.diff = max(abs(beta.old-beta))
     beta.old = beta
-    diffPres=logpY[iter]-logpY[iter-1]
-    if(iter > 1){diff.loglik =  abs(diffPres)}else{diff.loglik=1}
+    diff.loglik=logpY[iter]-logpY[iter-1]
+    if(iter > 1){diff.loglik =  abs(diff.loglik)}else{diff.loglik=1}
   }
-  time<-difftime(Sys.time(),T1)
   logpY = logpY[1:iter]
-  if(plot){
-    g<-tibble(p=logpY) %>% rowid_to_column() %>%
-      ggplot(aes(rowid,p))+geom_point()+geom_line()+theme_minimal()+labs(x="Iter",y="Likelihood")
-    print(g)
-  }
-  P = EdgeProba(beta.old*psi)
-  if(verbatim){
-    cat("\nConvergence took",round(time,2), attr(time, "units")," and ", iter," iterations.")
-  }
-  return(list(edges_prob=P, edges_weight=beta, logpY=logpY,maxIter=iter, norm.cst = SumTree(beta), timeEM=time))
+  return(list(edges_weight=beta, logpY=logpY,maxIter=iter))
 }
 
 #########################################################################
-#' Computes edges probability
+#' Core computing function
 #'
 #' @param PLN.Cor Either an object resulting from the use of the `PLN` function from package `PLNmodels`, or an estimation of Gaussian data correlation matrix.
 #' @param n Number of samples, required if a correlation matrix is supplied
 #' @param maxIter Maximum number of iterations for EMtree
-#' @param cond.tol Tolerence parameter for the conditionement of psi matrix
+#' @param unlinked An optional vector of nodes which are not linked with each other
+#' @param random.init A boolean for trying a random initialization of the EM
+#' @param cond.tol Tolerance parameter for the conditioning of psi matrix
+#' @param eps  Precision parameter controlling the convergence of weights beta
 #' @param verbatim Talks if set to TRUE
 #' @param plot Plots likelihood if set to TRUE
 #'
@@ -210,7 +214,12 @@ FitBeta <- function(beta.init, psi, maxIter=50, eps1 = 1e-6,eps2=1e-4, verbatim=
 #' Y=data_from_scratch("tree",p=p)$data
 #' PLN_Y = PLNmodels::PLN(Y~1)
 #' EMtree(PLN.Cor=PLN_Y,verbatim=TRUE, plot=TRUE)
-EMtree<-function(PLN.Cor,n=NULL,  maxIter=30, cond.tol=1e-10, verbatim=TRUE, plot=FALSE){
+
+
+EMtree<-function(PLN.Cor, n=NULL,  maxIter=30, unlinked=NULL , random.init=TRUE,
+                 cond.tol=1e-10, eps = 1e-6,
+                 verbatim=TRUE, plot=FALSE){
+  T1<-Sys.time()
   if(inherits(PLN.Cor, "PLNfit")){
     CorY=cov2cor(PLN.Cor$model_par$Sigma)
     n=PLN.Cor$n
@@ -219,16 +228,41 @@ EMtree<-function(PLN.Cor,n=NULL,  maxIter=30, cond.tol=1e-10, verbatim=TRUE, plo
   }else{
     stop("PLN.Cor must be a PLN object or a squarred gaussian correlation matrix")
   }
-  p = ncol(CorY)
+  p=ncol(CorY)
+  # set the tempering parameter alpha, for a good conditioning of the psi matrix
   alpha.psi = Psi_alpha(CorY, n, cond.tol=cond.tol)
   psi = alpha.psi$psi
 
-  beta.unif = matrix(1, p, p); diag(beta.unif) = 0; beta.unif = beta.unif / sum(beta.unif)
+  # beta.init with adaptative mean value depending on the network dimensions
+  sum.weights=binf.constraint(p)
+  mean.val=sum.weights/(p*(p-1))
+  beta.init = matrix(mean.val, p, p);
+  if(!is.null(unlinked)) beta.init[unlinked, unlinked]=0 #unliked nodes
 
-  FitEM = FitBeta(beta.init=beta.unif, psi=psi, maxIter = maxIter,
-                  verbatim=verbatim, plot=plot)
+  if(random.init){ # try different starting points for this EM
+    beta.init = matrix(runif(n=p*p, min=0.9*mean.val,max=1.1*mean.val ), p,p)
+    beta.init=t(beta.init)%*%beta.init/2}
+  diag(beta.init)=0
 
-  return(FitEM)
+
+  FitEM = FitBeta(beta.init=beta.init, psi=psi, maxIter = maxIter,eps = eps,
+                  unlinked=unlinked)
+
+  beta=FitEM$edges_weight
+  P = Kirshner(beta*psi)
+  time<-difftime(Sys.time(),T1)
+
+  if(plot){
+    g<-tibble(p=FitEM$logpY) %>% rowid_to_column() %>%
+      ggplot(aes(rowid,p))+geom_point()+geom_line()+theme_minimal()+labs(x="Iter",y="Likelihood")
+    print(g)
+  }
+
+  if(verbatim){
+    cat("\nConvergence took",round(time,2), attr(time, "units")," and ", FitEM$iter," iterations.")
+  }
+  return(c(list(edges_prob=P, norm.cst = SumTree(beta), timeEM=time),FitEM))
+
 }
 
 #################################################################################
@@ -236,11 +270,13 @@ EMtree<-function(PLN.Cor,n=NULL,  maxIter=30, cond.tol=1e-10, verbatim=TRUE, plo
 #'
 #' @param counts Data of observed counts with dimensions n x p, either a matrix, data.frame or tibble.
 #' @param covar_matrix matrix of covariates, should have the same number of rows as the count matrix.
+#' @param unlinked An optional vector of nodes which are not linked with each other
 #' @param O Matrix of offsets, with dimension n x p
 #' @param v The proportion of observed data to be taken in each sub-sample. It is the ratio (sub-sample size)/n
 #' @param S Total number of wanted sub-samples.
 #' @param maxIter Maximum number of EMtree iterations at each sub-sampling.
 #' @param cond.tol Tolerance for the psi matrix.
+#' @param eps Precision parameter controlling the convergence of weights beta
 #' @param cores Number of cores, can be greater than 1 if data involves less than about 32 species.
 #'
 #' @return Returns a list which contains the Pmat data.frame, and vectors of EMtree maximum iterations and running times in each
@@ -262,69 +298,46 @@ EMtree<-function(PLN.Cor,n=NULL,  maxIter=30, cond.tol=1e-10, verbatim=TRUE, plo
 #'X = data.frame(rnorm(n),rbinom(n,1,0.7))
 #'resample=ResampleEMtree(Y,covar_matrix=X, S=S,cores = 1)
 #'str(resample)
-ResampleEMtree <- function(counts, covar_matrix=NULL  , O=NULL, v=0.8, S=1e2, maxIter=30, cond.tol=1e-14,cores=3){
+ResampleEMtree <- function(counts,covar_matrix=NULL  , unlinked=NULL, O=NULL,
+                           v=0.8, S=1e2, maxIter=30, cond.tol=1e-14,eps=1e-6,cores=3){
   cat("Computing ",S,"probability matrices with", cores, "core(s)... ")
   t1=Sys.time()
   counts=as.matrix(counts)
-  n = nrow(counts)
-  p = ncol(counts)
-  P = p * (p - 1) / 2
-  V = round(v * n)
+  n = nrow(counts);  p = ncol(counts)
+  P = p * (p - 1) / 2 ; V = round(v * n)
   Pmat = matrix(0, S, P)
+  #- offsets and covariates
   if(is.null(O)){ O=matrix(1, n, p)}
-
-  if(is.null(covar_matrix)){
-    #default intercept
+  if(is.null(covar_matrix)){#default intercept
     X=matrix(1,nrow=n,ncol=1)
-  }else{
-    X=as.matrix(covar_matrix)
-  }
-
+  }else{X=as.matrix(covar_matrix)}
+  #- parallel computation of S fits of new_EMtree
   obj<-parallel::mclapply(1:S,function(b){
     set.seed(b)
     sample = sample(1:n, V, replace = F)
     counts.sample = counts[sample,]
     X.sample = data.frame(X[sample,])
     O.sample = O[sample,]
-    try({    suppressWarnings(
-      PLN.sample <- PLNmodels::PLN(counts.sample ~ -1  + offset(log(O.sample)) + ., data=X.sample, control = list("trace"=0))
-    )
-      inf1<-EMtree( PLN.sample, maxIter=maxIter, cond.tol=cond.tol,
-                    verbatim=FALSE,plot=FALSE)[c("edges_prob","maxIter","timeEM","alpha")]
+  try({
+      suppressWarnings(
+        PLN.sample <- PLNmodels::PLN(counts.sample ~ -1  + offset(log(O.sample)) + ., data=X.sample, control = list("trace"=0))
+      )
 
-      inf<-inf1[c("edges_prob","maxIter","timeEM")]
+      inf<-EMtree( PLN.sample,unlinked,n=n, maxIter=maxIter, cond.tol=cond.tol,verbatim=FALSE,eps=eps,
+                       plot=FALSE)[c("edges_prob","maxIter","timeEM")]
     },silent=TRUE )
-    # if error then inf1=NA
-
-    if(!exists("inf")) inf=list(edges_prob=matrix(NA,1,P),maxIter=0,timeEM=0)
+    if(!exists("inf")) inf=NA #depending on the sample drawn, it is possible that computation fail
+    # because of bad conditioning of the Laplacian matrix of the weights beta.
+    # This can happen especially when using the "unlinked" parameter.
     return(inf)
   }, mc.cores=cores)
-  #parallelization can malfunction.
-  #here check if all results were correctly computed (correct number of results)
-  #if not compute the missing results sequentially
-  # lengths<- sapply(obj,function(x){length(x)})
-  # if(mean(lengths)!=3){
-  #   indices<-which(lengths!=3)
-  #   lapply(indices, function(x){
-  #     set.seed(x)
-  #     sample = sample(1:n, V, replace = F)
-  #     counts.sample = counts[sample,]
-  #     X.sample = data.frame(X[sample,])
-  #     O.sample = O[sample,]
-  #
-  #     suppressWarnings(
-  #       PLN.sample <- PLN(counts.sample ~ -1  + offset(log(O.sample)) + ., data=X.sample, control = list("trace"=0))
-  #     )
-  #     # cat("need 2nd PLN")
-  #     obj[[x]]<<-EMtree( PLN.sample, maxIter=maxIter, cond.tol=cond.tol,
-  #                        verbatim=FALSE,plot=FALSE)[c("edges_prob","maxIter","timeEM")]
-  #   })
-  #
-  # }
-
-  t2=Sys.time()
-  time=difftime(t2, t1)
+  bad_samples=which(do.call(rbind, lapply(obj, length))!=3)
+  time=difftime(Sys.time(), t1)
   cat(round(time,2),  attr(time, "units"))
+  if(length(bad_samples)!=0){
+    cat("\n",length(bad_samples), " failed samples.\n")
+    obj=obj[-bad_samples]
+  }
   Pmat<-do.call(rbind,lapply(obj,function(x){F_Sym2Vec(x$edges_prob)}))
   summaryiter = do.call(c,lapply(obj,function(x){x$maxIter}))
   times<-do.call(c,lapply(obj,function(x){x$timeEM}))
@@ -339,6 +352,7 @@ ResampleEMtree <- function(counts, covar_matrix=NULL  , O=NULL, v=0.8, S=1e2, ma
 #' @param models list of covariate combinations to be tested. For example list(1,2) will design two linear models with the first two covariates adjusted separately
 #' @param m_names list of names for the models to be compared, for example list("first model","last model")
 #' @param O Offset matrix with dimensions n x p
+#' @param unlinked An optional vector of nodes which are not linked with each other
 #' @param Pt Probability threshold for every sub-sample
 #' @param v The proportion of observed data to be taken in each sub-sample. It is the ratio (sub-sample size)/n
 #' @param S Number of desired sub-samples
@@ -362,16 +376,16 @@ ResampleEMtree <- function(counts, covar_matrix=NULL  , O=NULL, v=0.8, S=1e2, ma
 #'Y = data_from_scratch(type="tree",p=p,n=n)$data
 #'X = data.frame(rnorm(n),rbinom(n,1,0.7))
 #'ComparEMtree(Y,X,models=list(1,2,c(1,2)),m_names=list("1","2","both"),Pt=0.3,S=S, cores=1)
-ComparEMtree <- function(counts, covar_matrix, models, m_names, O=NULL, Pt=0.1, v=0.8,
+ComparEMtree <- function(counts, covar_matrix, models, m_names, O=NULL,unlinked=NULL, Pt=0.1, v=0.8,
                          S=1e2, maxIter=50, cond.tol=1e-14,cores=3){
 
   Stab.sel<- lapply(seq_along(models),function(x){
     cat("model",m_names[[x]],": ")
     covariates=colnames(covar_matrix)[models[[x]]]
-    chaine=paste0("~-1+",paste(covariates,collapse="+")) #includes the intercept
+    chaine=paste0("~",paste(covariates,collapse="+")) #includes the intercept
     formule=stats::formula(chaine)
     matcovar=stats::model.matrix(formule,covar_matrix)
-    Pmat=ResampleEMtree(counts,matcovar,O=O, v=v, S=S, maxIter, cond.tol=cond.tol,cores=cores)$Pmat
+    Pmat=ResampleEMtree(counts,matcovar,unlinked= unlinked,O=O, v=v, S=S, maxIter, cond.tol=cond.tol,cores=cores)$Pmat
     cat("\n")
     return(Pmat)
   })
@@ -418,18 +432,10 @@ ComparEMtree <- function(counts, covar_matrix, models, m_names, O=NULL, Pt=0.1, 
 #'str(edges_freq)
 
 freq_selec<-function(Pmat,Pt){
-  E=ncol(Pmat)
+  E=ncol(Pmat) #number of edges
   p=sqrt(2*E+(1/4))-1/2
   if(is.null(Pt)) Pt= 2/p + 0.1
   return(F_Vec2Sym(colMeans(1*(Pmat>Pt))))
 }
 
-select_edges<-function(data,p=p){
-  1*(data$ProbaCond>2/p)
-}
 
-freq_selec_pmat<-function(list,p,f){ # rend une liste de sélection pour chaque elt (modeles) de la liste de départ
-  lapply(list, function(x){
-    1*(colMeans(1*(x$Pmat>2/p))>f)
-  })
-}

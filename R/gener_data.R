@@ -81,7 +81,7 @@ generator_graph<-function(p = 20, graph = "tree", dens=0.3, r=2, k=3){
     theta<-SimCluster(p,k=k,dens,r)
   }
   if (graph == "scale-free") {
-    theta = huge.generator(d=p,graph="scale-free",verbose = FALSE)$theta
+    theta = huge::huge.generator(d=p,graph="scale-free",verbose = FALSE)$theta
   }
   if(graph=="tree"){
     theta<-SpannTree(p)
@@ -122,7 +122,6 @@ generator_param<-function(G,signed=FALSE,v=0.01){
       lambda = 1.1*lambda
       omega = lambda*D + Gsign
     }
-    print(lambda)
   }else{
     omega = lambda*D + G
     while (min(eigen(omega)$values) < 1e-10){
@@ -161,11 +160,11 @@ generator_PLN<-function(Sigma,covariates=NULL, n=50, norm=FALSE){
 
     string<-paste0("~", paste(colnames(covariates), collapse=" + "))
     formula<-stats::as.formula(string)
-    m<- stats::model.matrix(formula,covariates)[,-1]
+    m<- stats::model.matrix(formula,covariates)
 
-    mc<-ncol(m)
+    mc<-ncol(m)-1
     beta<-matrix(stats::runif(p*mc),mc,p)
-    prod=m %*% beta+2
+    prod=(matrix(m[,-1],n , mc) %*% beta) +2
   }else{
     prod=2 # constant for signal
   }
@@ -205,9 +204,11 @@ generator_PLN<-function(Sigma,covariates=NULL, n=50, norm=FALSE){
 #' @export
 #' @importFrom magrittr "%>%"
 #' @importFrom tidygraph as_tbl_graph
-#' @importFrom ggraph ggraph geom_edge_link geom_node_point
+#' @importFrom ggraph ggraph geom_edge_link geom_node_point theme_graph
 #' @examples set.seed(1)
-#' data_from_scratch("tree",p=10,draw=TRUE)
+#' p=30
+#' data_from_scratch("tree",p=p,draw=TRUE)
+#' data_from_scratch("cluster",p=p,r=10, dens=8/p,draw=TRUE)
 data_from_scratch<-function(type, p=20,n=50, r=5, covariates=NULL,dens=log(p)/p,
                             norm=FALSE, signed=FALSE,v=0.01,draw=FALSE){
   # make graph
@@ -217,8 +218,8 @@ data_from_scratch<-function(type, p=20,n=50, r=5, covariates=NULL,dens=log(p)/p,
   if(draw){
     g=as_tbl_graph(as.matrix(graph)) %>%
       ggraph(layout="nicely")+
-      geom_edge_link()+
-      geom_node_point(size=2, color="blue")
+      geom_edge_link(color="#31374f")+
+      geom_node_point(size=2, color="steelblue")+theme_graph()
     print(g)
   }
 

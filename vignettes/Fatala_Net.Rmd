@@ -54,13 +54,13 @@ EMtreeFit<-EMtree(PLNfit,  maxIter = 20, plot=TRUE)
 str(EMtreeFit)
 ```
 
-To get a network from afit of `EMtree()`, the probabilities stored in `edges_prob` can be thresholded. We propose the $2/p$ threshold as follows:
+To get a network from a fit of `EMtree()`, the probabilities stored in `edges_prob` can be thresholded. We propose the $2/p$ threshold as follows:
 ```{r}
 probs<- EMtreeFit$edges_prob
 net<-1*(probs>2/p)
 ```
 
-To improve the robstness, the function `ResampleEMtree()` implements a statibility selection of EMtree on S sub-samples. This function uses parallel computations with `mclapply()`.  The output Pmat gathers all the infered edges probabilities for each sub-sample.
+To improve the robustness, the function `ResampleEMtree()` implements a stability selection of EMtree on S sub-samples. This function uses parallel computations with `mclapply()`.  The output Pmat gathers all the inferred edges probabilities for each sub-sample.
 ```{r, cache=TRUE}
 ResampEmtreeFit<-ResampleEMtree(counts=Y, covar_matrix = X$site , S=5, maxIter=10,cond.tol=1e-8, cores=1)
 str(ResampEmtreeFit)

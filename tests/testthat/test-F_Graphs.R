@@ -17,18 +17,20 @@ beta = matrix(1/10,10,10)
 gamma=log(beta)
 psi=Psi_alpha(cor(Y), n)$psi
 P=EdgeProba(beta*psi)
+P=Kirshner(beta*psi)
 M=Meila(beta)
-x=SetLambda(P,M)
+sum.contraint=binf.constraint(p)
+x=SetLambda(P,M, sum.contraint)
 
 ##########################
-FitEM = FitBeta(beta.init=beta, psi=psi, maxIter = 6,
-                      verbatim=TRUE, plot=TRUE)
-PLNobj = PLN(Y~1)
+FitEM = FitBeta(beta.init=beta, psi=psi, maxIter = 6 )
+PLNobj = PLN(Y~1, control=list(trace=0))
 EM=EMtree(PLN.Cor =PLNobj, plot=FALSE, verbatim=FALSE)
 resampl=ResampleEMtree(Y, S=S,cores = 1)
 
 X = data.frame(V1=rnorm(n),V2=rbinom(n,1,0.7))
-compare=ComparEMtree(Y,X,models=list(1,2),m_names=list("1","2"),Pt=0.3,S=S, cores=1)
+compare=ComparEMtree(Y,X,models=list(1,2),m_names=list("1","2"),
+                     Pt=0.3,S=S, cores=1)
 
 ##########################
 draw = draw_network(EM$edges_prob)

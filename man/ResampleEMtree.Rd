@@ -7,11 +7,13 @@
 ResampleEMtree(
   counts,
   covar_matrix = NULL,
+  unlinked = NULL,
   O = NULL,
   v = 0.8,
   S = 100,
   maxIter = 30,
   cond.tol = 1e-14,
+  eps = 1e-06,
   cores = 3
 )
 }
@@ -19,6 +21,8 @@ ResampleEMtree(
 \item{counts}{Data of observed counts with dimensions n x p, either a matrix, data.frame or tibble.}
 
 \item{covar_matrix}{matrix of covariates, should have the same number of rows as the count matrix.}
+
+\item{unlinked}{An optional vector of nodes which are not linked with each other}
 
 \item{O}{Matrix of offsets, with dimension n x p}
 
@@ -29,6 +33,8 @@ ResampleEMtree(
 \item{maxIter}{Maximum number of EMtree iterations at each sub-sampling.}
 
 \item{cond.tol}{Tolerance for the psi matrix.}
+
+\item{eps}{Precision parameter controlling the convergence of weights beta}
 
 \item{cores}{Number of cores, can be greater than 1 if data involves less than about 32 species.}
 }
