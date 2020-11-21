@@ -12,29 +12,34 @@ F_NegGradient_Trans <- function(gamma, log.psi, P,sum.constraint){
   beta[gamma==0]=0
   M = Meila(F_Vec2Sym(beta))
   lambda = SetLambda(P, M,sum.constraint)
-  return(- F_Sym2Vec(P)/beta + (F_Sym2Vec(M) + lambda))
+  return(- F_Sym2Vec(P) + beta*(F_Sym2Vec(M) + lambda))#gradient with log transformation
 }
 F_NegLikelihood_Trans <- function(gamma, log.psi, P,sum.constraint, trim=TRUE){
   #cat(paste0("SumTree=",SumTree(F_Vec2Sym(exp(gamma)))),"\nsummary:", summary(gamma),"\n")
 
-   if(trim){#center and trim in log scale, while preventing getting a matrix full of zeros
-  #  if(sum((gamma-mean(gamma))!=0)!=0) gamma=gamma-mean(gamma)
+  if(trim){#center and trim in log scale, while preventing getting a matrix full of zeros
+    if(sum((gamma-mean(gamma))!=0)!=0) gamma=gamma-mean(gamma)
     gamma[which(gamma<(-30))]=-30
     gamma[which(gamma>(40))]=40
   }
   M = Meila(F_Vec2Sym(exp(gamma)))
+  # if(!is.finite(sum(M)) || is.nan(sum(M))){
+  #   gamma[which(gamma<(-20))]=-20
+  #   gamma[which(gamma>(20))]=20
+  #   M = Meila(F_Vec2Sym(exp(gamma)))
+  # }
   lambda = SetLambda(P, M,sum.constraint)
 
   suppressWarnings(
     res<-(-sum(F_Sym2Vec(P) * (log(exp(gamma))+ F_Sym2Vec(log.psi))) )+
       log(SumTree(F_Vec2Sym(exp(gamma))))+
       lambda*(sum(exp(gamma))-sum.constraint/2))
-# cat("like val is... ",res," !!\n Detail: a=",
-# -sum(F_Sym2Vec(P) * (log(exp(gamma))+ F_Sym2Vec(log.psi))) ,"/b=",
-# log(SumTree(F_Vec2Sym(exp(gamma)))),"/c=",
-#   lambda*(sum(exp(gamma))-sum.constraint/2),"\n"
-# )
-#cat(paste0("\nSumTree=",SumTree(F_Vec2Sym(exp(gamma)))))
+  # cat("like val is... ",res," !!\n Detail: a=",
+  # -sum(F_Sym2Vec(P) * (log(exp(gamma))+ F_Sym2Vec(log.psi))) ,"/b=",
+  # log(SumTree(F_Vec2Sym(exp(gamma)))),"/c=",
+  #   lambda*(sum(exp(gamma))-sum.constraint/2),"\n"
+  # )
+  #cat(paste0("\nSumTree=",SumTree(F_Vec2Sym(exp(gamma)))))
 
   if(is.nan(res)){
     #  cat(max(gamma),": higher bound ")
@@ -52,7 +57,7 @@ F_NegLikelihood_Trans <- function(gamma, log.psi, P,sum.constraint, trim=TRUE){
 
   return( res)
 }
-binf.constraint<-function(p,min.order=308){
+binf.constraint<-function(p,min.order=250){
   round( p*(p-1)*10^(-min.order/(p-1)))+1
 }
 #########################################################################
@@ -66,16 +71,15 @@ SetLambda <- function(P, M,sum.constraint=1, eps = 1e-6, start=1){
       sum.constraint - (2*sum(P[upper.tri(P)] / M[upper.tri(M)]))
     }
   }
-  x.min = ifelse(F.x(0) >0,-start,1e-4);
-  while(F.x(x.min)>F.x(0)){
-    x.min=x.min/2
-  }
-  t1<-Sys.time()
-  while(F.x(x.min)>0 ){
-    x.min = x.min -1
-    if(difftime(Sys.time(),t1)>1) stop("Could not set lambda.")}
+  x.min = ifelse(F.x(0) >0,-min(F_Sym2Vec(M))+1e-5,-1e-4);
+ if(F.x(x.min)>0) stop("Could not set lambda.")
+  # t1<-Sys.time()
+  # while(F.x(x.min)>0 ){
+  #   # x.min = sign(x.min)*(abs(x.min)*10)
+  #   x.min=x.min-1
+  #   if(difftime(Sys.time(),t1)>1) stop("Could not set lambda.")}
   x.max = start
-  while(F.x(x.max)<0){x.max = x.max * 2}
+  while(F.x(x.max)<0){x.max = x.max * 10}
   x = (x.max+x.min)/2
   f.min = F.x(x.min)
   f.max = F.x(x.max)
@@ -331,13 +335,13 @@ ResampleEMtree <- function(counts,covar_matrix=NULL  , unlinked=NULL, O=NULL,
     counts.sample = counts[sample,]
     X.sample = data.frame(X[sample,])
     O.sample = O[sample,]
-  try({
+    try({
       suppressWarnings(
         PLN.sample <- PLNmodels::PLN(counts.sample ~ -1  + offset(log(O.sample)) + ., data=X.sample, control = list("trace"=0))
       )
 
-      inf<-EMtree( PLN.sample,unlinked,n=n, maxIter=maxIter, cond.tol=cond.tol,verbatim=FALSE,eps=eps,
-                       plot=FALSE)[c("edges_prob","maxIter","timeEM")]
+      inf<-EMtree( PLN.sample,unlinked,n=n, maxIter=maxIter, cond.tol=cond.tol,verbatim=TRUE,eps=eps,
+                   plot=FALSE)[c("edges_prob","maxIter","timeEM")]
     },silent=TRUE )
     if(!exists("inf")) inf=NA #depending on the sample drawn, it is possible that computation fail
     # because of bad conditioning of the Laplacian matrix of the weights beta.
@@ -414,7 +418,7 @@ ComparEMtree <- function(counts, covar_matrix, models, m_names, O=NULL,unlinked=
       df
     })) %>%
     mutate(P = purrr::map(P,~rownames_to_column(.) %>%
-                     gather(key, value , -rowname) %>%filter(!is.na(value))
+                            gather(key, value , -rowname) %>%filter(!is.na(value))
     ),
     mods=unlist(mods)
     ) %>%

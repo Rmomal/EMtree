@@ -17,6 +17,7 @@
 #' @param pal_edges optional palette for edges
 #' @param pal_nodes optional palette for nodes
 #' @param groupes optional vector seperating the nodes into groupes
+#' @param legend optional boolean for generating a legend when groups are provided
 #'
 #' @return \itemize{
 #' \item{G} {the network as a ggplot2 object, with highlighted high betweenness nodes}
@@ -26,16 +27,19 @@
 #' @importFrom tidygraph .N as_tbl_graph activate centrality_betweenness centrality_degree edge_is_incident
 #' @importFrom ggraph ggraph set_graph_style geom_edge_arc scale_edge_alpha_manual scale_edge_width_continuous geom_node_text geom_node_point  scale_edge_colour_manual
 #' @importFrom tibble tibble rownames_to_column
-#' @importFrom ggplot2 aes theme labs scale_color_manual scale_size_manual
+#' @importFrom ggplot2 aes theme labs scale_color_manual scale_size_manual ggplot_gtable ggplot_build
 #' @importFrom dplyr mutate filter
 #' @importFrom viridisLite viridis
 #' @importFrom tibble as_tibble
+#' @importFrom gridExtra grid.arrange
 #' @examples adj_matrix= SimCluster(20,2,0.4, 10)
 #' draw_network(adj_matrix,"Cluster graph", layout="fr", shade=TRUE)
 draw_network<-function(adj_matrix,title="", size=4, curv=0,width=1, shade=FALSE, filter_deg=FALSE,btw_rank=2,
-                       layout=NULL,stored_layout=NULL,nodes_label=NULL,nodes_size=c(2,5),pal_edges=NULL, pal_nodes=NULL, groupes=NULL){
+                       layout=NULL,stored_layout=NULL,nodes_label=NULL,nodes_size=c(2,5),pal_edges=NULL, pal_nodes=NULL, groupes=NULL,
+                       legend=FALSE){
   adj_matrix=as.matrix(adj_matrix)
   p=nrow(adj_matrix) ; binary=FALSE
+
   if(is.null(nodes_label)){ nodes_label=1:p ; nonames=TRUE}else{nonames=FALSE}
   if(sum(unique(adj_matrix))==1) binary=TRUE
   # edges width
@@ -62,17 +66,17 @@ draw_network<-function(adj_matrix,title="", size=4, curv=0,width=1, shade=FALSE,
     filter(weight !=0) %>%
     mutate(neibs=edge_is_incident(which(.N()$bool_btw)), title=title)
 
-# define nodes color
+  # define nodes color
+
+  sensitive_nodes=unlist(res %>%
+                           activate(nodes)  %>% dplyr::select(bool_btw) %>% tibble::as_tibble())
   if(!is.null(groupes)){
-   if(is.null(pal_nodes)) pal_nodes<-c("#31374f","#adc9e0","#e7bd42")
- }else{
-   groupes=unlist(res %>%
-     activate(nodes)  %>% dplyr::select(bool_btw) %>% tibble::as_tibble())
-   if(is.null(pal_nodes)) pal_nodes<-c("#31374f","#e7bd42")
- }
-  res<-res %>%
-    activate(nodes)  %>%
-    mutate(finalcolor=groupes)
+    if(is.null(pal_nodes)) pal_nodes<-c("#31374f","#adc9e0","#e7bd42")
+  }else{
+    groupes=sensitive_nodes
+    if(is.null(pal_nodes)) pal_nodes<-c("#31374f","#e7bd42")
+  }
+
 
   #draw graph
   set_graph_style(family="sans")
@@ -83,10 +87,11 @@ draw_network<-function(adj_matrix,title="", size=4, curv=0,width=1, shade=FALSE,
     g=res %>%
       ggraph(graph = finallayout)
   }else{
-    finallayout=stored_layout
+    finallayout=stored_layout[,1:2]
     g=res %>%
       ggraph(layout = finallayout)
   }
+
 
 
   if(shade){ #shading
@@ -97,13 +102,22 @@ draw_network<-function(adj_matrix,title="", size=4, curv=0,width=1, shade=FALSE,
     geom_edge_arc(aes(edge_width=weight,color = title), strength = curv, show.legend = FALSE)
   }
   g<-g+
-    geom_node_point(aes(color = finalcolor, size = groupes), show.legend = FALSE) +
+    geom_node_point(aes(color = groupes, size = sensitive_nodes), show.legend = FALSE) +
     scale_edge_colour_manual(values = pal_edges) +
     scale_color_manual(values = pal_nodes)+
     scale_size_manual(values = nodes_size)+
     geom_node_text(aes(label = label), color = "black", size = size) +#,nudge_x = 0.3
     labs(title = title) + theme(plot.title = element_text(hjust = 0.5))+
     scale_edge_width_continuous(range=c(min.width,width))
+
+  if(!is.null(groupes) & legend ){#add legend if groups provided
+    tmp=ggplot(data.frame(groupes=as.factor(groupes), row1=adj_matrix[1,], row2=adj_matrix[2,]),
+               aes(row1, row2, color=groupes))+
+      geom_point()+scale_color_manual(values=pal_nodes)+theme(legend.position="right")
+    tmp <- ggplot_gtable(ggplot_build(tmp))
+    leg <- tmp$grobs[[which(sapply(tmp$grobs, function(x) x$name) == "guide-box")]]
+    g<-grid.arrange(g,leg, widths = c(5,  1), ncol=2)
+  }
 
   return(list(G=g,graph_data=res))
 }
@@ -147,15 +161,15 @@ draw_network<-function(adj_matrix,title="", size=4, curv=0,width=1, shade=FALSE,
 compare_graphs<-function(allNets, curv=0.2, width=1, shade=TRUE,Ft=0, nodes_label=NULL,
                          btw_rank=2, layout="circle", base_model=NULL){
 
-   mods=unique(allNets$model)
+  mods=unique(allNets$model)
   if(is.null(base_model)) base_model = allNets$model[1]
   nbmod<-length(mods)
   binary=(sum(unique(allNets$weight))==1)
 
-if(is.null(nodes_label)){
-  nb_sp = max(as.numeric(allNets$node2))
-  nodes_label=1:nb_sp
-}
+  if(is.null(nodes_label)){
+    nb_sp = max(as.numeric(allNets$node2))
+    nodes_label=1:nb_sp
+  }
   spliT<-data.frame(allNets) %>%
     base::split(allNets$model) %>%
     tibble(P=map(.,function(x){
@@ -166,7 +180,7 @@ if(is.null(nodes_label)){
         mutate(btw.weights=log(1+1/weight)) %>%
         activate(nodes) %>%
         mutate( importance=centrality_degree(),btw=centrality_betweenness(weights = btw.weights),boolbtw=(btw>sort(btw, decreasing = TRUE)[btw_rank]),
-                 mod=mod, names=nodes_label) %>%
+                mod=mod, names=nodes_label) %>%
         activate(edges) %>%
         mutate(neibs=edge_is_incident(which(.N()$boolbtw)), mod=mod) %>%
         activate(nodes) %>%
@@ -177,14 +191,15 @@ if(is.null(nodes_label)){
 
   pal_edges <- viridisLite::viridis(5, option = "C")
   pal_nodes<-c("gray15","goldenrod1")
-  lay<-create_layout(spliT$P[[base_model]],layout=layout)
+  lay<-data.frame(create_layout(spliT$P[[base_model]],layout=layout)[,1:2])
+  rownames(lay)=NULL
   set_graph_style(family="sans")
   plot<- spliT$P %>%
     reduce(bind_graphs) %>%
     activate(nodes) %>%
-    mutate(mod=factor(mod,levels=mods),x=rep(lay$x,nbmod),y=rep(lay$y,nbmod)) %>%
+    mutate(mod=factor(mod,levels=mods)) %>%
     activate(edges) %>% filter(weight>Ft) %>%
-    ggraph(layout="nicely")
+    ggraph(layout=lay)
   if(shade){
     plot<-plot+
       geom_edge_arc(aes(edge_width=weight,color=mod, alpha=neibs),strength=curv,show.legend=FALSE)+

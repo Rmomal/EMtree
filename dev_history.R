@@ -5,6 +5,7 @@ usethis::use_package("magrittr")
 usethis::use_package("ade4")
 usethis::use_package("viridis")
 usethis::use_package("gmp")
+usethis::use_package("gridExtra")
 attachment::att_to_description()
 
 

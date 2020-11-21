@@ -19,7 +19,8 @@ draw_network(
   nodes_size = c(2, 5),
   pal_edges = NULL,
   pal_nodes = NULL,
-  groupes = NULL
+  groupes = NULL,
+  legend = FALSE
 )
 }
 \arguments{
@@ -52,6 +53,8 @@ draw_network(
 \item{pal_nodes}{optional palette for nodes}
 
 \item{groupes}{optional vector seperating the nodes into groupes}
+
+\item{legend}{optional boolean for generating a legend when groups are provided}
 }
 \value{
 \itemize{

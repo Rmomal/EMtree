@@ -44,6 +44,8 @@ Meila <- function(W){
   M = rbind(c(0, diag(M)),
             cbind(diag(M), (diag(M)%o%rep(1, p-1) + rep(1, p-1)%o%diag(M) - 2*M)))
   M = .5*(M + t(M))
+  test=sum(M)
+
   return(M)
 }
 
