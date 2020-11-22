@@ -42,7 +42,7 @@ compare=ComparEMtree(Y,X,models=list(1,2),m_names=list("1","2"),Pt=0.3,S=S, core
 # test=test+1e-30
 
 
-Y2=data_from_scratch(type="tree",p=30,n=n, draw=TRUE)$data
+Y2=data_from_scratch(type="tree",p=30,n=n)$data
 psi2=Psi_alpha(cor(Y2), n)$psi
 set.seed(1)
 test=F_Vec2Sym(exp(sample(c(-39,39), 435, prob = c(0.9,0.1), replace=TRUE)))

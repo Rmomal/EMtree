@@ -35,12 +35,12 @@ compare=ComparEMtree(Y,X,models=list(1,2),m_names=list("1","2"),
 
 ##########################
 draw = draw_network(EM$edges_prob, groupes=rep(c(1,2),each=p/2),
-                    shade=TRUE, legend=TRUE)
-comp.gr=compare_graphs(compare, layout="kk")
+                    shade=TRUE, legend=TRUE)$graph_data
+comp.gr=compare_graphs(compare, layout="kk")$graph_data
 
 
 test_that("draw_networktest", {
-  expect_length(draw, 2)
+  expect_length(draw, p)
 })
 
 test_that("compar_graphstest", {

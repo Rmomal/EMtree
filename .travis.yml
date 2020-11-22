@@ -23,6 +23,7 @@ matrix:
       r_packages:
         - covr
         - pkgdown
+        - ragg
       after_success:
         - Rscript -e 'covr::codecov()'
         - R CMD INSTALL .
