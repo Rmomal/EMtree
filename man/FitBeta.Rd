@@ -4,7 +4,14 @@
 \alias{FitBeta}
 \title{Update the beta weights according to the gradient ascent}
 \usage{
-FitBeta(beta.init, psi, maxIter = 50, eps = 1e-06, unlinked = NULL)
+FitBeta(
+  beta.init,
+  psi,
+  maxIter = 50,
+  eps = 1e-06,
+  unlinked = NULL,
+  sum.weights
+)
 }
 \arguments{
 \item{beta.init}{Initial beta weight matrix}
@@ -17,6 +24,8 @@ wase be deduced from the correlation matrix.}
 \item{eps}{Precision parameter controlling the convergence of weights beta}
 
 \item{unlinked}{An optional vector of nodes which are not linked with each other}
+
+\item{sum.weights}{Sum constraint for the weight matrix}
 }
 \value{
 \itemize{
@@ -37,5 +46,5 @@ S=5
 Y=data_from_scratch("tree",p=p,n=n)$data
 beta = matrix(1/10,10,10)
 psi=Psi_alpha(cor(Y), n)$psi
-FitEM = FitBeta(beta.init=beta, psi=psi, maxIter = 6)
+FitEM = FitBeta(beta.init=beta, psi=psi, maxIter = 6, sum.weights=sum(beta))
 }

@@ -12,22 +12,14 @@ F_NegGradient_Trans <- function(gamma, log.psi, P,sum.constraint){
   beta[gamma==0]=0
   M = Meila(F_Vec2Sym(beta))
   lambda = SetLambda(P, M,sum.constraint)
-  return(- F_Sym2Vec(P) + beta*(F_Sym2Vec(M) + lambda))#gradient with log transformation
+  D=length(gamma)
+  #gradient with log transformation
+  return((- F_Sym2Vec(P) + beta*(F_Sym2Vec(M) + lambda)))
 }
-F_NegLikelihood_Trans <- function(gamma, log.psi, P,sum.constraint, trim=TRUE){
-  #cat(paste0("SumTree=",SumTree(F_Vec2Sym(exp(gamma)))),"\nsummary:", summary(gamma),"\n")
-
-  if(trim){#center and trim in log scale, while preventing getting a matrix full of zeros
-    if(sum((gamma-mean(gamma))!=0)!=0) gamma=gamma-mean(gamma)
-    gamma[which(gamma<(-30))]=-30
-    gamma[which(gamma>(40))]=40
-  }
+F_NegLikelihood_Trans <- function(gamma, log.psi, P,sum.constraint){
+#gamma=gamma-mean(gamma)
   M = Meila(F_Vec2Sym(exp(gamma)))
-  # if(!is.finite(sum(M)) || is.nan(sum(M))){
-  #   gamma[which(gamma<(-20))]=-20
-  #   gamma[which(gamma>(20))]=20
-  #   M = Meila(F_Vec2Sym(exp(gamma)))
-  # }
+
   lambda = SetLambda(P, M,sum.constraint)
 
   suppressWarnings(
@@ -41,19 +33,6 @@ F_NegLikelihood_Trans <- function(gamma, log.psi, P,sum.constraint, trim=TRUE){
   # )
   #cat(paste0("\nSumTree=",SumTree(F_Vec2Sym(exp(gamma)))))
 
-  if(is.nan(res)){
-    #  cat(max(gamma),": higher bound ")
-    gamma[which(gamma>(20))]=20
-    gamma[which(gamma<(-20))]=-20
-    M = Meila(F_Vec2Sym(exp(gamma)))
-    lambda = SetLambda(P, M,sum.constraint)
-    res<-(-sum(F_Sym2Vec(P) * (log(exp(gamma))+ F_Sym2Vec(log.psi))) )+
-      log(SumTree(F_Vec2Sym(exp(gamma))))+
-      lambda*(sum(exp(gamma))-sum.constraint/2)
-    if(is.nan(res))   cat("\nbeta optimization failed: ",SumTree(F_Vec2Sym(exp(gamma))),
-                          sum(F_Sym2Vec(P) * (log(exp(gamma))+ F_Sym2Vec(log.psi))) ,
-                          sum(F_Sym2Vec(P)),"\n")
-  }
 
   return( res)
 }
@@ -71,13 +50,13 @@ SetLambda <- function(P, M,sum.constraint=1, eps = 1e-6, start=1){
       sum.constraint - (2*sum(P[upper.tri(P)] / M[upper.tri(M)]))
     }
   }
-  x.min = ifelse(F.x(0) >0,-min(F_Sym2Vec(M))+1e-5,-1e-4);
- if(F.x(x.min)>0) stop("Could not set lambda.")
-  # t1<-Sys.time()
-  # while(F.x(x.min)>0 ){
-  #   # x.min = sign(x.min)*(abs(x.min)*10)
-  #   x.min=x.min-1
-  #   if(difftime(Sys.time(),t1)>1) stop("Could not set lambda.")}
+i=1
+  x.min = ifelse(F.x(0) >0,-sort(F_Sym2Vec(M))[1]+1e-10,max(-1e-4, -min(F_Sym2Vec(M))/2));
+ while(F.x(x.min)>0 && i<length(unique(M))){
+   i=i+1
+   x.min=-sort(F_Sym2Vec(M))[i]+1e-10
+ }
+  if(F.x(x.min)>0) stop("Could not set lambda.")
   x.max = start
   while(F.x(x.max)<0){x.max = x.max * 10}
   x = (x.max+x.min)/2
@@ -146,7 +125,7 @@ Psi_alpha <- function(CorY, n, cond.tol=1e-10){
 #' @param maxIter Maximum number of iterations
 #' @param eps  Precision parameter controlling the convergence of weights beta
 #' @param unlinked An optional vector of nodes which are not linked with each other
-#'
+#' @param sum.weights Sum constraint for the weight matrix
 #' @return
 #' \itemize{
 #'  \item{edges_prob: }{p x p matrix of edges probabilities}
@@ -165,19 +144,25 @@ Psi_alpha <- function(CorY, n, cond.tol=1e-10){
 #' Y=data_from_scratch("tree",p=p,n=n)$data
 #' beta = matrix(1/10,10,10)
 #' psi=Psi_alpha(cor(Y), n)$psi
-#' FitEM = FitBeta(beta.init=beta, psi=psi, maxIter = 6)
-FitBeta <- function(beta.init, psi, maxIter=50, eps = 1e-6, unlinked=NULL){
+#' FitEM = FitBeta(beta.init=beta, psi=psi, maxIter = 6, sum.weights=sum(beta))
+FitBeta <- function(beta.init, psi, maxIter=50, eps = 1e-6, unlinked=NULL,sum.weights){
   beta.tol = 1e-4
   beta.min = 1e-16
   beta.old = beta.init
   log.psi = log(psi+(psi==0))
   iter = 0
+  p=nrow(beta.init)
   logpY = rep(0, maxIter)
   beta.diff = diff.loglik = 2 * eps
 
   stop=FALSE
-
-  while (((beta.diff > eps) || (diff.loglik>100*eps) ) && iter < maxIter && !stop){
+  # min.val=max((-(p-2)*log(p)+round(log(.Machine$double.xmin))+10)/(p-1), -10)
+  # max.val=min((-(p-2)*log(p)+round(log(.Machine$double.xmax))-10)/(p-1), 10)
+  min.val=max((-(p-2)*log(p)+round(log(.Machine$double.xmin))+10)/(p-1), -10)
+  max.val=min((-(p-2)*log(p)+round(log(.Machine$double.xmax))-10)/(p-1), 3)
+  #((beta.diff > eps) || (diff.loglik>100*eps) )
+  gamma.bar=mean(F_Sym2Vec(log(beta.init)))
+  while (  (beta.diff > eps) && iter < maxIter && !stop){
     iter = iter+1
     P=Kirshner(W=beta.old*psi)
     init=F_Sym2Vec(beta.old)
@@ -185,15 +170,19 @@ FitBeta <- function(beta.init, psi, maxIter=50, eps = 1e-6, unlinked=NULL){
     #gradient ascent in log scale
     gamma_init=log(init+(init==0))
     gamma_init[init==0]=0
-    gamma = stats::optim(gamma_init, F_NegLikelihood_Trans, gr=F_NegGradient_Trans,method='BFGS',
-                         log.psi, P,sum(beta.init), control=list(maxit=300,  abstol=1e-5, reltol=1e-5))$par
 
+    gamma = stats::optim(gamma_init, F_NegLikelihood_Trans, gr=F_NegGradient_Trans,method='L-BFGS-B',
+                         log.psi, P,sum.weights, control=list(trace=0,maxit=500,  pgtol=1e-4, factr=1e+10),
+                         lower=rep(min.val, p*(p-1)/2),upper=rep(max.val, p*(p-1)/2))$par
+
+ # cat(round(mean(gamma),2))
     beta=exp(gamma)
     beta[which(beta< beta.min)] = beta.min # numerical zeros
     beta=F_Vec2Sym(beta)
     if(!is.null(unlinked)) beta[unlinked, unlinked]=0
-    logpY[iter] = -F_NegLikelihood(F_Sym2Vec(beta),log.psi,P,sum(beta.init))
+    logpY[iter] = -F_NegLikelihood(F_Sym2Vec(beta),log.psi,P,sum.weights)
     beta.diff = max(abs(beta.old-beta))
+#cat(paste0("/ ",round(beta.diff,6),"\n"))
     beta.old = beta
     diff.loglik=logpY[iter]-logpY[iter-1]
     if(iter > 1){diff.loglik =  abs(diff.loglik)}else{diff.loglik=1}
@@ -234,7 +223,7 @@ FitBeta <- function(beta.init, psi, maxIter=50, eps = 1e-6, unlinked=NULL){
 
 
 EMtree<-function(PLN.Cor, n=NULL,  maxIter=30, unlinked=NULL , random.init=FALSE,
-                 cond.tol=1e-10, eps = 1e-6,
+                 cond.tol=1e-10, eps = 1e-4,
                  verbatim=TRUE, plot=FALSE){
   T1<-Sys.time()
   if(inherits(PLN.Cor, "PLNfit")){
@@ -253,17 +242,19 @@ EMtree<-function(PLN.Cor, n=NULL,  maxIter=30, unlinked=NULL , random.init=FALSE
   # beta.init with adaptative mean value depending on the network dimensions
   sum.weights=binf.constraint(p)
   mean.val=sum.weights/(p*(p-1))
-  beta.init = matrix(mean.val, p, p);
+  beta.init = matrix(mean.val, p, p);  diag(beta.init)=0
   if(!is.null(unlinked)) beta.init[unlinked, unlinked]=0 #unliked nodes
 
   if(random.init){ # try different starting points for this EM
     beta.init = matrix(runif(n=p*p, min=0.9*mean.val,max=1.1*mean.val ), p,p)
-    beta.init=t(beta.init)%*%beta.init/2}
-  diag(beta.init)=0
+    beta.init=t(beta.init)%*%beta.init/2
+    diag(beta.init)=0
+    sum.weights=round(sum(beta.init))+1}
+
 
 
   FitEM = FitBeta(beta.init=beta.init, psi=psi, maxIter = maxIter,eps = eps,
-                  unlinked=unlinked)
+                  unlinked=unlinked, sum.weights=sum.weights)
 
   beta=FitEM$edges_weight
   P = Kirshner(beta*psi)

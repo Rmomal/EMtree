@@ -104,7 +104,7 @@ draw_network<-function(adj_matrix,title="", size=4, curv=0,width=1, shade=FALSE,
   g<-g+
     geom_node_point(aes(color = groupes, size = sensitive_nodes), show.legend = FALSE) +
     scale_edge_colour_manual(values = pal_edges) +
-    scale_color_manual(values = pal_nodes)+
+    scale_color_manual("",values = pal_nodes)+
     scale_size_manual(values = nodes_size)+
     geom_node_text(aes(label = label), color = "black", size = size) +#,nudge_x = 0.3
     labs(title = title) + theme(plot.title = element_text(hjust = 0.5))+
@@ -113,7 +113,7 @@ draw_network<-function(adj_matrix,title="", size=4, curv=0,width=1, shade=FALSE,
   if(!is.null(groupes) & legend ){#add legend if groups provided
     tmp=ggplot(data.frame(groupes=as.factor(groupes), row1=adj_matrix[1,], row2=adj_matrix[2,]),
                aes(row1, row2, color=groupes))+
-      geom_point()+scale_color_manual(values=pal_nodes)+theme(legend.position="right")
+      geom_point()+scale_color_manual("",values=pal_nodes)+theme(legend.position="right")
     tmp <- ggplot_gtable(ggplot_build(tmp))
     leg <- tmp$grobs[[which(sapply(tmp$grobs, function(x) x$name) == "guide-box")]]
     g<-grid.arrange(g,leg, widths = c(5,  1), ncol=2)
