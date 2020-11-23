@@ -1,7 +1,6 @@
-pandoc: '2.2'
-pkgdown: 1.6.1
+pandoc: 1.19.2.1
+pkgdown: 1.4.1
 pkgdown_sha: ~
 articles:
   Fatala_Net: Fatala_Net.html
-last_built: 2020-10-13T18:28Z
 
