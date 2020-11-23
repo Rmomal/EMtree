@@ -20,7 +20,8 @@ draw_network(
   pal_edges = NULL,
   pal_nodes = NULL,
   groupes = NULL,
-  legend = FALSE
+  legend = FALSE,
+  pos = "bottom"
 )
 }
 \arguments{
@@ -55,6 +56,8 @@ draw_network(
 \item{groupes}{optional vector seperating the nodes into groupes}
 
 \item{legend}{optional boolean for generating a legend when groups are provided}
+
+\item{pos}{optional legend position ("bottom", "top", "right" or "left")}
 }
 \value{
 \itemize{

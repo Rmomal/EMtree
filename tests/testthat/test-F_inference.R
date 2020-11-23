@@ -31,7 +31,7 @@ x=SetLambda(P,M, sum.contraint)
 ##########################
 FitEM = FitBeta(beta.init=beta, psi=psi, maxIter = 6,sum.weights = sum.contraint )
 PLNobj = PLN(Y~1, control=list(trace=0))
-EM=EMtree(PLN.Cor =PLNobj, plot=TRUE, verbatim=TRUE, maxIter = 30, random.init = TRUE)
+EM=EMtree(PLN.Cor =PLNobj, plot=TRUE, verbatim=TRUE, maxIter = 30, random.init = FALSE)
 EMunlink=EMtree(PLN.Cor =PLNobj,unlinked = c(1,2), plot=FALSE, verbatim=FALSE)
 resampl=ResampleEMtree(Y, S=S,cores = 1,maxIter = 3)
 

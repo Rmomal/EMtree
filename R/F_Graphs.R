@@ -18,7 +18,7 @@
 #' @param pal_nodes optional palette for nodes
 #' @param groupes optional vector seperating the nodes into groupes
 #' @param legend optional boolean for generating a legend when groups are provided
-#'
+#' @param pos optional legend position ("bottom", "top", "right" or "left")
 #' @return \itemize{
 #' \item{G} {the network as a ggplot2 object, with highlighted high betweenness nodes}
 #' \item{graph_data}{ data needed for plotting the network}
@@ -36,7 +36,7 @@
 #' draw_network(adj_matrix,"Cluster graph", layout="fr", shade=TRUE)
 draw_network<-function(adj_matrix,title="", size=4, curv=0,width=1, shade=FALSE, filter_deg=FALSE,btw_rank=2,
                        layout=NULL,stored_layout=NULL,nodes_label=NULL,nodes_size=c(2,5),pal_edges=NULL, pal_nodes=NULL, groupes=NULL,
-                       legend=FALSE){
+                       legend=FALSE, pos="bottom"){
   adj_matrix=as.matrix(adj_matrix)
   p=nrow(adj_matrix) ; binary=FALSE
 
@@ -109,17 +109,17 @@ draw_network<-function(adj_matrix,title="", size=4, curv=0,width=1, shade=FALSE,
     geom_node_text(aes(label = label), color = "black", size = size) +#,nudge_x = 0.3
     labs(title = title) + theme(plot.title = element_text(hjust = 0.5))+
     scale_edge_width_continuous(range=c(min.width,width))
-
+leg=NULL
   if(!is.null(groupes) & legend ){#add legend if groups provided
     tmp=ggplot(data.frame(groupes=as.factor(groupes), row1=adj_matrix[1,], row2=adj_matrix[2,]),
                aes(row1, row2, color=groupes))+
-      geom_point()+scale_color_manual("",values=pal_nodes)+theme(legend.position="right")
+      geom_point()+scale_color_manual("",values=pal_nodes)+theme(legend.position=pos)
     tmp <- ggplot_gtable(ggplot_build(tmp))
     leg <- tmp$grobs[[which(sapply(tmp$grobs, function(x) x$name) == "guide-box")]]
-    g<-grid.arrange(g,leg, widths = c(5,  1), ncol=2)
+
   }
 
-  return(list(G=g,graph_data=res))
+  return(list(G=g,legend=leg,graph_data=res))
 }
 
 

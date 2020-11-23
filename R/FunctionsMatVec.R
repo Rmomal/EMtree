@@ -28,6 +28,7 @@ F_Sym2Vec <- function(A.mat){
 #' @importFrom gmp as.bigq
 #' @export
 inverse.gmp<-function(A){
+   browser()
    p<-ncol(A)
    A.inv<-matrix(as.double(solve(as.bigq(A))),p,p)
    return(A.inv)
