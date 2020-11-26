@@ -11,7 +11,7 @@ EMtree(
   unlinked = NULL,
   random.init = FALSE,
   cond.tol = 1e-10,
-  eps = 1e-04,
+  eps = 0.001,
   verbatim = TRUE,
   plot = FALSE
 )

@@ -101,8 +101,9 @@ draw_network<-function(adj_matrix,title="", size=4, curv=0,width=1, shade=FALSE,
   }else{ g<-g+
     geom_edge_arc(aes(edge_width=weight,color = title), strength = curv, show.legend = FALSE)
   }
+
   g<-g+
-    geom_node_point(aes(color = groupes, size = sensitive_nodes), show.legend = FALSE) +
+    geom_node_point(aes(color = groupes, size = sensitive_nodes), show.legend =c(colour=legend,size=FALSE)) +
     scale_edge_colour_manual(values = pal_edges) +
     scale_color_manual("",values = pal_nodes)+
     scale_size_manual(values = nodes_size)+

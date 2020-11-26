@@ -21,22 +21,23 @@ beta = matrix(runif(n=p*p, min=0.9*mean.val,max=1.1*mean.val ), p,p)
 beta=t(beta)%*%beta/2
 diag(beta)=0
 gamma=log(beta)
-psi=Psi_alpha(cor(Y), n)$psi
-P=EdgeProba(beta*psi)
-P2=Kirshner(beta*psi)
-M=Meila(beta)
+ psi=Psi_alpha(cor(Y), n)$psi
+ P=EdgeProba(beta*psi)
+ P2=Kirshner(beta*psi)
+ M=Meila(beta)
 sum.contraint=binf.constraint(p)
-x=SetLambda(P,M, sum.contraint)
-
-##########################
-FitEM = FitBeta(beta.init=beta, psi=psi, maxIter = 6,sum.weights = sum.contraint )
+ x=SetLambda(P2,M, sum.contraint)
+#
+# ##########################
+# FitEM = FitBeta(beta.init=beta, psi=psi, maxIter = 6,sum.weights = sum.contraint )
 PLNobj = PLN(Y~1, control=list(trace=0))
-EM=EMtree(PLN.Cor =PLNobj, plot=TRUE, verbatim=TRUE, maxIter = 30, random.init = FALSE)
+EM=EMtree(PLN.Cor =PLNobj, plot=TRUE, verbatim=TRUE, maxIter = 6, random.init = FALSE)
 EMunlink=EMtree(PLN.Cor =PLNobj,unlinked = c(1,2), plot=FALSE, verbatim=FALSE)
 resampl=ResampleEMtree(Y, S=S,cores = 1,maxIter = 3)
 
 X = data.frame(V1=rnorm(n),V2=rbinom(n,1,0.7))
-compare=ComparEMtree(Y,X,models=list(1,2),m_names=list("1","2"),Pt=0.3,S=S, cores=1,maxIter = 3)
+compare=ComparEMtree(Y,X,models=list(1,2),m_names=list("1","2"),Pt=0.3,S=S,
+                     cores=1,maxIter = 3)
 
 # complexeW=matrix(runif(30^2, min=100,max=200),30, 30)
 # complexeW=t(complexeW)%$%complexeW/2
@@ -64,16 +65,16 @@ test_that("equiv versions of likelihood", {
                F_NegLikelihood_Trans(F_Sym2Vec(gamma),log(psi),P,sum.constraint = sum.contraint) )
 })
 
-test_that("Likelihood increases", {
-  expect_equal(FitEM$logpY[FitEM$maxIter]>FitEM$logpY[FitEM$maxIter-1],TRUE)
-})
+
 test_that("EMtree() raises an error for PLN.Cor argument", {
   expect_error(EMtree(covar, plot = FALSE, verbatim = FALSE))
   expect_error(EMtree(EMtree(cov2cor(PLNobj$model_par$Sigma)[1:9,], plot = FALSE, verbatim = FALSE)))
   expect_error(EMtree(EMtree(cov2cor(PLNobj$model_par$Sigma)[,1:9], plot = FALSE, verbatim = FALSE)))
 })
 
-
+test_that("increase log likelihood", {
+  expect_equal(tail(EM$logpY,1)>tail(EM$logpY,2)[1], TRUE)
+})
 test_that("EMtree.dim", {
   expect_equal(dim(EM$edges_weight)==dim(EM$edges_prob),c(TRUE,TRUE))
 })
@@ -91,3 +92,4 @@ test_that("unlinked", {
 test_that("ComparEMtree", {
   expect_equal(dim(compare),c(p*(p-1),4))
 })
+

@@ -12,9 +12,10 @@ ResampleEMtree(
   v = 0.8,
   S = 100,
   maxIter = 30,
-  cond.tol = 1e-14,
-  eps = 1e-06,
-  cores = 3
+  cond.tol = 1e-10,
+  eps = 0.001,
+  cores = 3,
+  init = FALSE
 )
 }
 \arguments{
@@ -37,6 +38,8 @@ ResampleEMtree(
 \item{eps}{Precision parameter controlling the convergence of weights beta}
 
 \item{cores}{Number of cores, can be greater than 1 if data involves less than about 32 species.}
+
+\item{init}{boolean: should the resmapling be carried out with different initial points (TRUE), or with different initial data (FALSE)}
 }
 \value{
 Returns a list which contains the Pmat data.frame, and vectors of EMtree maximum iterations and running times in each
