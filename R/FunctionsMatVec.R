@@ -20,16 +20,3 @@ F_Sym2Vec <- function(A.mat){
 }
 
 
-#' Computes exact inverses using gmp package
-#'
-#' @param A squared positive definite matrix
-#'
-#' @return the exact inverse of A
-#' @importFrom gmp as.bigq
-#' @export
-inverse.gmp<-function(A){
-
-   p<-ncol(A)
-   A.inv<-matrix(as.double(solve(as.bigq(A))),p,p)
-   return(A.inv)
-}

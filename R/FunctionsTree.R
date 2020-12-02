@@ -38,17 +38,17 @@ SumTree <- function(W){
 #' Meila(W)
 Meila <- function(W){
   if(!isSymmetric(W)){cat('Pb: W non symmetric!')}
-  p = nrow(W)
-  L = Laplacian(W)[-1, -1]
-  Leigen = eigen(L);
-  if(min(Leigen$values)<0) stop("Lacplacian not positive definite")
-  M = (Leigen$vectors) %*% diag(1/Leigen$values) %*% t(Leigen$vectors)
-  M = rbind(c(0, diag(M)),
-            cbind(diag(M), (diag(M)%o%rep(1, p-1) + rep(1, p-1)%o%diag(M) - 2*M)))
-  M = .5*(M + t(M))
-  test=sum(M)
+  p = nrow(W) ; index=1
+  L = Laplacian(W)[-index,-index]
+  Mei =solve(L)
+  Mei = rbind(c(0, diag(Mei)),
+              cbind(diag(Mei),
+                    (diag(Mei) %o% rep(1, p - 1) + rep(1, p - 1) %o% diag(Mei) - 2 * Mei)
+              )
+  )
+  Mei = 0.5 * (Mei + t(Mei))
 
-  return(M)
+  return(Mei)
 }
 
 #' Computing edge probabilities using Kirshner (07) formula
@@ -56,15 +56,16 @@ Meila <- function(W){
 #' @param W Squared weight matrix
 #'
 #' @return Edges probabilities as defined in Kirshner 2007
-#' @noRd
+#' @export
+#' @examples W = matrix(c(1,1,3,1,1,1,3,1,1),3,3,byrow=TRUE)
+#' Kirshner(W)
 Kirshner<-function(W){
   # W = squared weight matrix
   # Kirshner (07) formulas
   p = nrow(W)
   L = Laplacian(W)[-1,-1]
-  #improve numerical capacity with gmp on error with solve
-  Q=tryCatch({solve(L)},
-             error=function(e){inverse.gmp(L)})
+  #no need for gmp improved capacity thanks to the adaptive conditioning of psi and beta
+  Q=solve(L)
   Q = rbind(c(0, diag(Q)),
             cbind(diag(Q), (diag(Q)%o%rep(1, p-1) + rep(1, p-1)%o%diag(Q) - 2*Q)))
   Q = .5*(Q + t(Q))

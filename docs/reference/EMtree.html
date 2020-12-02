@@ -6,27 +6,31 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Computes edges probability — EMtree • EMtree</title>
+<title>Core computing function — EMtree • EMtree</title>
 
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -35,9 +39,8 @@
 
 
 
-<meta property="og:title" content="Computes edges probability — EMtree" />
-<meta property="og:description" content="Computes edges probability" />
-<meta name="twitter:card" content="summary" />
+<meta property="og:title" content="Core computing function — EMtree" />
+<meta property="og:description" content="Core computing function" />
 
 
 
@@ -55,7 +58,7 @@
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -69,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">EMtree</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
       </span>
     </div>
 
@@ -120,17 +123,26 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Computes edges probability</h1>
+    <h1>Core computing function</h1>
     
     <div class="hidden name"><code>EMtree.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Computes edges probability</p>
+    <p>Core computing function</p>
     </div>
 
-    <pre class="usage"><span class='fu'>EMtree</span>(<span class='no'>PLN.Cor</span>, <span class='kw'>maxIter</span> <span class='kw'>=</span> <span class='fl'>30</span>, <span class='kw'>cond.tol</span> <span class='kw'>=</span> <span class='fl'>1e-10</span>, <span class='kw'>verbatim</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+    <pre class="usage"><span class='fu'>EMtree</span><span class='op'>(</span>
+  <span class='va'>PLN.Cor</span>,
+  n <span class='op'>=</span> <span class='cn'>NULL</span>,
+  maxIter <span class='op'>=</span> <span class='fl'>30</span>,
+  unlinked <span class='op'>=</span> <span class='cn'>NULL</span>,
+  random.init <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  cond.tol <span class='op'>=</span> <span class='fl'>1e-10</span>,
+  eps <span class='op'>=</span> <span class='fl'>0.001</span>,
+  verbatim <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  plot <span class='op'>=</span> <span class='cn'>FALSE</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -140,12 +152,28 @@
       <td><p>Either an object resulting from the use of the `PLN` function from package `PLNmodels`, or an estimation of Gaussian data correlation matrix.</p></td>
     </tr>
     <tr>
+      <th>n</th>
+      <td><p>Number of samples, required if a correlation matrix is supplied</p></td>
+    </tr>
+    <tr>
       <th>maxIter</th>
       <td><p>Maximum number of iterations for EMtree</p></td>
     </tr>
     <tr>
+      <th>unlinked</th>
+      <td><p>An optional vector of nodes which are not linked with each other</p></td>
+    </tr>
+    <tr>
+      <th>random.init</th>
+      <td><p>A boolean for trying a random initialization of the EM</p></td>
+    </tr>
+    <tr>
       <th>cond.tol</th>
-      <td><p>Tolerence parameter for the conditionement of psi matrix</p></td>
+      <td><p>Tolerance parameter for the conditioning of psi matrix</p></td>
+    </tr>
+    <tr>
+      <th>eps</th>
+      <td><p>Precision parameter controlling the convergence of weights beta</p></td>
     </tr>
     <tr>
       <th>verbatim</th>
@@ -171,87 +199,82 @@
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>n</span><span class='kw'>=</span><span class='fl'>30</span>
-<span class='no'>p</span><span class='kw'>=</span><span class='fl'>10</span>
-<span class='no'>Y</span><span class='kw'>=</span><span class='fu'><a href='data_from_scratch.html'>data_from_scratch</a></span>(<span class='st'>"tree"</span>,<span class='kw'>p</span><span class='kw'>=</span><span class='no'>p</span>)$<span class='no'>data</span>
-<span class='no'>PLN_Y</span> <span class='kw'>=</span> <span class='kw pkg'>PLNmodels</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/PLNmodels/man/PLN.html'>PLN</a></span>(<span class='no'>Y</span>~<span class='fl'>1</span>)</div><div class='output co'>#&gt; 
+    <pre class="examples"><div class='input'><span class='va'>n</span><span class='op'>=</span><span class='fl'>30</span>
+<span class='va'>p</span><span class='op'>=</span><span class='fl'>10</span>
+<span class='va'>Y</span><span class='op'>=</span><span class='fu'><a href='data_from_scratch.html'>data_from_scratch</a></span><span class='op'>(</span><span class='st'>"tree"</span>,p<span class='op'>=</span><span class='va'>p</span><span class='op'>)</span><span class='op'>$</span><span class='va'>data</span>
+<span class='va'>PLN_Y</span> <span class='op'>=</span> <span class='fu'>PLNmodels</span><span class='fu'>::</span><span class='fu'><a href='https://jchiquet.github.io/PLNmodels/reference/PLN.html'>PLN</a></span><span class='op'>(</span><span class='va'>Y</span><span class='op'>~</span><span class='fl'>1</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; 
 #&gt;  Initialization...
 #&gt;  Adjusting a PLN model with full covariance model
 #&gt;  Post-treatments...
-#&gt;  DONE!</div><div class='input'><span class='no'>CorY</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/stats/cor.html'>cov2cor</a></span>(<span class='no'>PLN_Y</span>$<span class='no'>model_par</span>$<span class='no'>Sigma</span>)
-<span class='fu'>EMtree</span>(<span class='kw'>PLN.Cor</span><span class='kw'>=</span><span class='no'>PLN_Y</span>,<span class='kw'>verbatim</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; 
-#&gt; Likelihoods: -6.028488 , -5.954729 , -5.954684 , </div><div class='img'><img src='EMtree-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; 
-#&gt; Convergence took 0.05 secs  and  3  iterations.
-#&gt; Likelihood difference = 4.553927e-05 
-#&gt; Betas difference = 8.930179e-08</div><div class='output co'>#&gt; $edges_prob
-#&gt;             [,1]       [,2]       [,3]       [,4]       [,5]       [,6]
-#&gt;  [1,] 0.00000000 0.78719300 0.03817438 0.10055271 0.10273390 0.20502277
-#&gt;  [2,] 0.78719300 0.00000000 0.05004404 0.03052721 0.04143136 0.07626099
-#&gt;  [3,] 0.03817438 0.05004404 0.00000000 0.14841518 0.02369734 0.04887485
-#&gt;  [4,] 0.10055271 0.03052721 0.14841518 0.00000000 0.20283439 0.32612811
-#&gt;  [5,] 0.10273390 0.04143136 0.02369734 0.20283439 0.00000000 0.81510551
-#&gt;  [6,] 0.20502277 0.07626099 0.04887485 0.32612811 0.81510551 0.00000000
-#&gt;  [7,] 0.05836311 0.05719733 0.29846228 0.02913747 0.03331462 0.12697478
-#&gt;  [8,] 0.65690629 0.25122034 0.16983778 0.15648046 0.16028214 0.36523941
-#&gt;  [9,] 0.21868903 0.21165795 0.53815876 0.35191233 0.01557057 0.02809236
-#&gt; [10,] 0.03132264 0.02177219 0.17301532 0.74675494 0.08251735 0.18492118
-#&gt;             [,7]       [,8]       [,9]      [,10]
-#&gt;  [1,] 0.05836311 0.65690629 0.21868903 0.03132264
-#&gt;  [2,] 0.05719733 0.25122034 0.21165795 0.02177219
-#&gt;  [3,] 0.29846228 0.16983778 0.53815876 0.17301532
-#&gt;  [4,] 0.02913747 0.15648046 0.35191233 0.74675494
-#&gt;  [5,] 0.03331462 0.16028214 0.01557057 0.08251735
-#&gt;  [6,] 0.12697478 0.36523941 0.02809236 0.18492118
-#&gt;  [7,] 0.00000000 0.59912346 0.04057640 0.02502195
-#&gt;  [8,] 0.59912346 0.00000000 0.19055917 0.05454007
-#&gt;  [9,] 0.04057640 0.19055917 0.00000000 0.12538260
-#&gt; [10,] 0.02502195 0.05454007 0.12538260 0.00000000
-#&gt; 
-#&gt; $edges_weight
-#&gt;             [,1]       [,2]       [,3]       [,4]       [,5]       [,6]
-#&gt;  [1,] 0.00000000 0.01143441 0.01102248 0.01105725 0.01105805 0.01111453
-#&gt;  [2,] 0.01143441 0.00000000 0.01102833 0.01101821 0.01102366 0.01104349
-#&gt;  [3,] 0.01102248 0.01102833 0.00000000 0.01108271 0.01101378 0.01102830
-#&gt;  [4,] 0.01105725 0.01101821 0.01108271 0.00000000 0.01111263 0.01118007
-#&gt;  [5,] 0.01105805 0.01102366 0.01101378 0.01111263 0.00000000 0.01144982
-#&gt;  [6,] 0.01111453 0.01104349 0.01102830 0.01118007 0.01144982 0.00000000
-#&gt;  [7,] 0.01103352 0.01103219 0.01116381 0.01101720 0.01101891 0.01107110
-#&gt;  [8,] 0.01136250 0.01114074 0.01109493 0.01108817 0.01109003 0.01120190
-#&gt;  [9,] 0.01112132 0.01111691 0.01129445 0.01119352 0.01100955 0.01101713
-#&gt; [10,] 0.01101870 0.01101276 0.01109559 0.01141081 0.01104620 0.01110298
-#&gt;             [,7]       [,8]       [,9]      [,10]
-#&gt;  [1,] 0.01103352 0.01136250 0.01112132 0.01101870
-#&gt;  [2,] 0.01103219 0.01114074 0.01111691 0.01101276
-#&gt;  [3,] 0.01116381 0.01109493 0.01129445 0.01109559
-#&gt;  [4,] 0.01101720 0.01108817 0.01119352 0.01141081
-#&gt;  [5,] 0.01101891 0.01109003 0.01100955 0.01104620
-#&gt;  [6,] 0.01107110 0.01120190 0.01101713 0.01110298
-#&gt;  [7,] 0.00000000 0.01132864 0.01102313 0.01101429
-#&gt;  [8,] 0.01132864 0.00000000 0.01110641 0.01103188
-#&gt;  [9,] 0.01102313 0.01110641 0.00000000 0.01106986
-#&gt; [10,] 0.01101429 0.01103188 0.01106986 0.00000000
-#&gt; 
-#&gt; $logpY
-#&gt; [1] -6.028488 -5.954729 -5.954684
-#&gt; 
-#&gt; $maxIter
-#&gt; [1] 3
+#&gt;  DONE!</div><div class='input'><span class='fu'>EMtree</span><span class='op'>(</span>PLN.Cor<span class='op'>=</span><span class='va'>PLN_Y</span>,verbatim<span class='op'>=</span><span class='cn'>TRUE</span>, plot<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+</div><div class='img'><img src='EMtree-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; 
+#&gt; Convergence took 0.1 secs  and  9  iterations.</div><div class='output co'>#&gt; $edges_prob
+#&gt;               [,1]         [,2]         [,3]         [,4]         [,5]
+#&gt;  [1,] 0.000000e+00 6.704612e-10 9.999867e-01 1.466126e-10 3.587415e-11
+#&gt;  [2,] 6.704612e-10 0.000000e+00 1.000000e+00 5.324387e-10 2.167630e-13
+#&gt;  [3,] 9.999867e-01 1.000000e+00 0.000000e+00 2.608852e-06 8.831025e-10
+#&gt;  [4,] 1.466126e-10 5.324387e-10 2.608852e-06 0.000000e+00 2.271114e-10
+#&gt;  [5,] 3.587415e-11 2.167630e-13 8.831025e-10 2.271114e-10 0.000000e+00
+#&gt;  [6,] 1.847421e-11 2.391535e-09 1.290271e-05 8.848008e-03 1.395623e-10
+#&gt;  [7,] 2.499455e-06 4.770049e-10 2.977208e-03 9.992458e-01 1.000000e+00
+#&gt;  [8,] 6.419435e-08 3.354702e-09 1.000000e+00 3.205436e-07 1.387858e-10
+#&gt;  [9,] 1.247091e-05 2.995792e-09 9.999999e-01 4.794002e-10 3.312346e-07
+#&gt; [10,] 1.626539e-10 4.235325e-10 1.223461e-05 9.997778e-01 1.947069e-10
+#&gt;               [,6]         [,7]         [,8]         [,9]        [,10]
+#&gt;  [1,] 1.847421e-11 2.499455e-06 6.419435e-08 1.247091e-05 1.626539e-10
+#&gt;  [2,] 2.391535e-09 4.770049e-10 3.354702e-09 2.995792e-09 4.235325e-10
+#&gt;  [3,] 1.290271e-05 2.977208e-03 1.000000e+00 9.999999e-01 1.223461e-05
+#&gt;  [4,] 8.848008e-03 9.992458e-01 3.205436e-07 4.794002e-10 9.997778e-01
+#&gt;  [5,] 1.395623e-10 1.000000e+00 1.387858e-10 3.312346e-07 1.947069e-10
+#&gt;  [6,] 0.000000e+00 2.059556e-03 6.398497e-08 6.436580e-11 9.896660e-01
+#&gt;  [7,] 2.059556e-03 0.000000e+00 8.654440e-08 8.781633e-06 4.018092e-04
+#&gt;  [8,] 6.398497e-08 8.654440e-08 0.000000e+00 1.000531e-08 9.969848e-01
+#&gt;  [9,] 6.436580e-11 8.781633e-06 1.000531e-08 0.000000e+00 3.067561e-10
+#&gt; [10,] 9.896660e-01 4.018092e-04 9.969848e-01 3.067561e-10 0.000000e+00
 #&gt; 
 #&gt; $norm.cst
-#&gt; [1] 2.58084e-10
+#&gt; [1] 0.0001845045
 #&gt; 
 #&gt; $timeEM
-#&gt; Time difference of 0.05101609 secs
+#&gt; Time difference of 0.09658194 secs
+#&gt; 
+#&gt; $edges_weight
+#&gt;               [,1]         [,2]         [,3]         [,4]         [,5]
+#&gt;  [1,] 0.000000e+00 4.457394e-06 6.507374e-02 2.021403e-06 1.102815e-06
+#&gt;  [2,] 4.457394e-06 0.000000e+00 2.208613e-01 2.197603e-06 1.165857e-06
+#&gt;  [3,] 6.507374e-02 2.208613e-01 0.000000e+00 1.945355e-05 2.213082e-06
+#&gt;  [4,] 2.021403e-06 2.197603e-06 1.945355e-05 0.000000e+00 6.970386e-06
+#&gt;  [5,] 1.102815e-06 1.165857e-06 2.213082e-06 6.970386e-06 0.000000e+00
+#&gt;  [6,] 1.160539e-06 1.282507e-06 3.805390e-05 9.138621e-03 2.443792e-06
+#&gt;  [7,] 1.534553e-05 2.057742e-06 7.106670e-04 1.480939e+00 2.270639e-01
+#&gt;  [8,] 8.778089e-06 9.450661e-06 7.073823e-01 8.119896e-06 2.028588e-06
+#&gt;  [9,] 6.704691e-05 5.467761e-06 2.778620e-01 2.262476e-06 4.575977e-06
+#&gt; [10,] 2.192314e-06 2.391233e-06 3.640196e-05 2.743593e+00 5.560383e-06
+#&gt;               [,6]         [,7]         [,8]         [,9]        [,10]
+#&gt;  [1,] 1.160539e-06 1.534553e-05 8.778089e-06 6.704691e-05 2.192314e-06
+#&gt;  [2,] 1.282507e-06 2.057742e-06 9.450661e-06 5.467761e-06 2.391233e-06
+#&gt;  [3,] 3.805390e-05 7.106670e-04 7.073823e-01 2.778620e-01 3.640196e-05
+#&gt;  [4,] 9.138621e-03 1.480939e+00 8.119896e-06 2.262476e-06 2.743593e+00
+#&gt;  [5,] 2.443792e-06 2.270639e-01 2.028588e-06 4.575977e-06 5.560383e-06
+#&gt;  [6,] 0.000000e+00 2.700182e-03 3.258679e-06 1.261069e-06 6.349105e-01
+#&gt;  [7,] 2.700182e-03 0.000000e+00 5.154694e-06 3.305730e-05 3.630525e-03
+#&gt;  [8,] 3.258679e-06 5.154694e-06 0.000000e+00 1.051796e-05 1.070142e-01
+#&gt;  [9,] 1.261069e-06 3.305730e-05 1.051796e-05 0.000000e+00 2.462242e-06
+#&gt; [10,] 6.349105e-01 3.630525e-03 1.070142e-01 2.462242e-06 0.000000e+00
+#&gt; 
+#&gt; $logpY
+#&gt; [1] 78.12352 80.67833 81.52038 81.99879 82.28432 82.45059 82.56402 82.63695
+#&gt; [9] 82.63695
+#&gt; 
+#&gt; $maxIter
+#&gt; [1] 9
 #&gt; </div></pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#value">Value</a></li>
-      <li><a href="#examples">Examples</a></li>
-    </ul>
-
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
@@ -262,7 +285,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

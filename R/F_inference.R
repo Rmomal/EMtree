@@ -17,7 +17,7 @@ F_NegGradient_Trans <- function(gamma, log.psi, P,sum.constraint){
   return((- F_Sym2Vec(P) + beta*(F_Sym2Vec(M) + lambda)))
 }
 F_NegLikelihood_Trans <- function(gamma, log.psi, P,sum.constraint){
-#gamma=gamma-mean(gamma)
+  #gamma=gamma-mean(gamma)
   M = Meila(F_Vec2Sym(exp(gamma)))
 
   lambda = SetLambda(P, M,sum.constraint)
@@ -36,7 +36,7 @@ F_NegLikelihood_Trans <- function(gamma, log.psi, P,sum.constraint){
 
   return( res)
 }
-binf.constraint<-function(p,min.order=250){
+sum.constraint.inf<-function(p,min.order=300){
   round( p*(p-1)*10^(-min.order/(p-1)))+1
 }
 #########################################################################
@@ -50,12 +50,12 @@ SetLambda <- function(P, M,sum.constraint=1, eps = 1e-6, start=1){
       sum.constraint - (2*sum(P[upper.tri(P)] / M[upper.tri(M)]))
     }
   }
-i=1
+  i=1
   x.min = ifelse(F.x(0) >0,-sort(F_Sym2Vec(M))[1]+1e-10,max(-1e-4, -min(F_Sym2Vec(M))/2));
- while(F.x(x.min)>0 && i<length(unique(M))){
-   i=i+1
-   x.min=-sort(F_Sym2Vec(M))[i]+1e-10
- }
+  while(F.x(x.min)>0 && i<length(unique(M))){
+    i=i+1
+    x.min=-sort(F_Sym2Vec(M))[i]+1e-10
+  }
   if(F.x(x.min)>0) stop("Could not set lambda.")
   x.max = start
   while(F.x(x.max)<0){x.max = x.max * 10}
@@ -103,7 +103,7 @@ Psi_alpha <- function(CorY, n, cond.tol=1e-10){
   cond = Inf; a = 0
   while(cond > cond.tol & a<n){
     a = a+1
-    psi.vec = F_Sym2Vec(-alpha.grid[a]*n*log(1 - CorY^2)/2);
+    psi.vec = -alpha.grid[a]*n*log(1 - F_Sym2Vec(CorY^2))/2;
     #psi.vec = psi.vec - mean(psi.vec)
     psi = F_Vec2Sym(exp(psi.vec))
     lambda = svd(psi)$d
@@ -111,7 +111,9 @@ Psi_alpha <- function(CorY, n, cond.tol=1e-10){
 
   }
   alpha = alpha.grid[a]
-  psi.vec = F_Sym2Vec(-alpha*n*log(1 - CorY^2)/2);
+
+  psi.vec = -alpha.grid[a]*n*log(1 - F_Sym2Vec(CorY^2))/2;
+  #  if(sum(is.na(psi.vec))!=0) browser()
   psi.vec = psi.vec - mean(psi.vec)
   psi = F_Vec2Sym(exp(psi.vec))
   return(list(psi=psi, alpha=alpha))
@@ -175,14 +177,15 @@ FitBeta <- function(beta.init, psi, maxIter=50, eps = 1e-6, unlinked=NULL,sum.we
                          log.psi, P,sum.weights, control=list(trace=0,maxit=500,  pgtol=1e-2, factr=1e+8),
                          lower=rep(min.val, p*(p-1)/2),upper=rep(max.val, p*(p-1)/2))$par
 
- # cat(round(mean(gamma),2))
+    # cat(round(mean(gamma),2))
     beta=exp(gamma)
     beta[which(beta< beta.min)] = beta.min # numerical zeros
     beta=F_Vec2Sym(beta)
     if(!is.null(unlinked)) beta[unlinked, unlinked]=0
     logpY[iter] = -F_NegLikelihood(F_Sym2Vec(beta),log.psi,P,sum.weights)
+    #if(iter==2)browser()
     beta.diff = max(abs(beta.old-beta))
-#cat(paste0("/ ",round(beta.diff,6),"\n"))
+    #cat(paste0("/ ",round(beta.diff,6),"\n"))
     beta.old = beta
     diff.loglik=logpY[iter]-logpY[iter-1]
     if(iter > 1){diff.loglik =  abs(diff.loglik)}else{diff.loglik=1}
@@ -238,8 +241,9 @@ EMtree<-function(PLN.Cor, n=NULL,  maxIter=30, unlinked=NULL , random.init=FALSE
 
 
   # beta.init with adaptative mean value depending on the network dimensions
-  sum.weights=binf.constraint(p)
-  mean.val=sum.weights/(p*(p-1))
+  # sum.weights=sum.constraint.inf(p)
+  # mean.val=sum.weights/(p*(p-1))
+  mean.val=exp((-(p-2)*log(p))/(p-1))
   beta.init = matrix(mean.val, p, p);  diag(beta.init)=0
   if(!is.null(unlinked)) beta.init[unlinked, unlinked]=0 #unliked nodes
 
@@ -247,7 +251,8 @@ EMtree<-function(PLN.Cor, n=NULL,  maxIter=30, unlinked=NULL , random.init=FALSE
     beta.init = matrix(runif(n=p*p, min=0.9*mean.val,max=1.1*mean.val ), p,p)
     beta.init=t(beta.init)%*%beta.init/2
     diag(beta.init)=0
-    sum.weights=round(sum(beta.init))+1}
+  }
+  sum.weights=round(sum(beta.init))+1
   alpha.psi = Psi_alpha(CorY, n, cond.tol=cond.tol)
   psi = alpha.psi$psi
 
@@ -258,7 +263,7 @@ EMtree<-function(PLN.Cor, n=NULL,  maxIter=30, unlinked=NULL , random.init=FALSE
     adapt=TRUE
     if(verbatim)cat("Adapting conditioning tolerance... ")
   }
-#  browser()
+  #  browser()
   while(cond<1e-12 || min(lambda)<=0){ # set the tempering parameter alpha, for a good conditioning of the psi matrix
     cond.tol=10*cond.tol
     alpha.psi = Psi_alpha(CorY, n, cond.tol=cond.tol)
@@ -266,7 +271,7 @@ EMtree<-function(PLN.Cor, n=NULL,  maxIter=30, unlinked=NULL , random.init=FALSE
     lambda = svd(Laplacian(beta.init*psi)[-1,-1])$d
     cond = min(abs(lambda))/max(abs(lambda))
   }
-if(adapt && verbatim)  cat(paste0("Final value:",cond.tol))
+  if(adapt && verbatim)  cat(paste0("Final value:",cond.tol))
   FitEM = FitBeta(beta.init=beta.init, psi=psi, maxIter = maxIter,eps = eps,
                   unlinked=unlinked, sum.weights=sum.weights)
 
@@ -334,28 +339,28 @@ ResampleEMtree <- function(counts,covar_matrix=NULL  , unlinked=NULL, O=NULL,
     X=matrix(1,nrow=n,ncol=1)
   }else{X=as.matrix(covar_matrix)}
   #- parallel computation of S fits of new_EMtree
-  if(init) PLNfit <- PLNmodels::PLN(counts ~ -1  + offset(log(O)) + ., data=data.frame(X), control = list("trace"=0))
+  suppressWarnings(
+    PLNfit <- PLNmodels::PLN(counts ~ -1  + offset(log(O)) + ., data=data.frame(X), control = list("trace"=0))
+  )
   obj<-parallel::mclapply(1:S,function(b){
     set.seed(b)
     if(init){
       inf<-EMtree( PLNfit,unlinked,n=n, maxIter=maxIter, cond.tol=cond.tol,verbatim=TRUE,eps=eps,
                    plot=FALSE, random.init = TRUE)[c("edges_prob","maxIter","timeEM")]
     }else{
-    sample = sample(1:n, V, replace = F)
-    counts.sample = counts[sample,]
-    X.sample = data.frame(X[sample,])
-    O.sample = O[sample,]
-    try({
-      suppressWarnings(
-        PLN.sample <- PLNmodels::PLN(counts.sample ~ -1  + offset(log(O.sample)) + ., data=X.sample, control = list("trace"=0))
-      )
+      sample = sample(1:n, V, replace = F)
 
-      inf<-EMtree( PLN.sample,unlinked,n=n, maxIter=maxIter, cond.tol=cond.tol,verbatim=TRUE,eps=eps,
-                   plot=FALSE)[c("edges_prob","maxIter","timeEM")]
-    },silent=TRUE )
-    if(!exists("inf")) inf=NA #depending on the sample drawn, it is possible that computation fail
-    # because of bad conditioning of the Laplacian matrix of the weights beta.
-    # This can happen especially when using the "unlinked" parameter.
+      #inception
+      M.sample=PLNfit$var_par$M[sample,]
+      S2.sample=PLNfit$var_par$S2[sample,]
+      CorY=cov2cor(t(M.sample)%*%M.sample+diag(colSums(S2.sample)))
+      try({
+        inf<-EMtree( CorY,unlinked,n=n, maxIter=maxIter, cond.tol=cond.tol,verbatim=TRUE,eps=eps,
+                     plot=FALSE, random.init=TRUE)[c("edges_prob","maxIter","timeEM")]
+      }, silent=TRUE)
+      if(!exists("inf")) inf=NA #depending on the sample drawn, it is possible that computation fail
+      # because of bad conditioning of the Laplacian matrix of the weights beta.
+      # This can happen especially when using the "unlinked" parameter.
     }
     return(inf)
   }, mc.cores=cores)

@@ -27,7 +27,6 @@ Imports:
     viridisLite,
     ade4,
     viridis,
-    gmp,
     gridExtra
 Suggests: 
     testthat (>= 2.1.0),
