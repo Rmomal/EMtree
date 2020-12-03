@@ -10,23 +10,27 @@
 
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -37,7 +41,6 @@
 
 <meta property="og:title" content="Resampling procedure for  edges probability — ResampleEMtree" />
 <meta property="og:description" content="Resampling procedure for  edges probability" />
-<meta name="twitter:card" content="summary" />
 
 
 
@@ -55,7 +58,7 @@
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -69,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">EMtree</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
       </span>
     </div>
 
@@ -129,8 +132,19 @@
     <p>Resampling procedure for  edges probability</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ResampleEMtree</span>(<span class='no'>counts</span>, <span class='kw'>covar_matrix</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>O</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>v</span> <span class='kw'>=</span> <span class='fl'>0.8</span>,
-  <span class='kw'>S</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>maxIter</span> <span class='kw'>=</span> <span class='fl'>30</span>, <span class='kw'>cond.tol</span> <span class='kw'>=</span> <span class='fl'>1e-14</span>, <span class='kw'>cores</span> <span class='kw'>=</span> <span class='fl'>3</span>)</pre>
+    <pre class="usage"><span class='fu'>ResampleEMtree</span><span class='op'>(</span>
+  <span class='va'>counts</span>,
+  covar_matrix <span class='op'>=</span> <span class='cn'>NULL</span>,
+  unlinked <span class='op'>=</span> <span class='cn'>NULL</span>,
+  O <span class='op'>=</span> <span class='cn'>NULL</span>,
+  v <span class='op'>=</span> <span class='fl'>0.8</span>,
+  S <span class='op'>=</span> <span class='fl'>100</span>,
+  maxIter <span class='op'>=</span> <span class='fl'>30</span>,
+  cond.tol <span class='op'>=</span> <span class='fl'>1e-10</span>,
+  eps <span class='op'>=</span> <span class='fl'>0.001</span>,
+  cores <span class='op'>=</span> <span class='fl'>3</span>,
+  init <span class='op'>=</span> <span class='cn'>FALSE</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -142,6 +156,10 @@
     <tr>
       <th>covar_matrix</th>
       <td><p>matrix of covariates, should have the same number of rows as the count matrix.</p></td>
+    </tr>
+    <tr>
+      <th>unlinked</th>
+      <td><p>An optional vector of nodes which are not linked with each other</p></td>
     </tr>
     <tr>
       <th>O</th>
@@ -164,8 +182,16 @@
       <td><p>Tolerance for the psi matrix.</p></td>
     </tr>
     <tr>
+      <th>eps</th>
+      <td><p>Precision parameter controlling the convergence of weights beta</p></td>
+    </tr>
+    <tr>
       <th>cores</th>
       <td><p>Number of cores, can be greater than 1 if data involves less than about 32 species.</p></td>
+    </tr>
+    <tr>
+      <th>init</th>
+      <td><p>boolean: should the resmapling be carried out with different initial points (TRUE), or with different initial data (FALSE)</p></td>
     </tr>
     </table>
 
@@ -180,30 +206,28 @@ resampling.</p><ul>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>n</span><span class='kw'>=</span><span class='fl'>30</span>
-<span class='no'>p</span><span class='kw'>=</span><span class='fl'>10</span>
-<span class='no'>S</span><span class='kw'>=</span><span class='fl'>5</span>
-<span class='no'>Y</span><span class='kw'>=</span><span class='fu'><a href='data_from_scratch.html'>data_from_scratch</a></span>(<span class='st'>"tree"</span>,<span class='kw'>p</span><span class='kw'>=</span><span class='no'>p</span>,<span class='kw'>n</span><span class='kw'>=</span><span class='no'>n</span>)$<span class='no'>data</span>
-<span class='no'>X</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='no'>n</span>),<span class='fu'><a href='https://rdrr.io/r/stats/Binomial.html'>rbinom</a></span>(<span class='no'>n</span>,<span class='fl'>1</span>,<span class='fl'>0.7</span>))
-<span class='no'>resample</span><span class='kw'>=</span><span class='fu'>ResampleEMtree</span>(<span class='no'>Y</span>,<span class='kw'>covar_matrix</span><span class='kw'>=</span><span class='no'>X</span>, <span class='kw'>S</span><span class='kw'>=</span><span class='no'>S</span>,<span class='kw'>cores</span> <span class='kw'>=</span> <span class='fl'>1</span>)</div><div class='output co'>#&gt; 
-#&gt; S= 1   
-#&gt; S= 2   
-#&gt; S= 3   
-#&gt; S= 4   
-#&gt; S= 5   </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='no'>resample</span>)</div><div class='output co'>#&gt; List of 3
-#&gt;  $ Pmat   : num [1:5, 1:45] 0.875 0.947 0.872 0.748 0.956 ...
-#&gt;  $ maxIter: num [1:5] 3 3 3 3 3
-#&gt;  $ times  : 'difftime' num [1:5] 0.0325717926025391 0.0341501235961914 0.0437800884246826 0.0488259792327881 ...
+    <pre class="examples"><div class='input'><span class='va'>n</span><span class='op'>=</span><span class='fl'>30</span>
+<span class='va'>p</span><span class='op'>=</span><span class='fl'>10</span>
+<span class='va'>S</span><span class='op'>=</span><span class='fl'>5</span>
+<span class='va'>Y</span><span class='op'>=</span><span class='fu'><a href='data_from_scratch.html'>data_from_scratch</a></span><span class='op'>(</span><span class='st'>"tree"</span>,p<span class='op'>=</span><span class='va'>p</span>,n<span class='op'>=</span><span class='va'>n</span><span class='op'>)</span><span class='op'>$</span><span class='va'>data</span>
+<span class='va'>X</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='va'>n</span><span class='op'>)</span>,<span class='fu'><a href='https://rdrr.io/r/stats/Binomial.html'>rbinom</a></span><span class='op'>(</span><span class='va'>n</span>,<span class='fl'>1</span>,<span class='fl'>0.7</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>resample</span><span class='op'>=</span><span class='fu'>ResampleEMtree</span><span class='op'>(</span><span class='va'>Y</span>,covar_matrix<span class='op'>=</span><span class='va'>X</span>, S<span class='op'>=</span><span class='va'>S</span>,cores <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; Computing  5 probability matrices with 1 core(s)... 
+#&gt; Convergence took 0.11 secs  and  15  iterations.
+#&gt; Convergence took 0.1 secs  and  11  iterations.
+#&gt; Convergence took 0.11 secs  and  22  iterations.
+#&gt; Convergence took 0.07 secs  and  9  iterations.
+#&gt; Convergence took 0.14 secs  and  27  iterations.0.55 secs </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>resample</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; List of 3
+#&gt;  $ Pmat   : num [1:5, 1:45] 1 1 1 1 1 ...
+#&gt;  $ maxIter: num [1:5] 15 11 22 9 27
+#&gt;  $ times  : 'difftime' num [1:5] 0.110763788223267 0.0986161231994629 0.111547946929932 0.0657360553741455 ...
 #&gt;   ..- attr(*, "units")= chr "secs"</div></pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#value">Value</a></li>
-      <li><a href="#examples">Examples</a></li>
-    </ul>
-
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
@@ -214,7 +238,7 @@ resampling.</p><ul>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

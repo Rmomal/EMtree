@@ -10,23 +10,27 @@
 
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -37,7 +41,6 @@
 
 <meta property="og:title" content="Plots a network — draw_network" />
 <meta property="og:description" content="Plots a network" />
-<meta name="twitter:card" content="summary" />
 
 
 
@@ -55,7 +58,7 @@
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -69,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">EMtree</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
       </span>
     </div>
 
@@ -129,10 +132,25 @@
     <p>Plots a network</p>
     </div>
 
-    <pre class="usage"><span class='fu'>draw_network</span>(<span class='no'>adj_matrix</span>, <span class='kw'>title</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>curv</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>width</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>shade</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>filter_deg</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>btw_rank</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>layout</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>nodes_label</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>nodes_size</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>, <span class='fl'>5</span>), <span class='kw'>pal_edges</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>pal_nodes</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>groupes</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>draw_network</span><span class='op'>(</span>
+  <span class='va'>adj_matrix</span>,
+  title <span class='op'>=</span> <span class='st'>""</span>,
+  size <span class='op'>=</span> <span class='fl'>4</span>,
+  curv <span class='op'>=</span> <span class='fl'>0</span>,
+  width <span class='op'>=</span> <span class='fl'>1</span>,
+  shade <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  filter_deg <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  btw_rank <span class='op'>=</span> <span class='fl'>2</span>,
+  layout <span class='op'>=</span> <span class='cn'>NULL</span>,
+  stored_layout <span class='op'>=</span> <span class='cn'>NULL</span>,
+  nodes_label <span class='op'>=</span> <span class='cn'>NULL</span>,
+  nodes_size <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2</span>, <span class='fl'>5</span><span class='op'>)</span>,
+  pal_edges <span class='op'>=</span> <span class='cn'>NULL</span>,
+  pal_nodes <span class='op'>=</span> <span class='cn'>NULL</span>,
+  groupes <span class='op'>=</span> <span class='cn'>NULL</span>,
+  legend <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  pos <span class='op'>=</span> <span class='st'>"bottom"</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -174,6 +192,10 @@
       <td><p>optional ggraph layout.</p></td>
     </tr>
     <tr>
+      <th>stored_layout</th>
+      <td><p>optional data.frame of point positions from a previous graph, possibly created using ggraph::create_layout()</p></td>
+    </tr>
+    <tr>
       <th>nodes_label</th>
       <td><p>optional labels for nodes.</p></td>
     </tr>
@@ -182,12 +204,24 @@
       <td><p>size of nodes, possibility to specify a size per group</p></td>
     </tr>
     <tr>
+      <th>pal_edges</th>
+      <td><p>optional palette for edges</p></td>
+    </tr>
+    <tr>
+      <th>pal_nodes</th>
+      <td><p>optional palette for nodes</p></td>
+    </tr>
+    <tr>
       <th>groupes</th>
       <td><p>optional vector seperating the nodes into groupes</p></td>
     </tr>
     <tr>
-      <th>pal</th>
-      <td><p>optional palette.</p></td>
+      <th>legend</th>
+      <td><p>optional boolean for generating a legend when groups are provided</p></td>
+    </tr>
+    <tr>
+      <th>pos</th>
+      <td><p>optional legend position ("bottom", "top", "right" or "left")</p></td>
     </tr>
     </table>
 
@@ -201,17 +235,41 @@
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>adj_matrix</span><span class='kw'>=</span> <span class='fu'><a href='SimCluster.html'>SimCluster</a></span>(<span class='fl'>20</span>,<span class='fl'>2</span>,<span class='fl'>0.4</span>, <span class='fl'>10</span>)
-<span class='fu'>draw_network</span>(<span class='no'>adj_matrix</span>,<span class='st'>"Cluster graph"</span>, <span class='kw'>layout</span><span class='kw'>=</span><span class='st'>"fr"</span>, <span class='kw'>shade</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='error'>Error in as_tibble(.): could not find function "as_tibble"</span></div></pre>
+    <pre class="examples"><div class='input'><span class='va'>adj_matrix</span><span class='op'>=</span> <span class='fu'><a href='SimCluster.html'>SimCluster</a></span><span class='op'>(</span><span class='fl'>20</span>,<span class='fl'>2</span>,<span class='fl'>0.4</span>, <span class='fl'>10</span><span class='op'>)</span>
+<span class='fu'>draw_network</span><span class='op'>(</span><span class='va'>adj_matrix</span>,<span class='st'>"Cluster graph"</span>, layout<span class='op'>=</span><span class='st'>"fr"</span>, shade<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; $G</div><div class='img'><img src='draw_network-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; 
+#&gt; $legend
+#&gt; NULL
+#&gt; 
+#&gt; $graph_data
+#&gt; <span style='color: #555555;'># A tbl_graph: 20 nodes and 69 edges
+#&gt; #
+#&gt; # An undirected simple graph with 1 component
+#&gt; #
+#&gt; # Edge Data: 69 x 6 (active)</span><span>
+#&gt;    from    to weight btw.weights neibs title        
+#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>        
+#&gt; </span><span style='color: #555555;'>1</span><span>     1     3      1       0.693 FALSE Cluster graph
+#&gt; </span><span style='color: #555555;'>2</span><span>     1     7      1       0.693 FALSE Cluster graph
+#&gt; </span><span style='color: #555555;'>3</span><span>     1     9      1       0.693 FALSE Cluster graph
+#&gt; </span><span style='color: #555555;'>4</span><span>     1    12      1       0.693 FALSE Cluster graph
+#&gt; </span><span style='color: #555555;'>5</span><span>     1    17      1       0.693 FALSE Cluster graph
+#&gt; </span><span style='color: #555555;'>6</span><span>     1    19      1       0.693 FALSE Cluster graph
+#&gt; </span><span style='color: #555555;'># … with 63 more rows</span><span>
+#&gt; </span><span style='color: #555555;'>#
+#&gt; # Node Data: 20 x 7</span><span>
+#&gt;      btw bool_btw bool_deg   deg title          name label
+#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>
+#&gt; </span><span style='color: #555555;'>1</span><span> 10.9   FALSE    TRUE         7 Cluster graph     1 </span><span style='color: #555555;'>""</span><span>   
+#&gt; </span><span style='color: #555555;'>2</span><span>  0.655 FALSE    TRUE         5 Cluster graph     2 </span><span style='color: #555555;'>""</span><span>   
+#&gt; </span><span style='color: #555555;'>3</span><span>  0.5   FALSE    TRUE         4 Cluster graph     3 </span><span style='color: #555555;'>""</span><span>   
+#&gt; </span><span style='color: #555555;'># … with 17 more rows</span><span>
+#&gt; </div></span></pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#value">Value</a></li>
-      <li><a href="#examples">Examples</a></li>
-    </ul>
-
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
@@ -222,7 +280,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
