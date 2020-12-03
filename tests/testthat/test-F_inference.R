@@ -25,7 +25,7 @@ gamma=log(beta)
  P=EdgeProba(beta*psi)
  P2=Kirshner(beta*psi)
  M=Meila(beta)
-sum.contraint=binf.constraint(p)
+sum.contraint=sum.constraint.inf(p)
  x=SetLambda(P2,M, sum.contraint)
 #
 # ##########################
@@ -42,7 +42,7 @@ compare=ComparEMtree(Y,X,models=list(1,2),m_names=list("1","2"),Pt=0.3,S=S,
 # complexeW=matrix(runif(30^2, min=100,max=200),30, 30)
 # complexeW=t(complexeW)%$%complexeW/2
 # complexeP=Kirshner(complexeW*1e+10)
- #sum.contraint2=binf.constraint(30)
+ #sum.contraint2=sum.constraint.inf(30)
 # test=matrix(0,10,10)
 # test[5,3]=1
 # test=test+1e-30
