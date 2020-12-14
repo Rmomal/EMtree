@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Computes edges selection frequency after resampling procedure — freq_selec • EMtree</title>
+<title>Generate simulation parameters from a graph adjacency matrix — generator_param • EMtree</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Computes edges selection frequency after resampling procedure — freq_selec" />
-<meta property="og:description" content="Computes edges selection frequency after resampling procedure" />
+<meta property="og:title" content="Generate simulation parameters from a graph adjacency matrix — generator_param" />
+<meta property="og:description" content="Generate simulation parameters from a graph adjacency matrix" />
 
 
 
@@ -123,48 +123,88 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Computes edges selection frequency after resampling procedure</h1>
+    <h1>Generate simulation parameters from a graph adjacency matrix</h1>
     
-    <div class="hidden name"><code>freq_selec.Rd</code></div>
+    <div class="hidden name"><code>generator_param.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Computes edges selection frequency after resampling procedure</p>
+    <p>Generate simulation parameters from a graph adjacency matrix</p>
     </div>
 
-    <pre class="usage"><span class='fu'>freq_selec</span><span class='op'>(</span><span class='va'>Pmat</span>, <span class='va'>Pt</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>generator_param</span><span class='op'>(</span><span class='va'>G</span>, signed <span class='op'>=</span> <span class='cn'>FALSE</span>, v <span class='op'>=</span> <span class='fl'>0.01</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>Pmat</th>
-      <td><p>matrix gathering edgges probability, with dimensions number of resamples x number of possible edges. Typically the Pmat output of ResampleEMtree()</p></td>
+      <th>G</th>
+      <td><p>adjacency matrix</p></td>
     </tr>
     <tr>
-      <th>Pt</th>
-      <td><p>edges probabilty threshold</p></td>
+      <th>signed</th>
+      <td><p>boolean: should the graph be composed of positive and negative partial correlations ?</p></td>
+    </tr>
+    <tr>
+      <th>v</th>
+      <td><p>parameter controlling the noise on the precision matrix</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>p x p matrix of edges selection frequency</p>
+    <p>a list containing</p><ul>
+<li><p>sigma: the covariance matrix</p></li>
+<li><p>omega: the precision matrix</p></li>
+<li><p>cste: the constant that was needed to load the diagonal of omega and esure its positive definitiveness</p></li>
+</ul>
+
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='va'>n</span><span class='op'>=</span><span class='fl'>30</span>
-<span class='va'>p</span><span class='op'>=</span><span class='fl'>10</span>
-<span class='va'>S</span><span class='op'>=</span><span class='fl'>5</span>
-<span class='va'>Y</span><span class='op'>=</span><span class='fu'><a href='data_from_scratch.html'>data_from_scratch</a></span><span class='op'>(</span><span class='st'>"tree"</span>,p<span class='op'>=</span><span class='va'>p</span><span class='op'>)</span><span class='op'>$</span><span class='va'>data</span>
-<span class='va'>resample_prob</span><span class='op'>=</span><span class='fu'><a href='ResampleEMtree.html'>ResampleEMtree</a></span><span class='op'>(</span><span class='va'>Y</span>, S<span class='op'>=</span><span class='va'>S</span>,cores <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span><span class='op'>$</span><span class='va'>Pmat</span>
-</div><div class='output co'>#&gt; Computing  5 probability matrices with 1 core(s)... 
-#&gt; Convergence took 0.1 secs  and  12  iterations.
-#&gt; Convergence took 0.08 secs  and  9  iterations.
-#&gt; Convergence took 0.14 secs  and  23  iterations.
-#&gt; Convergence took 0.07 secs  and  7  iterations.
-#&gt; Convergence took 0.16 secs  and  19  iterations.0.58 secs </div><div class='input'><span class='va'>edges_freq</span><span class='op'>&lt;-</span><span class='fu'>freq_selec</span><span class='op'>(</span><span class='va'>resample_prob</span>,Pt<span class='op'>=</span><span class='fl'>0.3</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>edges_freq</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;  num [1:10, 1:10] 0 0 0 1 0 0 0 0 0.2 0 ...</div></pre>
+    <pre class="examples"><div class='input'><span class='va'>G</span><span class='op'>=</span><span class='fu'><a href='generator_graph.html'>generator_graph</a></span><span class='op'>(</span>p<span class='op'>=</span><span class='fl'>10</span>,graph<span class='op'>=</span><span class='st'>"tree"</span><span class='op'>)</span>
+<span class='fu'>generator_param</span><span class='op'>(</span>G<span class='op'>=</span><span class='va'>G</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; $sigma
+#&gt;             [,1]       [,2]       [,3]       [,4]       [,5]       [,6]
+#&gt;  [1,]  11.287998   8.966510  10.958157  -9.600442  10.060487 -11.067739
+#&gt;  [2,]   8.966510  12.235819   8.704504 -10.040890   9.588073  -8.791549
+#&gt;  [3,]  10.958157   8.704504  12.589222  -9.319913   9.766515 -11.715114
+#&gt;  [4,]  -9.600442 -10.040890  -9.319913  10.750781 -10.265949   9.413112
+#&gt;  [5,]  10.060487   9.588073   9.766515 -10.265949  10.757885  -9.864180
+#&gt;  [6,] -11.067739  -8.791549 -11.715114   9.413112  -9.864180  11.832265
+#&gt;  [7,]   9.236402  10.594117   8.966510 -10.343121   9.876674  -9.056175
+#&gt;  [8,]  -9.144952 -10.489225  -8.877733  10.240714  -9.778885   8.966510
+#&gt;  [9,]  -9.056175 -11.358177  -8.791549  10.141299  -9.683953   8.879465
+#&gt; [10,] -10.621137  -9.231136 -10.310782   9.883777 -10.357399  10.413890
+#&gt;             [,7]       [,8]       [,9]      [,10]
+#&gt;  [1,]   9.236402  -9.144952  -9.056175 -10.621137
+#&gt;  [2,]  10.594117 -10.489225 -11.358177  -9.231136
+#&gt;  [3,]   8.966510  -8.877733  -8.791549 -10.310782
+#&gt;  [4,] -10.343121  10.240714  10.141299   9.883777
+#&gt;  [5,]   9.876674  -9.778885  -9.683953 -10.357399
+#&gt;  [6,]  -9.056175   8.966510   8.879465  10.413890
+#&gt;  [7,]  10.913000 -10.804950 -10.700058  -9.508993
+#&gt;  [8,] -10.804950  11.688070  10.594117   9.414844
+#&gt;  [9,] -10.700058  10.594117  11.471759   9.323447
+#&gt; [10,]  -9.508993   9.414844   9.323447  10.934595
+#&gt; 
+#&gt; $omega
+#&gt; 10 x 10 sparse Matrix of class "dsCMatrix"
+#&gt;                                                        
+#&gt;  [1,] 2.01 .    .    .    .    1.00 .    .    .    1.00
+#&gt;  [2,] .    1.01 .    .    .    .    .    .    1.00 .   
+#&gt;  [3,] .    .    1.01 .    .    1.00 .    .    .    .   
+#&gt;  [4,] .    .    .    2.01 1.00 .    1.00 .    .    .   
+#&gt;  [5,] .    .    .    1.00 2.01 .    .    .    .    1.00
+#&gt;  [6,] 1.00 .    1.00 .    .    2.01 .    .    .    .   
+#&gt;  [7,] .    .    .    1.00 .    .    3.01 1.00 1.00 .   
+#&gt;  [8,] .    .    .    .    .    .    1.00 1.01 .    .   
+#&gt;  [9,] .    1.00 .    .    .    .    1.00 .    2.01 .   
+#&gt; [10,] 1.00 .    .    .    1.00 .    .    .    .    2.01
+#&gt; 
+#&gt; $cste
+#&gt; [1] 1
+#&gt; </div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
