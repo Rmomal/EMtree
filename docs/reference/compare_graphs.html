@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Runs EMtree for several covariates choices — ComparEMtree • EMtree</title>
+<title>Plots networks from several models — compare_graphs • EMtree</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Runs EMtree for several covariates choices — ComparEMtree" />
-<meta property="og:description" content="Runs EMtree for several covariates choices" />
+<meta property="og:title" content="Plots networks from several models — compare_graphs" />
+<meta property="og:description" content="Plots networks from several models" />
 
 
 
@@ -123,123 +123,109 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Runs EMtree for several covariates choices</h1>
+    <h1>Plots networks from several models</h1>
     
-    <div class="hidden name"><code>ComparEMtree.Rd</code></div>
+    <div class="hidden name"><code>compare_graphs.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Runs EMtree for several covariates choices</p>
+    <p>Plots networks from several models</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ComparEMtree</span><span class='op'>(</span>
-  <span class='va'>counts</span>,
-  <span class='va'>covar_matrix</span>,
-  <span class='va'>models</span>,
-  <span class='va'>m_names</span>,
-  O <span class='op'>=</span> <span class='cn'>NULL</span>,
-  unlinked <span class='op'>=</span> <span class='cn'>NULL</span>,
-  Pt <span class='op'>=</span> <span class='fl'>0.1</span>,
-  v <span class='op'>=</span> <span class='fl'>0.8</span>,
-  S <span class='op'>=</span> <span class='fl'>100</span>,
-  maxIter <span class='op'>=</span> <span class='fl'>50</span>,
-  cond.tol <span class='op'>=</span> <span class='fl'>1e-14</span>,
-  cores <span class='op'>=</span> <span class='fl'>3</span>
+    <pre class="usage"><span class='fu'>compare_graphs</span><span class='op'>(</span>
+  <span class='va'>allNets</span>,
+  curv <span class='op'>=</span> <span class='fl'>0.2</span>,
+  width <span class='op'>=</span> <span class='fl'>1</span>,
+  shade <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  Ft <span class='op'>=</span> <span class='fl'>0</span>,
+  nodes_label <span class='op'>=</span> <span class='cn'>NULL</span>,
+  btw_rank <span class='op'>=</span> <span class='fl'>2</span>,
+  layout <span class='op'>=</span> <span class='st'>"circle"</span>,
+  base_model <span class='op'>=</span> <span class='cn'>NULL</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>counts</th>
-      <td><p>Data of observed counts with dimensions n x p, either a matrix, data.frame or tibble.</p></td>
+      <th>allNets</th>
+      <td><p>tibble resulting of ComparEMtree()</p></td>
     </tr>
     <tr>
-      <th>covar_matrix</th>
-      <td><p>matrix of covariates, should have the same number of rows as the count matrix.</p></td>
+      <th>curv</th>
+      <td><p>edges curvature</p></td>
     </tr>
     <tr>
-      <th>models</th>
-      <td><p>list of covariate combinations to be tested. For example list(1,2) will design two linear models with the first two covariates adjusted separately</p></td>
+      <th>width</th>
+      <td><p>maximum width for the edges</p></td>
     </tr>
     <tr>
-      <th>m_names</th>
-      <td><p>list of names for the models to be compared, for example list("first model","last model")</p></td>
+      <th>shade</th>
+      <td><p>if TRUE, shades the edges non-linked to nodes with high betweenness</p></td>
     </tr>
     <tr>
-      <th>O</th>
-      <td><p>Offset matrix with dimensions n x p</p></td>
+      <th>Ft</th>
+      <td><p>Frequency threshold</p></td>
     </tr>
     <tr>
-      <th>unlinked</th>
-      <td><p>An optional vector of nodes which are not linked with each other</p></td>
+      <th>nodes_label</th>
+      <td><p>optional label for the nodes</p></td>
     </tr>
     <tr>
-      <th>Pt</th>
-      <td><p>Probability threshold for every sub-sample</p></td>
+      <th>btw_rank</th>
+      <td><p>betweenness rank +1 of highlighted nodes. If set to 1, none are highlighted.</p></td>
     </tr>
     <tr>
-      <th>v</th>
-      <td><p>The proportion of observed data to be taken in each sub-sample. It is the ratio (sub-sample size)/n</p></td>
+      <th>layout</th>
+      <td><p>choice of layout for all networks among available layouts in `ggraph`. Default is "circle"</p></td>
     </tr>
     <tr>
-      <th>S</th>
-      <td><p>Number of desired sub-samples</p></td>
-    </tr>
-    <tr>
-      <th>maxIter</th>
-      <td><p>Maximum number of iterations of EMtree</p></td>
-    </tr>
-    <tr>
-      <th>cond.tol</th>
-      <td><p>Tolerance for the psi matrix.</p></td>
-    </tr>
-    <tr>
-      <th>cores</th>
-      <td><p>Number of cores, can be greater than 1 if data involves less than about 32 species.</p></td>
+      <th>base_model</th>
+      <td><p>choice of referent model for the layout construction</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a tibble in a suitable format for graphical purposes. It has four columns describing each edge of each model: the endpoints ("node1", "node2"),
- the model it corresponds to ("model") and its weight ("value").</p>
+    
+<ul>
+<li><p>G the collection of networks as a ggplot2 object, with highlighted high betweenness nodes</p></li>
+<li><p>graph_data list of data needed to plot the networks</p></li>
+</ul>
+
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='va'>n</span><span class='op'>=</span><span class='fl'>30</span>
 <span class='va'>p</span><span class='op'>=</span><span class='fl'>10</span>
 <span class='va'>S</span><span class='op'>=</span><span class='fl'>3</span>
-<span class='va'>Y</span> <span class='op'>=</span> <span class='fu'><a href='data_from_scratch.html'>data_from_scratch</a></span><span class='op'>(</span>type<span class='op'>=</span><span class='st'>"tree"</span>,p<span class='op'>=</span><span class='va'>p</span>,n<span class='op'>=</span><span class='va'>n</span><span class='op'>)</span><span class='op'>$</span><span class='va'>data</span>
+<span class='va'>Y</span><span class='op'>=</span><span class='fu'><a href='data_from_scratch.html'>data_from_scratch</a></span><span class='op'>(</span><span class='st'>"tree"</span>,p<span class='op'>=</span><span class='va'>p</span>,n<span class='op'>=</span><span class='va'>n</span><span class='op'>)</span><span class='op'>$</span><span class='va'>data</span>
 <span class='va'>X</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='va'>n</span><span class='op'>)</span>,<span class='fu'><a href='https://rdrr.io/r/stats/Binomial.html'>rbinom</a></span><span class='op'>(</span><span class='va'>n</span>,<span class='fl'>1</span>,<span class='fl'>0.7</span><span class='op'>)</span><span class='op'>)</span>
-<span class='fu'>ComparEMtree</span><span class='op'>(</span><span class='va'>Y</span>,<span class='va'>X</span>,models<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>,m_names<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='st'>"1"</span>,<span class='st'>"2"</span>,<span class='st'>"both"</span><span class='op'>)</span>,Pt<span class='op'>=</span><span class='fl'>0.3</span>,S<span class='op'>=</span><span class='va'>S</span>, cores<span class='op'>=</span><span class='fl'>1</span><span class='op'>)</span>
+<span class='va'>threemodels</span><span class='op'>=</span><span class='fu'><a href='ComparEMtree.html'>ComparEMtree</a></span><span class='op'>(</span><span class='va'>Y</span>,<span class='va'>X</span>,models<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>,<span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>,
+m_names<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='st'>"1"</span>,<span class='st'>"2"</span>,<span class='st'>"both"</span><span class='op'>)</span>,Pt<span class='op'>=</span><span class='fl'>0.3</span>,S<span class='op'>=</span><span class='va'>S</span>, cores<span class='op'>=</span><span class='fl'>1</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; model 1 : Computing  3 probability matrices with 1 core(s)... 
-#&gt; Convergence took 0.09 secs  and  8  iterations.
-#&gt; Convergence took 0.21 secs  and  12  iterations.
-#&gt; Convergence took 0.1 secs  and  9  iterations.0.45 secs 
+#&gt; Convergence took 0.1 secs  and  12  iterations.
+#&gt; Convergence took 0.15 secs  and  31  iterations.
+#&gt; Convergence took 0.05 secs  and  5  iterations.0.33 secs 
 #&gt; 
 #&gt; model 2 : Computing  3 probability matrices with 1 core(s)... 
-#&gt; Convergence took 0.12 secs  and  10  iterations.
-#&gt; Convergence took 0.13 secs  and  10  iterations.
-#&gt; Convergence took 0.1 secs  and  10  iterations.0.37 secs 
+#&gt; Convergence took 0.07 secs  and  8  iterations.
+#&gt; Convergence took 0.05 secs  and  6  iterations.
+#&gt; Convergence took 0.22 secs  and  23  iterations.0.36 secs 
 #&gt; 
 #&gt; model both : Computing  3 probability matrices with 1 core(s)... 
-#&gt; Convergence took 0.09 secs  and  13  iterations.
-#&gt; Convergence took 0.08 secs  and  9  iterations.
-#&gt; Convergence took 0.06 secs  and  8  iterations.0.25 secs 
-#&gt; </div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 135 x 4</span><span>
-#&gt;    node1 node2 model weight
-#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'> 1</span><span> 1     2     1          0
-#&gt; </span><span style='color: #555555;'> 2</span><span> 1     3     1          1
-#&gt; </span><span style='color: #555555;'> 3</span><span> 2     3     1          1
-#&gt; </span><span style='color: #555555;'> 4</span><span> 1     4     1          0
-#&gt; </span><span style='color: #555555;'> 5</span><span> 2     4     1          0
-#&gt; </span><span style='color: #555555;'> 6</span><span> 3     4     1          0
-#&gt; </span><span style='color: #555555;'> 7</span><span> 1     5     1          0
-#&gt; </span><span style='color: #555555;'> 8</span><span> 2     5     1          0
-#&gt; </span><span style='color: #555555;'> 9</span><span> 3     5     1          0
-#&gt; </span><span style='color: #555555;'>10</span><span> 4     5     1          1
-#&gt; </span><span style='color: #555555;'># … with 125 more rows</span><span></div></span></pre>
+#&gt; Convergence took 0.07 secs  and  6  iterations.
+#&gt; Convergence took 0.11 secs  and  6  iterations.
+#&gt; Convergence took 0.08 secs  and  10  iterations.0.29 secs 
+#&gt; </div><div class='input'><span class='fu'>compare_graphs</span><span class='op'>(</span><span class='va'>threemodels</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; $G</div><div class='img'><img src='compare_graphs-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; 
+#&gt; $graph_data
+#&gt; <span style='color: #555555;'># A tibble: 3 x 2</span><span>
+#&gt;   .                 P           
+#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;named list&gt;</span><span>      </span><span style='color: #555555;font-style: italic;'>&lt;named list&gt;</span><span>
+#&gt; </span><span style='color: #555555;'>1</span><span> </span><span style='color: #555555;'>&lt;df[,4] [45 × 4]&gt;</span><span> </span><span style='color: #555555;'>&lt;tbl_grph&gt;</span><span>  
+#&gt; </span><span style='color: #555555;'>2</span><span> </span><span style='color: #555555;'>&lt;df[,4] [45 × 4]&gt;</span><span> </span><span style='color: #555555;'>&lt;tbl_grph&gt;</span><span>  
+#&gt; </span><span style='color: #555555;'>3</span><span> </span><span style='color: #555555;'>&lt;df[,4] [45 × 4]&gt;</span><span> </span><span style='color: #555555;'>&lt;tbl_grph&gt;</span><span>  
+#&gt; </div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
