@@ -22,6 +22,7 @@ matrix:
       r: bioc-release
       r_packages:
         - covr
+        - pkgdown
 
       after_success:
         - Rscript -e 'covr::codecov()'

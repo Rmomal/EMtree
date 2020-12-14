@@ -72,6 +72,7 @@ draw_network<-function(adj_matrix,title="", size=4, curv=0,width=1, shade=FALSE,
                            activate(nodes)  %>% dplyr::select(bool_btw) %>% tibble::as_tibble())
   if(!is.null(groupes)){
     if(is.null(pal_nodes)) pal_nodes<-c("#31374f","#adc9e0","#e7bd42")
+    if(sum(sensitive_nodes)==0) sensitive_nodes=groupes
   }else{
     groupes=sensitive_nodes
     if(is.null(pal_nodes)) pal_nodes<-c("#31374f","#e7bd42")
@@ -103,7 +104,7 @@ draw_network<-function(adj_matrix,title="", size=4, curv=0,width=1, shade=FALSE,
   }
 
   g<-g+
-    geom_node_point(aes(color = groupes, size = sensitive_nodes), show.legend =c(colour=legend,size=FALSE)) +
+    geom_node_point(aes(color = groupes, size = as.factor(sensitive_nodes)), show.legend =c(colour=legend,size=FALSE)) +
     scale_edge_colour_manual(values = pal_edges) +
     scale_color_manual("",values = pal_nodes)+
     scale_size_manual(values = nodes_size)+
