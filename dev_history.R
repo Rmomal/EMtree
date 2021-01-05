@@ -16,6 +16,7 @@ pkgdown::build_site()
 
 # workflow
 devtools::document() # then build and restart
+devtools::load_all()
 devtools::run_examples() #handy for debug
 devtools::check()
 usethis::use_vignette("Usage","Usage example")

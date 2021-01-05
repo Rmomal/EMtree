@@ -25,7 +25,7 @@ compare=ComparEMtree(Y,X,models=list(1,2),m_names=list("1","2"),
                      Pt=0.3,S=S, cores=1, maxIter = 3)
 
 ##########################
-draw = draw_network(EM$edges_prob, groupes=rep(c(1,2),each=p/2),
+draw = draw_network(EM$edges_prob, node_groups=rep(c(1,2),each=p/2),
                     shade=TRUE, legend=TRUE)$graph_data
 comp.gr=compare_graphs(compare, layout="kk")$graph_data
 

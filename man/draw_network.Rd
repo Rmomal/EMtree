@@ -7,11 +7,11 @@
 draw_network(
   adj_matrix,
   title = "",
-  size = 4,
+  label_size = 4,
   curv = 0,
   width = 1,
   shade = FALSE,
-  filter_deg = FALSE,
+  remove_isolated = FALSE,
   btw_rank = 2,
   layout = NULL,
   stored_layout = NULL,
@@ -19,7 +19,8 @@ draw_network(
   nodes_size = c(2, 5),
   pal_edges = NULL,
   pal_nodes = NULL,
-  groupes = NULL,
+  node_groups = NULL,
+  edge_groups = NULL,
   legend = FALSE,
   pos = "bottom"
 )
@@ -29,7 +30,7 @@ draw_network(
 
 \item{title}{graph title}
 
-\item{size}{size of nodes}
+\item{label_size}{size of labels}
 
 \item{curv}{edges curvature}
 
@@ -37,7 +38,7 @@ draw_network(
 
 \item{shade}{if TRUE, shades the edges unlinked to nodes with high betweenness}
 
-\item{filter_deg}{selects nodes with a higher degree than filter_deg}
+\item{remove_isolated}{Removes isolated nodes if TRUE}
 
 \item{btw_rank}{betweenness rank +1 of highlighted nodes. If set to 1, none are highlighted.}
 
@@ -53,7 +54,9 @@ draw_network(
 
 \item{pal_nodes}{optional palette for nodes}
 
-\item{groupes}{optional vector seperating the nodes into groupes}
+\item{node_groups}{optional vector seperating the nodes into groups}
+
+\item{edge_groups}{optional matrix specifying groups of edgess}
 
 \item{legend}{optional boolean for generating a legend when groups are provided}
 

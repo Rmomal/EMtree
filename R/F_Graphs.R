@@ -4,11 +4,11 @@
 #'
 #' @param adj_matrix graph adjacency matrix
 #' @param title graph title
-#' @param size size of nodes
+#' @param label_size size of labels
 #' @param curv edges curvature
 #' @param width maximum width for the edges
 #' @param shade if TRUE, shades the edges unlinked to nodes with high betweenness
-#' @param filter_deg selects nodes with a higher degree than filter_deg
+#' @param remove_isolated Removes isolated nodes if TRUE
 #' @param btw_rank betweenness rank +1 of highlighted nodes. If set to 1, none are highlighted.
 #' @param layout optional ggraph layout.
 #' @param stored_layout optional data.frame of point positions from a previous graph, possibly created using ggraph::create_layout()
@@ -16,7 +16,8 @@
 #' @param nodes_size size of nodes, possibility to specify a size per group
 #' @param pal_edges optional palette for edges
 #' @param pal_nodes optional palette for nodes
-#' @param groupes optional vector seperating the nodes into groupes
+#' @param node_groups optional vector seperating the nodes into groups
+#' @param edge_groups optional matrix specifying groups of edgess
 #' @param legend optional boolean for generating a legend when groups are provided
 #' @param pos optional legend position ("bottom", "top", "right" or "left")
 #' @return \itemize{
@@ -34,18 +35,26 @@
 #' @importFrom gridExtra grid.arrange
 #' @examples adj_matrix= SimCluster(20,2,0.4, 10)
 #' draw_network(adj_matrix,"Cluster graph", layout="fr", shade=TRUE)
-draw_network<-function(adj_matrix,title="", size=4, curv=0,width=1, shade=FALSE, filter_deg=FALSE,btw_rank=2,
-                       layout=NULL,stored_layout=NULL,nodes_label=NULL,nodes_size=c(2,5),pal_edges=NULL, pal_nodes=NULL, groupes=NULL,
-                       legend=FALSE, pos="bottom"){
+draw_network<-function(adj_matrix,title="", label_size=4, curv=0,width=1, shade=FALSE, remove_isolated=FALSE,btw_rank=2,
+                       layout=NULL,stored_layout=NULL,nodes_label=NULL,nodes_size=c(2,5),pal_edges=NULL, pal_nodes=NULL,
+                       node_groups=NULL, edge_groups=NULL,legend=FALSE, pos="bottom"){
   adj_matrix=as.matrix(adj_matrix)
   p=nrow(adj_matrix) ; binary=FALSE
 
   if(is.null(nodes_label)){ nodes_label=1:p ; nonames=TRUE}else{nonames=FALSE}
   if(sum(unique(adj_matrix))==1) binary=TRUE
+ if(!is.null(edge_groups)){
+   edge_groups=F_Sym2Vec(edge_groups)[F_Sym2Vec(adj_matrix!=0)]
+ }else{
+   edge_groups=F_Sym2Vec(matrix(1, p,p))[F_Sym2Vec(adj_matrix!=0)]
+ }
+  edge_groups=as.factor(edge_groups)
   # edges width
   min.width=ifelse(binary,0,0.1)
   #edges colour
-  pal_edges <-  ifelse(is.null(pal_edges), viridisLite::viridis(5, option = "C")[c(3,2,4,1)], pal_edges)
+if(is.null(pal_edges)){
+  pal_edges=viridisLite::viridis(5, option = "C")[c(3,2,4,1)][1:length(unique(edge_groups))]
+}
   #betweenness computations
   res<- as_tbl_graph(adj_matrix, directed=FALSE) %>% activate(edges) %>%
     mutate(btw.weights=ifelse(weight==0,0,log(1+1/weight))) %>%
@@ -54,13 +63,11 @@ draw_network<-function(adj_matrix,title="", size=4, curv=0,width=1, shade=FALSE,
             bool_btw=(btw>sort(btw, decreasing = TRUE)[btw_rank]),
             bool_deg=(centrality_degree()>0),
             deg=centrality_degree(), title=title, name=nodes_label )
-  if(!is.null(groupes)) res<-res %>% mutate(groupes=as.factor(groupes))
+  if(!is.null(node_groups)) res<-res %>% mutate(node_groups=as.factor(node_groups))
   if(nonames){
-    res<-res %>% mutate(label=ifelse(bool_btw,name,""))
-  }else{
-    res<-res %>% mutate(label=ifelse(bool_deg,name,""))
+    res<-res %>% mutate(label=ifelse(bool_btw,name,"")) #if no names supplied, only print important labels
   }
-  if(filter_deg) res <- res %>% activate(nodes) %>% filter(deg!=0)
+  if(remove_isolated) res <- res %>% activate(nodes) %>% filter(deg!=0)
   res<-res %>%
     activate(edges)  %>%
     filter(weight !=0) %>%
@@ -68,16 +75,15 @@ draw_network<-function(adj_matrix,title="", size=4, curv=0,width=1, shade=FALSE,
 
   # define nodes color
 
-  sensitive_nodes=unlist(res %>%
-                           activate(nodes)  %>% dplyr::select(bool_btw) %>% tibble::as_tibble())
-  if(!is.null(groupes)){
+  sensitive_nodes=unlist(res %>%  activate(nodes)  %>%
+                           dplyr::select(bool_btw) %>% tibble::as_tibble())
+  if(!is.null(node_groups)){
     if(is.null(pal_nodes)) pal_nodes<-c("#31374f","#adc9e0","#e7bd42")
-    if(sum(sensitive_nodes)==0) sensitive_nodes=groupes
+    if(sum(sensitive_nodes)==0) sensitive_nodes=node_groups
   }else{
-    groupes=sensitive_nodes
+    node_groups=sensitive_nodes
     if(is.null(pal_nodes)) pal_nodes<-c("#31374f","#e7bd42")
   }
-
 
   #draw graph
   set_graph_style(family="sans")
@@ -97,24 +103,24 @@ draw_network<-function(adj_matrix,title="", size=4, curv=0,width=1, shade=FALSE,
 
   if(shade){ #shading
     g<-g+
-      geom_edge_arc(aes(edge_width=weight, alpha=neibs,color = title), strength = curv, show.legend = FALSE) +
+      geom_edge_arc(aes(edge_width=weight, alpha=neibs,color = edge_groups), strength = curv, show.legend = FALSE) +
       scale_edge_alpha_manual(values=c(0.2,1))
   }else{ g<-g+
-    geom_edge_arc(aes(edge_width=weight,color = title), strength = curv, show.legend = FALSE)
+    geom_edge_arc(aes(edge_width=weight,color = edge_groups), strength = curv, show.legend = FALSE)
   }
 
   g<-g+
-    geom_node_point(aes(color = groupes, size = as.factor(sensitive_nodes)), show.legend =c(colour=legend,size=FALSE)) +
+    geom_node_point(aes(color = node_groups, size = as.factor(sensitive_nodes)), show.legend =c(colour=legend,size=FALSE)) +
     scale_edge_colour_manual(values = pal_edges) +
     scale_color_manual("",values = pal_nodes)+
     scale_size_manual(values = nodes_size)+
-    geom_node_text(aes(label = label), color = "black", size = size) +#,nudge_x = 0.3
+    geom_node_text(aes(label = label), color = "black", size = label_size) +#,nudge_x = 0.3
     labs(title = title) + theme(plot.title = element_text(hjust = 0.5))+
     scale_edge_width_continuous(range=c(min.width,width))
 leg=NULL
-  if(!is.null(groupes) & legend ){#add legend if groups provided
-    tmp=ggplot(data.frame(groupes=as.factor(groupes), row1=adj_matrix[1,], row2=adj_matrix[2,]),
-               aes(row1, row2, color=groupes))+
+  if(!is.null(node_groups) & legend ){#add legend if groups provided
+    tmp=ggplot(data.frame(node_groups=as.factor(node_groups), row1=adj_matrix[1,], row2=adj_matrix[2,]),
+               aes(row1, row2, color=node_groups))+
       geom_point()+scale_color_manual("",values=pal_nodes)+theme(legend.position=pos)
     tmp <- ggplot_gtable(ggplot_build(tmp))
     leg <- tmp$grobs[[which(sapply(tmp$grobs, function(x) x$name) == "guide-box")]]
