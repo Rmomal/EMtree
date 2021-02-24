@@ -2,6 +2,7 @@ library(devtools)
 library(usethis)
 
 usethis::use_package("magrittr")
+usethis::use_package("pillar")
 usethis::use_package("ade4")
 usethis::use_package("viridis")
 usethis::use_package("gmp")
@@ -19,7 +20,7 @@ devtools::document() # then build and restart
 devtools::load_all()
 devtools::run_examples() #handy for debug
 devtools::check()
-usethis::use_vignette("Usage","Usage example")
+ usethis::use_vignette("Usage","Usage example")
 pkgdown::build_site()
 pkgdown::build_home()
 pkgdown::build_articles()
