@@ -56,6 +56,7 @@ if(is.null(pal_edges)){
   pal_edges=viridisLite::viridis(5, option = "C")[c(3,2,4,1)][1:length(unique(edge_groups))]
 }
   #betweenness computations
+
   res<- as_tbl_graph(adj_matrix, directed=FALSE) %>% activate(edges) %>%
     mutate(btw.weights=ifelse(weight==0,0,log(1+1/weight))) %>%
     activate(nodes) %>%
@@ -64,8 +65,11 @@ if(is.null(pal_edges)){
             bool_deg=(centrality_degree()>0),
             deg=centrality_degree(), title=title, name=nodes_label )
   if(!is.null(node_groups)) res<-res %>% mutate(node_groups=as.factor(node_groups))
+
   if(nonames){
     res<-res %>% mutate(label=ifelse(bool_btw,name,"")) #if no names supplied, only print important labels
+  }else{
+    res<-res %>% mutate(label=name)
   }
   if(remove_isolated) res <- res %>% activate(nodes) %>% filter(deg!=0)
   res<-res %>%
@@ -98,7 +102,6 @@ if(is.null(pal_edges)){
     g=res %>%
       ggraph(layout = finallayout)
   }
-
 
 
   if(shade){ #shading

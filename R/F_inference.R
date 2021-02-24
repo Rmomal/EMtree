@@ -343,7 +343,7 @@ ResampleEMtree <- function(counts,covar_matrix=NULL  , unlinked=NULL, O=NULL,
     PLNfit <- PLNmodels::PLN(counts ~ -1  + offset(log(O)) + ., data=data.frame(X), control = list("trace"=0))
   )
   obj<-parallel::mclapply(1:S,function(b){
-    set.seed(b)
+    #set.seed(b)
     if(init){
       inf<-EMtree( PLNfit,unlinked,n=n, maxIter=maxIter, cond.tol=cond.tol,verbatim=TRUE,eps=eps,
                    plot=FALSE, random.init = TRUE)[c("edges_prob","maxIter","timeEM")]
