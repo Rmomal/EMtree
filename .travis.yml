@@ -18,6 +18,8 @@ matrix:
           packages:
             -gcc
           update: true
+      r_packages:
+        - pillar
     - os: linux
       r: bioc-release
       r_packages:
