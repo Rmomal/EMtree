@@ -6,11 +6,11 @@ diag(B)=0
 
 
 test_that("F_Vec2Sym", {
-  expect_equal(F_Vec2Sym(A), B)
+  expect_equal(ToSym(A), B)
 })
 
 test_that("F_Sym2Vec", {
-  expect_equal(F_Sym2Vec(B), A)
+  expect_equal(ToVec(B), A)
 })
 
 # library(EMtree)

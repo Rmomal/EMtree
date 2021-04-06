@@ -57,8 +57,8 @@ SimCluster <- function(p, k, dens, r){
   groupe=Z%*%1:k
   Z = Z %*% t(Z)
   diag(Z) = 0
-  ZZ = F_Sym2Vec(Z)
-  G = F_Vec2Sym(rbinom(p * (p - 1) / 2, 1, alpha * ZZ + beta * (1 - ZZ)))
+  ZZ = ToVec(Z)
+  G = ToSym(rbinom(p * (p - 1) / 2, 1, alpha * ZZ + beta * (1 - ZZ)))
   res=G
   return(res)
 }
@@ -116,7 +116,7 @@ generator_param<-function(G,signed=FALSE,v=0.01){
   if(sum(sumlignes==0)!=0) sumlignes[sumlignes==0]=0.1
   D=diag(sumlignes+v)
   if(signed){
-    Gsign = F_Vec2Sym(F_Sym2Vec(G * matrix(2*stats::rbinom(p^2, 1, .3)-1, p, p)))
+    Gsign = ToSym(ToVec(G * matrix(2*stats::rbinom(p^2, 1, .3)-1, p, p)))
     omega = lambda*D + Gsign
     while(min(eigen(omega)$values) < 1e-10 & lambda<1e3){
       lambda = 1.1*lambda

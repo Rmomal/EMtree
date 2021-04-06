@@ -54,9 +54,9 @@ draw_network(
 
 \item{pal_nodes}{optional palette for nodes}
 
-\item{node_groups}{optional vector seperating the nodes into groups}
+\item{node_groups}{optional vector separating the nodes into groups}
 
-\item{edge_groups}{optional matrix specifying groups of edgess}
+\item{edge_groups}{optional matrix specifying groups of edges}
 
 \item{legend}{optional boolean for generating a legend when groups are provided}
 

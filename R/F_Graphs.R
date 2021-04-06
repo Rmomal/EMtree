@@ -16,8 +16,8 @@
 #' @param nodes_size size of nodes, possibility to specify a size per group
 #' @param pal_edges optional palette for edges
 #' @param pal_nodes optional palette for nodes
-#' @param node_groups optional vector seperating the nodes into groups
-#' @param edge_groups optional matrix specifying groups of edgess
+#' @param node_groups optional vector separating the nodes into groups
+#' @param edge_groups optional matrix specifying groups of edges
 #' @param legend optional boolean for generating a legend when groups are provided
 #' @param pos optional legend position ("bottom", "top", "right" or "left")
 #' @return \itemize{
@@ -26,9 +26,9 @@
 #' }
 #' @export
 #' @importFrom tidygraph .N as_tbl_graph activate centrality_betweenness centrality_degree edge_is_incident
-#' @importFrom ggraph ggraph set_graph_style geom_edge_arc scale_edge_alpha_manual scale_edge_width_continuous geom_node_text geom_node_point  scale_edge_colour_manual
+#' @importFrom ggraph ggraph set_graph_style geom_edge_arc scale_edge_alpha_manual scale_edge_width_continuous geom_node_text geom_node_point  scale_edge_colour_manual create_layout
 #' @importFrom tibble tibble rownames_to_column
-#' @importFrom ggplot2 aes theme labs scale_color_manual scale_size_manual ggplot_gtable ggplot_build
+#' @importFrom ggplot2 aes theme labs scale_color_manual scale_size_manual ggplot_gtable ggplot_build element_text
 #' @importFrom dplyr mutate filter
 #' @importFrom viridisLite viridis
 #' @importFrom tibble as_tibble
@@ -44,9 +44,9 @@ draw_network<-function(adj_matrix,title="", label_size=4, curv=0,width=1, shade=
   if(is.null(nodes_label)){ nodes_label=1:p ; nonames=TRUE}else{nonames=FALSE}
   if(sum(unique(adj_matrix))==1) binary=TRUE
  if(!is.null(edge_groups)){
-   edge_groups=F_Sym2Vec(edge_groups)[F_Sym2Vec(adj_matrix!=0)]
+   edge_groups=ToVec(edge_groups)[ToVec(adj_matrix!=0)]
  }else{
-   edge_groups=F_Sym2Vec(matrix(1, p,p))[F_Sym2Vec(adj_matrix!=0)]
+   edge_groups=ToVec(matrix(1, p,p))[ToVec(adj_matrix!=0)]
  }
   edge_groups=as.factor(edge_groups)
   # edges width
@@ -118,7 +118,10 @@ if(is.null(pal_edges)){
     scale_color_manual("",values = pal_nodes)+
     scale_size_manual(values = nodes_size)+
     geom_node_text(aes(label = label), color = "black", size = label_size) +#,nudge_x = 0.3
-    labs(title = title) + theme(plot.title = element_text(hjust = 0.5))+
+    labs(title = title) + theme(plot.title = ggplot2::element_text(
+      hjust=0.5,
+      family = "Helvetica",
+      size = 12 ))+
     scale_edge_width_continuous(range=c(min.width,width))
 leg=NULL
   if(!is.null(node_groups) & legend ){#add legend if groups provided
@@ -135,107 +138,107 @@ leg=NULL
 
 
 
-
-#' Plots networks from several models
+# Deprecated
+#' #' Plots networks from several models
+#' #'
+#' #' @param allNets tibble resulting of ComparEMtree()
+#' #' @param curv edges curvature
+#' #' @param width maximum width for the edges
+#' #' @param shade if TRUE, shades the edges non-linked to nodes with high betweenness
+#' #' @param Ft Frequency threshold
+#' #' @param btw_rank betweenness rank +1 of highlighted nodes. If set to 1, none are highlighted.
+#' #' @param layout choice of layout for all networks among available layouts in `ggraph`. Default is "circle"
+#' #' @param base_model choice of referent model for the layout construction
+#' #' @param nodes_label optional label for the nodes
+#' #'
+#' #' @return \itemize{
+#' #' \item{G}{ the collection of networks as a ggplot2 object, with highlighted high betweenness nodes}
+#' #' \item{graph_data }{list of data needed to plot the networks}
+#' #' }
+#' #' @export
+#' #' @importFrom tidygraph .N bind_graphs as_tbl_graph activate centrality_betweenness centrality_degree edge_is_incident
+#' #' @importFrom ggraph  ggraph create_layout set_graph_style facet_nodes th_foreground geom_edge_arc scale_edge_alpha_manual scale_edge_width_continuous geom_node_text geom_node_point  scale_edge_colour_manual
+#' #' @importFrom tibble tibble rownames_to_column
+#' #' @importFrom ggplot2 element_rect element_text aes theme labs scale_color_manual scale_size_manual
+#' #' @importFrom dplyr mutate filter
+#' #' @importFrom purrr map reduce
+#' #' @importFrom viridisLite viridis
+#' #' @examples
+#' #'n=30
+#' #'p=10
+#' #'S=3
+#' #'Y=data_from_scratch("tree",p=p,n=n)$data
+#' #'X = data.frame(rnorm(n),rbinom(n,1,0.7))
+#' #'threemodels=ComparEMtree(Y,X,models=list(1,2,c(1,2)),
+#' #'m_names=list("1","2","both"),Pt=0.3,S=S, cores=1)
+#' #'compare_graphs(threemodels)
+#' compare_graphs<-function(allNets, curv=0.2, width=1, shade=TRUE,Ft=0, nodes_label=NULL,
+#'                          btw_rank=2, layout="circle", base_model=NULL){
 #'
-#' @param allNets tibble resulting of ComparEMtree()
-#' @param curv edges curvature
-#' @param width maximum width for the edges
-#' @param shade if TRUE, shades the edges non-linked to nodes with high betweenness
-#' @param Ft Frequency threshold
-#' @param btw_rank betweenness rank +1 of highlighted nodes. If set to 1, none are highlighted.
-#' @param layout choice of layout for all networks among available layouts in `ggraph`. Default is "circle"
-#' @param base_model choice of referent model for the layout construction
-#' @param nodes_label optional label for the nodes
+#'   mods=unique(allNets$model)
+#'   if(is.null(base_model)) base_model = allNets$model[1]
+#'   nbmod<-length(mods)
+#'   binary=(sum(unique(allNets$weight))==1)
 #'
-#' @return \itemize{
-#' \item{G}{ the collection of networks as a ggplot2 object, with highlighted high betweenness nodes}
-#' \item{graph_data }{list of data needed to plot the networks}
+#'   if(is.null(nodes_label)){
+#'     nb_sp = max(as.numeric(allNets$node2))
+#'     nodes_label=1:nb_sp
+#'   }
+#'   spliT<-data.frame(allNets) %>%
+#'     base::split(allNets$model) %>%
+#'     tibble(P=map(.,function(x){
+#'       mod<-x$model[1]
+#'
+#'       res<- as_tbl_graph(x, directed=FALSE) %>%
+#'         activate(edges) %>% filter(weight!=0) %>%
+#'         mutate(btw.weights=log(1+1/weight)) %>%
+#'         activate(nodes) %>%
+#'         mutate( importance=centrality_degree(),btw=centrality_betweenness(weights = btw.weights),boolbtw=(btw>sort(btw, decreasing = TRUE)[btw_rank]),
+#'                 mod=mod, names=nodes_label) %>%
+#'         activate(edges) %>%
+#'         mutate(neibs=edge_is_incident(which(.N()$boolbtw)), mod=mod) %>%
+#'         activate(nodes) %>%
+#'         mutate(label=ifelse(boolbtw,names,""))
+#'
+#'     }))
+#'
+#'
+#'   pal_edges <- viridisLite::viridis(5, option = "C")
+#'   pal_nodes<-c("gray15","goldenrod1")
+#'   lay<-data.frame(create_layout(spliT$P[[base_model]],layout=layout)[,1:2])
+#'   rownames(lay)=NULL
+#'   set_graph_style(family="sans")
+#'   plot<- spliT$P %>%
+#'     reduce(bind_graphs) %>%
+#'     activate(nodes) %>%
+#'     mutate(mod=factor(mod,levels=mods)) %>%
+#'     activate(edges) %>% filter(weight>Ft) %>%
+#'     ggraph(layout=lay)
+#'   if(shade){
+#'     plot<-plot+
+#'       geom_edge_arc(aes(edge_width=weight,color=mod, alpha=neibs),strength=curv,show.legend=FALSE)+
+#'       scale_edge_alpha_manual(values=c(0.2,1))
+#'
+#'   }else{plot<-plot+
+#'     geom_edge_arc(aes(edge_width=weight,color=mod),strength=curv,show.legend=FALSE)
+#'   }
+#'
+#'   g= plot+
+#'     geom_node_point(aes(color=boolbtw, size=boolbtw), show.legend=FALSE)+
+#'     scale_edge_colour_manual(values=pal_edges[c(1,3,2,4)], labels=mods)+
+#'     scale_color_manual(values=pal_nodes)+
+#'     scale_size_manual(values=c(1.5,6))+
+#'     geom_node_text(aes(label = label),color="black", repel = FALSE)+
+#'     facet_nodes(~mod, scales="free",ncol=nbmod)+
+#'     th_foreground(border=FALSE)+
+#'     theme(strip.background = element_rect(fill="white",color="white"),
+#'           strip.text = element_text(color="black",size=14))
+#'   if(!binary){ g=g+
+#'     scale_edge_width_continuous(range=c(0.1,width))
+#'   }else{
+#'     g=g+
+#'       scale_edge_width_continuous(range=c(0,width))
+#'   }
+#'   return(list(G=g, graph_data=spliT))
 #' }
-#' @export
-#' @importFrom tidygraph .N bind_graphs as_tbl_graph activate centrality_betweenness centrality_degree edge_is_incident
-#' @importFrom ggraph  ggraph create_layout set_graph_style facet_nodes th_foreground geom_edge_arc scale_edge_alpha_manual scale_edge_width_continuous geom_node_text geom_node_point  scale_edge_colour_manual
-#' @importFrom tibble tibble rownames_to_column
-#' @importFrom ggplot2 element_rect element_text aes theme labs scale_color_manual scale_size_manual
-#' @importFrom dplyr mutate filter
-#' @importFrom purrr map reduce
-#' @importFrom viridisLite viridis
-#' @examples
-#'n=30
-#'p=10
-#'S=3
-#'Y=data_from_scratch("tree",p=p,n=n)$data
-#'X = data.frame(rnorm(n),rbinom(n,1,0.7))
-#'threemodels=ComparEMtree(Y,X,models=list(1,2,c(1,2)),
-#'m_names=list("1","2","both"),Pt=0.3,S=S, cores=1)
-#'compare_graphs(threemodels)
-compare_graphs<-function(allNets, curv=0.2, width=1, shade=TRUE,Ft=0, nodes_label=NULL,
-                         btw_rank=2, layout="circle", base_model=NULL){
-
-  mods=unique(allNets$model)
-  if(is.null(base_model)) base_model = allNets$model[1]
-  nbmod<-length(mods)
-  binary=(sum(unique(allNets$weight))==1)
-
-  if(is.null(nodes_label)){
-    nb_sp = max(as.numeric(allNets$node2))
-    nodes_label=1:nb_sp
-  }
-  spliT<-data.frame(allNets) %>%
-    base::split(allNets$model) %>%
-    tibble(P=map(.,function(x){
-      mod<-x$model[1]
-
-      res<- as_tbl_graph(x, directed=FALSE) %>%
-        activate(edges) %>% filter(weight!=0) %>%
-        mutate(btw.weights=log(1+1/weight)) %>%
-        activate(nodes) %>%
-        mutate( importance=centrality_degree(),btw=centrality_betweenness(weights = btw.weights),boolbtw=(btw>sort(btw, decreasing = TRUE)[btw_rank]),
-                mod=mod, names=nodes_label) %>%
-        activate(edges) %>%
-        mutate(neibs=edge_is_incident(which(.N()$boolbtw)), mod=mod) %>%
-        activate(nodes) %>%
-        mutate(label=ifelse(boolbtw,names,""))
-
-    }))
-
-
-  pal_edges <- viridisLite::viridis(5, option = "C")
-  pal_nodes<-c("gray15","goldenrod1")
-  lay<-data.frame(create_layout(spliT$P[[base_model]],layout=layout)[,1:2])
-  rownames(lay)=NULL
-  set_graph_style(family="sans")
-  plot<- spliT$P %>%
-    reduce(bind_graphs) %>%
-    activate(nodes) %>%
-    mutate(mod=factor(mod,levels=mods)) %>%
-    activate(edges) %>% filter(weight>Ft) %>%
-    ggraph(layout=lay)
-  if(shade){
-    plot<-plot+
-      geom_edge_arc(aes(edge_width=weight,color=mod, alpha=neibs),strength=curv,show.legend=FALSE)+
-      scale_edge_alpha_manual(values=c(0.2,1))
-
-  }else{plot<-plot+
-    geom_edge_arc(aes(edge_width=weight,color=mod),strength=curv,show.legend=FALSE)
-  }
-
-  g= plot+
-    geom_node_point(aes(color=boolbtw, size=boolbtw), show.legend=FALSE)+
-    scale_edge_colour_manual(values=pal_edges[c(1,3,2,4)], labels=mods)+
-    scale_color_manual(values=pal_nodes)+
-    scale_size_manual(values=c(1.5,6))+
-    geom_node_text(aes(label = label),color="black", repel = FALSE)+
-    facet_nodes(~mod, scales="free",ncol=nbmod)+
-    th_foreground(border=FALSE)+
-    theme(strip.background = element_rect(fill="white",color="white"),
-          strip.text = element_text(color="black",size=14))
-  if(!binary){ g=g+
-    scale_edge_width_continuous(range=c(0.1,width))
-  }else{
-    g=g+
-      scale_edge_width_continuous(range=c(0,width))
-  }
-  return(list(G=g, graph_data=spliT))
-}
-
+#'

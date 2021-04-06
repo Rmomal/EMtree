@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Computes edges selection frequency after resampling procedure — freq_selec • EMtree</title>
+<title>Makes a vector from the upper triangular part of a symmetric matrix — ToVec • EMtree</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Computes edges selection frequency after resampling procedure — freq_selec" />
-<meta property="og:description" content="Computes edges selection frequency after resampling procedure" />
+<meta property="og:title" content="Makes a vector from the upper triangular part of a symmetric matrix — ToVec" />
+<meta property="og:description" content="Makes a vector from the upper triangular part of a symmetric matrix" />
 
 
 
@@ -123,48 +123,30 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Computes edges selection frequency after resampling procedure</h1>
+    <h1>Makes a vector from the upper triangular part of a symmetric matrix</h1>
     
-    <div class="hidden name"><code>freq_selec.Rd</code></div>
+    <div class="hidden name"><code>ToVec.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Computes edges selection frequency after resampling procedure</p>
+    <p>Makes a vector from the upper triangular part of a symmetric matrix</p>
     </div>
 
-    <pre class="usage"><span class='fu'>freq_selec</span><span class='op'>(</span><span class='va'>Pmat</span>, <span class='va'>Pt</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>ToVec</span><span class='op'>(</span><span class='va'>A.mat</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>Pmat</th>
-      <td><p>matrix gathering edgges probability, with dimensions number of resamples x number of possible edges. Typically the Pmat output of ResampleEMtree()</p></td>
-    </tr>
-    <tr>
-      <th>Pt</th>
-      <td><p>edges probabilty threshold</p></td>
+      <th>A.mat</th>
+      <td><p>A symmetric matrix.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>p x p matrix of edges selection frequency</p>
+    <p>The vector from the upper triangular part of A.mat.</p>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='va'>n</span><span class='op'>=</span><span class='fl'>30</span>
-<span class='va'>p</span><span class='op'>=</span><span class='fl'>10</span>
-<span class='va'>S</span><span class='op'>=</span><span class='fl'>5</span>
-<span class='va'>Y</span><span class='op'>=</span><span class='fu'><a href='data_from_scratch.html'>data_from_scratch</a></span><span class='op'>(</span><span class='st'>"tree"</span>,p<span class='op'>=</span><span class='va'>p</span><span class='op'>)</span><span class='op'>$</span><span class='va'>data</span>
-<span class='va'>resample_prob</span><span class='op'>=</span><span class='fu'><a href='ResampleEMtree.html'>ResampleEMtree</a></span><span class='op'>(</span><span class='va'>Y</span>, S<span class='op'>=</span><span class='va'>S</span>,cores <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span><span class='op'>$</span><span class='va'>Pmat</span>
-</div><div class='output co'>#&gt; Computing 5 probability matrices with 1 core(s)... 
-#&gt; Convergence took 0.16 secs  and  24  iterations.
-#&gt; Convergence took 0.09 secs  and  7  iterations.
-#&gt; Convergence took 0.08 secs  and  9  iterations.
-#&gt; Convergence took 0.12 secs  and  17  iterations.
-#&gt; Convergence took 0.07 secs  and  6  iterations.0.55 secs </div><div class='input'><span class='va'>edges_freq</span><span class='op'>&lt;-</span><span class='fu'>freq_selec</span><span class='op'>(</span><span class='va'>resample_prob</span>,Pt<span class='op'>=</span><span class='fl'>0.3</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>edges_freq</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;  num [1:10, 1:10] 0 0 0 0 0 0 1 1 0 0 ...</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

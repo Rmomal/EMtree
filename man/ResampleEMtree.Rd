@@ -9,6 +9,7 @@ ResampleEMtree(
   covar_matrix = NULL,
   unlinked = NULL,
   O = NULL,
+  user_covariance_estimation = NULL,
   v = 0.8,
   S = 100,
   maxIter = 30,
@@ -26,6 +27,8 @@ ResampleEMtree(
 \item{unlinked}{An optional vector of nodes which are not linked with each other}
 
 \item{O}{Matrix of offsets, with dimension n x p}
+
+\item{user_covariance_estimation}{A user-provided function for the estimation of a covariance}
 
 \item{v}{The proportion of observed data to be taken in each sub-sample. It is the ratio (sub-sample size)/n}
 
@@ -54,11 +57,25 @@ resampling.
 Resampling procedure for  edges probability
 }
 \examples{
-n=30
-p=10
-S=5
-Y=data_from_scratch("tree",p=p,n=n)$data
-X = data.frame(rnorm(n),rbinom(n,1,0.7))
-resample=ResampleEMtree(Y,covar_matrix=X, S=S,cores = 1)
-str(resample)
+
+n=100
+p=15
+S=15
+set.seed(2021)
+simu=data_from_scratch("erdos",p=p,n=n)
+G=1*(simu$omega!=0) ; diag(G) = 0
+# With default evaluation, using the PLNmodel paradigm:
+default_resample=ResampleEMtree(simu$data, S=S,cores = 1)
+default_freqs=freq_selec(default_resample$Pmat, 2/p)
+# With provided correlation estimation function:
+estimSigma<-function(counts, covar_matrix, sample){
+Dum_Sigma = cov2cor(cov(counts[sample,]))
+}
+custom_resample=ResampleEMtree(simu$data,S=S,cores = 1,
+user_covariance_estimation=estimSigma)
+stab_default=StATS(default_resample$Pmat, nlambda=50, stab.thresh=0.85,plot=TRUE)
+stab_custom=StATS(custom_resample$Pmat, nlambda=50, stab.thresh=0.85,plot=TRUE)
+#Check quality of result
+table(pred=1*(stab_default$freqs_opt>0.9), truth=ToVec(G))
+table(pred=1*(stab_custom$freqs_opt>0.9), truth=ToVec(G))
 }

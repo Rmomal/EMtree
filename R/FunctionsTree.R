@@ -95,10 +95,10 @@ EdgeProba <- function(W, verbatim=FALSE){
     borne=30-it
    if(verbatim) message(cat("W corrected, bound=",borne))
 
-    W.log=log(F_Sym2Vec(W))
+    W.log=log(ToVec(W))
     W.center=W.log-mean(W.log)
     W.center[which(W.center<(-borne))]=-borne
-    W=F_Vec2Sym(exp(W.center))
+    W=ToSym(exp(W.center))
     Wcum = SumTree(W)
   }
 

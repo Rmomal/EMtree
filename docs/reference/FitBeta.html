@@ -191,7 +191,7 @@ wase be deduced from the correlation matrix.</p></td>
 <span class='va'>beta</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>/</span><span class='fl'>10</span>,<span class='fl'>10</span>,<span class='fl'>10</span><span class='op'>)</span>
 <span class='va'>psi</span><span class='op'>=</span><span class='fu'><a href='Psi_alpha.html'>Psi_alpha</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/cor.html'>cor</a></span><span class='op'>(</span><span class='va'>Y</span><span class='op'>)</span>, <span class='va'>n</span><span class='op'>)</span><span class='op'>$</span><span class='va'>psi</span>
 <span class='va'>FitEM</span> <span class='op'>=</span> <span class='fu'>FitBeta</span><span class='op'>(</span>beta.init<span class='op'>=</span><span class='va'>beta</span>, psi<span class='op'>=</span><span class='va'>psi</span>, maxIter <span class='op'>=</span> <span class='fl'>6</span>, sum.weights<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='va'>beta</span><span class='op'>)</span><span class='op'>)</span>
-</div></pre>
+</div><div class='output co'>#&gt; <span class='error'>Error in solve.default(L): system is computationally singular: reciprocal condition number = 6.56367e-17</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

@@ -12,6 +12,8 @@ library(ggraph)
 library(tidygraph)
 library(viridis)
 library(tidyr)
+library(gridExtra)
+library(RColorBrewer)
 ```
 
 This is a basic example detailing how to infer a network, using fishes counts from the Fatala River (Barans95 data from the `ade4` package).
@@ -61,7 +63,7 @@ probs<- EMtreeFit$edges_prob
 net<-1*(probs>2/p)
 ```
 
-To improve the robustness, the function `ResampleEMtree()` implements a stability selection of EMtree on S sub-samples. This function uses parallel computations with `mclapply()`.  The output Pmat gathers all the inferred edges probabilities for each sub-sample.
+To improve the robustness, the function `ResampleEMtree()` implements a stability selection of EMtree on S sub-samples. This function uses parallel computations with `mclapply()`.  The `Pmat` output gathers all the inferred edges probabilities for each sub-sample.
 ```{r, cache=TRUE}
 ResampEmtreeFit<-ResampleEMtree(counts=Y, covar_matrix = X$site , S=5, maxIter=10,cond.tol=1e-8, cores=1)
 str(ResampEmtreeFit)
@@ -71,57 +73,85 @@ Another way to specify the covariates matrix is to use the model.matrix() functi
 ```{r}
 built_covar_matrix=model.matrix(~X$site+X$date)
 ```
-Then `built_covar_matrix` would be the `covar_matrix` paramter.
+Then `built_covar_matrix` would be the `covar_matrix` parameter.
 
-For the sake of the example we continue with the $site$ covariate only. Edges selection frequencies can be derived from the `Pmat`output with the function `freq_selec()`. A final network can then be obtained by thresholding the frequencies, to keep for example edges that are selected in more than $80\%$ of sub-samples:
+For the sake of the example we continue with the $site$ covariate only. Edges selection frequencies can be derived from the `Pmat` output with the function `freq_selec()`. This function simply summarizes the number of times an edge has a probability above the threshold `Pt`. A network can then be obtained by thresholding the frequencies, to keep for example edges that are selected in more than $80\%$ of sub-samples:
 ```{r}
-freqs<-freq_selec(ResampEmtreeFit$Pmat,Pt=2/p+0.1)
+freqs<-freq_selec(ResampEmtreeFit$Pmat,Pt=0.2)
 resampNet<-1*(freqs>0.8)
 ```
 
-## Infer networks under several models:
-
-The aim of function `ComparEMtree()` is to run network inference with different covariates specifications. It uses `ResampleEMtree()` and adjust the different models specified in `model_names` as follows: 
-```{r, cache=FALSE}
-tested_models=list(1,2,c(1,2))
-models_names=c("date","site","date + site")
-compare_models<-ComparEMtree(Y, X, models=tested_models, m_names=models_names, Pt=2/p+0.1,  S=3, maxIter=5,cond.tol=1e-8,cores=1)
-
-str(compare_models)
+The problem of course is that there is no rationale for the threshold on probabilities `Pt` ; the optimal threshold is unknown. A way to select the threshold is to compute the stability of the frequencies for any threshold, and select the desired stability. The function `StATS()` adapts the well-known penalty selection strategy StARS in the context of threshold selection.
+```{r}
+stab_selection=StATS(ResampEmtreeFit$Pmat, nlambda=50, stab.thresh=0.9,plot=TRUE)
 ```
+
+We then keep the frequencies corresponding to the optimal lambda value, which is here at about $exp(-9.5)$. The optimal frequencies are stored in `stab_selection$freqs_opt`, the optimal threshold is `stab_selection$lambda_opt`.
+
+The optimal frequencies still need to be thresholded in order to obtain a network. However, the task is very much simpler and understandable now: the higher the frequency, the more stable the edge along the resamples.
 
 ## Visualizations
 
-Package EMtree provides with plotting functions for network visualizations. They build from the `ggraph` and `'tidygraph` packages.
+The package `EMtree` has one general plotting function for network visualization: `draw_network()`. It builds from the `ggraph` and `tidygraph` packages, and provides with several interesting functionalities, among which
 
-### Simple networks
-The function `draw_network()` takes a weighted matrix an input, and represent a network with edges widths proportional to the input weights. Several layouts are available (see the `ggraph` documentation). Highlighting of nodes possessing among the highest betweenness centrality measure is done with the parameter `btw_rank`.
+  - highlighting of important nodes ,
+  - shading of edges,
+  - defining groups of nodes and edges, with coloring possibilities,
+  - using a previously stored layout.
 
- 
+### Basic usage
 
-```{r, fig.asp=1, fig.width=4.5, fig.fullwidth=FALSE, message=FALSE}
-probs[probs<2/p]=0 
-EMtree::draw_network(probs,title="Site", pal_edges="dodgerblue3", layout="nicely",btw_rank=3)$G
+It takes an adjacency matrix as input and represents a network with edges widths proportional to the input weights. Several layouts are available (see the `ggraph` documentation). Highlighting of nodes possessing among the highest betweenness centrality measure is done with the parameter `btw_rank`. To disable this functionality, just set `btw_rank=1`.
+
+`shade=TRUE` lowers the opacity of edges not linked to a highlighted node. This allows to better see the direct neighborhood of important nodes.
+
+```{r, fig.height=4, fig.width=8, fig.fullwidth=FALSE, message=FALSE}
+weighted_net=ToSym(stab_selection$freqs_opt)
+net_50=ToSym(1*(stab_selection$freqs_opt>0.5))
+net_95=ToSym(1*(stab_selection$freqs_opt>0.95))
+g1<-draw_network(weighted_net,title="Weighted", pal_edges="dodgerblue3",layout="nicely",
+                 shade = TRUE, btw_rank=3)$G
+g2<-draw_network(net_50,title="Selected > 50%", pal_edges="dodgerblue3",layout="nicely",
+                 shade = TRUE, btw_rank=3)$G
+g3<-draw_network(net_95,title="Selected > 90%", pal_edges="dodgerblue3",layout="nicely",
+                 shade = FALSE, btw_rank=3)$G
+grid.arrange(g1, g2, g3, ncol=3)
+
+
 ```
 
-From the selected edges frequencies:
-```{r, fig.height=4.5, fig.width=4.5}
-draw_network(resampNet,"Site", layout="nicely")$G 
 
+### Storing a layout
+
+To store a layout, we need to create it first, using the ggraph package for example. We only keep the columns corresponding to points coordinates.
+```{r}
+a_layout = create_layout(net_95, layout="nicely")[,1:2] %>% data.frame()
 ```
 
-### Facets of several networks
-
-The function`compare_graphs()` draws a facet plot of the output networks from `ComparEMtree()`.  Comparing network by eye is difficult, on particular choosing the right layout to do so is often troublesome. Here by default, the circle layout is used so that differences in density and sensitive nodes are easily seen.
-
-```{r,  fig.height=3.5, fig.width=8}
-compare_graphs(compare_models,shade=TRUE)$G
+Then the layout is taken as the `stored_layout` parameter of `draw_network()`, as follows:
+```{r,fig.height=4, fig.width=7}
+args=list( pal_edges="dodgerblue3")
+g1<-draw_network(net_50,title="Selected > 50%", pal_edges="dodgerblue3",
+                 stored_layout = a_layout, btw_rank=3)$G
+g2<-draw_network(net_95,title="Selected > 95%", pal_edges="dodgerblue3",
+                 stored_layout = a_layout, btw_rank=3)$G
+grid.arrange(g1, g2, ncol=2)
 ```
 
-However, if another layout is preferred, the nodes position is preserved along the facet and defined by choosing the `base_model`.
 
-```{r,  fig.height=3.5,fig.width=8}
-compare_graphs(compare_models,shade=FALSE, layout="nicely", curv=0.1, base_model="site")$G
+### Grouping of nodes and edges
+
+It is possible to define groups of nodes with `node_groups` and edges with `edge_groups`, and color them accordingly using `pal_nodes` and `pal_edges`. For example :
+
+```{r,fig.height=4, fig.width=4}
+draw_network(net_95, title="Groups of nodes", pal_edges="gray70", 
+             node_groups=sample(3,p, replace=TRUE),
+             pal_nodes=brewer.pal(3,"Dark2"),layout="nicely")$G
 ```
 
+```{r,fig.height=4, fig.width=4}
+draw_network(net_95, title="Groups of edges", pal_nodes="gray70", 
+             edge_groups=ToSym(sample(3,p*(p-1)/2,replace=TRUE)),
+             pal_edges=brewer.pal(3,"Dark2"),layout="nicely", btw_rank=1)$G
+```
 

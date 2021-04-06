@@ -20,12 +20,13 @@ devtools::document() # then build and restart
 devtools::load_all()
 devtools::run_examples() #handy for debug
 devtools::check()
- usethis::use_vignette("Usage","Usage example")
+
+usethis::use_vignette("Usage","Usage example")
 pkgdown::build_site()
 pkgdown::build_home()
 pkgdown::build_articles()
 pkgdown::build_reference()
-
+pkgdown::preview_site()
 ##########
 # unitary tests
 usethis::use_testthat()

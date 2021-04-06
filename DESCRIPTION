@@ -2,7 +2,7 @@ Type: Package
 Package: EMtree
 Title: Infers Ecological Interaction Networks from Abundance
     Data
-Version: 1.0.0
+Version: 1.1.0
 Author: Raphaëlle Momal <raphaelle.momal@agroparistech.fr>
 Maintainer: Raphaëlle Momal <raphaelle.momal@agroparistech.fr>
 Description: Uses averages over spanning trees within a Poisson

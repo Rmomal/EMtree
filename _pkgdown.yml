@@ -21,7 +21,7 @@ reference:
   contents:
   - '`EMtree`'
   - '`ResampleEMtree`'
-  - '`ComparEMtree`'
+  - '`StATS`'
   - '`freq_selec`'
   - '`data_from_scratch`'
 - title: Tools
@@ -31,6 +31,8 @@ reference:
   - '`SumTree`'
   - '`EdgeProba`'
   - '`Kirshner`'
+  - '`ToSym`'
+  - '`ToVec`'
 - title: Computing functions
   desc:  ~
   contents:
@@ -46,10 +48,9 @@ reference:
   - '`SimCluster`'
   - '`SpannTree`'
   - '`erdos`'
-- title: Visualizatoins
+- title: Visualization
   desc: ~
   contents:
   - '`draw_network`'
-  - '`compare_graphs`'
 
 

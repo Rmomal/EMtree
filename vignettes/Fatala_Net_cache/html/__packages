@@ -1,11 +1,13 @@
 base
-EMtree
-ade4
-tibble
-PLNmodels
 ggplot2
 ggraph
 tidygraph
 viridisLite
 viridis
 tidyr
+ade4
+tibble
+PLNmodels
+EMtree
+gridExtra
+RColorBrewer

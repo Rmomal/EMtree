@@ -1,14 +1,25 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-EMtree
-======
 
-[![Travis build status](https://travis-ci.org/Rmomal/EMtree.svg?branch=master)](https://travis-ci.org/Rmomal/EMtree) [![Codecov test coverage](https://codecov.io/gh/Rmomal/EMtree/branch/master/graph/badge.svg)](https://codecov.io/gh/Rmomal/EMtree?branch=master) [![DOI](https://zenodo.org/badge/166967948.svg)](https://zenodo.org/badge/latestdoi/166967948)
+# EMtree
 
-> `EMtree` infers interaction networks from abundance data, implementing the procedure described in [Momal *et al.*](https://besjournals.onlinelibrary.wiley.com/doi/abs/10.1111/2041-210X.13380). This package uses averages over spanning trees within a Poisson log-Normal Model ([PLNmodels](https://github.com/jchiquet/PLNmodels%3E)), and involves plotting funcitonalities (using `ggraph` and `tydigraph`).
+[![Travis build
+status](https://travis-ci.org/Rmomal/EMtree.svg?branch=master)](https://travis-ci.org/Rmomal/EMtree)
+[![Codecov test
+coverage](https://codecov.io/gh/Rmomal/EMtree/branch/master/graph/badge.svg)](https://codecov.io/gh/Rmomal/EMtree?branch=master)
+[![DOI](https://zenodo.org/badge/166967948.svg)](https://zenodo.org/badge/latestdoi/166967948)
 
-Installation
-------------
+> `EMtree` infers interaction networks from abundance data, implementing
+> the procedure described in [Momal *et
+> al.*](https://besjournals.onlinelibrary.wiley.com/doi/abs/10.1111/2041-210X.13380).
+> This package uses averages over spanning trees within a Poisson
+> log-Normal Model
+> ([PLNmodels](https://github.com/jchiquet/PLNmodels%3E)), and involves
+> plotting funcitonalities (using `ggraph` and `tydigraph`).
+
+## Installation
+
+`EMtree` requires R\>3.5.
 
 ### CRAN dependencies
 
@@ -28,9 +39,11 @@ You can install the development version of EMtree:
 devtools::install_github("Rmomal/EMtree")
 ```
 
-Reference
----------
+## Reference
 
 Please cite our work using the following reference:
 
--   Momal, Raphaëlle, Stéphane Robin, and Christophe Ambroise. "Tree‐based inference of species interaction networks from abundance data." *Methods in Ecology and Evolution* 11.5 (2020): 621-632.
+  - Momal, Raphaëlle, Stéphane Robin, and Christophe Ambroise.
+    “Tree‐based inference of species interaction networks from
+    abundance data.” *Methods in Ecology and Evolution* 11.5 (2020):
+    621-632.

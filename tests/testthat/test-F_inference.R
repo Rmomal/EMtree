@@ -36,8 +36,12 @@ EMunlink=EMtree(PLN.Cor =PLNobj,unlinked = c(1,2), plot=FALSE, verbatim=FALSE)
 resampl=ResampleEMtree(Y, S=S,cores = 1,maxIter = 3)
 
 X = data.frame(V1=rnorm(n),V2=rbinom(n,1,0.7))
-compare=ComparEMtree(Y,X,models=list(1,2),m_names=list("1","2"),Pt=0.3,S=S,
-                     cores=1,maxIter = 3)
+stab_selec=StATS(resampl$Pmat, nlambda=50, stab.thresh=0.8,plot=FALSE)
+freqs_opt=stab_selec$freqs_opt
+
+
+# compare=ComparEMtree(Y,X,models=list(1,2),m_names=list("1","2"),Pt=0.3,S=S,
+#                      cores=1,maxIter = 3)
 
 # complexeW=matrix(runif(30^2, min=100,max=200),30, 30)
 # complexeW=t(complexeW)%$%complexeW/2
@@ -61,8 +65,8 @@ test_that("equiv Kirshner and MTT", {
   expect_equal(sum(abs(P-P2)<1e-5), p^2 )
 })
 test_that("equiv versions of likelihood", {
-  expect_equal(F_NegLikelihood(F_Sym2Vec(beta), log(psi),P,sum.constraint = sum.contraint),
-               F_NegLikelihood_Trans(F_Sym2Vec(gamma),log(psi),P,sum.constraint = sum.contraint) )
+  expect_equal(F_NegLikelihood(ToVec(beta), log(psi),P,sum.constraint = sum.contraint),
+               F_NegLikelihood_Trans(ToVec(gamma),log(psi),P,sum.constraint = sum.contraint) )
 })
 
 
@@ -87,9 +91,14 @@ test_that("unlinked", {
   expect_equal(sum(EMunlink$edges_prob[1:2,1:2]),0)
 })
 
-
-
-test_that("ComparEMtree", {
-  expect_equal(dim(compare),c(p*(p-1),4))
+test_that("StATS", {
+  expect_equal(length(stab_selec),3)
 })
+test_that("freq_selec", {
+  expect_equal(length(freq_selec(resampl$Pmat, Pt=NULL)), p^2)
+})
+
+# test_that("ComparEMtree", {
+#   expect_equal(dim(compare),c(p*(p-1),4))
+# })
 

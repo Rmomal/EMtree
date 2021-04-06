@@ -27,15 +27,15 @@ test2=(cov(data_erdos$data$U))
 
 #-----------------------
 test_that("signed data", {
-  expect_equal(dim(table(sign(F_Sym2Vec(data_cluster$omega)))),3)
+  expect_equal(dim(table(sign(ToVec(data_cluster$omega)))),3)
 })
 
 test_that("not signed data", {
-  expect_equal(dim(table(sign(F_Sym2Vec(data_erdos$omega)))),2)
+  expect_equal(dim(table(sign(ToVec(data_erdos$omega)))),2)
 })
 test_that("effect of covariates", {
   expect_equal((log(m2)-log(m1))>1,TRUE)
 })
 test_that("check norm", {
-  expect_equal((summary(lm(F_Sym2Vec(test)~F_Sym2Vec(test2)))$r.squared>0.85),TRUE)
+  expect_equal((summary(lm(ToVec(test)~ToVec(test2)))$r.squared>0.85),TRUE)
 })
