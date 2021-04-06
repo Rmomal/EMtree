@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Computes edges selection frequency after resampling procedure — freq_selec • EMtree</title>
+<title>Stability Approach to Threshold Selection — StATS • EMtree</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Computes edges selection frequency after resampling procedure — freq_selec" />
-<meta property="og:description" content="Computes edges selection frequency after resampling procedure" />
+<meta property="og:title" content="Stability Approach to Threshold Selection — StATS" />
+<meta property="og:description" content="Stability Approach to Threshold Selection" />
 
 
 
@@ -123,48 +123,78 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Computes edges selection frequency after resampling procedure</h1>
+    <h1>Stability Approach to Threshold Selection</h1>
     
-    <div class="hidden name"><code>freq_selec.Rd</code></div>
+    <div class="hidden name"><code>StATS.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Computes edges selection frequency after resampling procedure</p>
+    <p>Stability Approach to Threshold Selection</p>
     </div>
 
-    <pre class="usage"><span class='fu'>freq_selec</span><span class='op'>(</span><span class='va'>Pmat</span>, <span class='va'>Pt</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>StATS</span><span class='op'>(</span><span class='va'>Pmat</span>, nlambda <span class='op'>=</span> <span class='fl'>100</span>, stab.thresh <span class='op'>=</span> <span class='fl'>0.9</span>, plot <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>Pmat</th>
-      <td><p>matrix gathering edgges probability, with dimensions number of resamples x number of possible edges. Typically the Pmat output of ResampleEMtree()</p></td>
+      <td><p>Pmat output from the ResampleEmtree() function</p></td>
     </tr>
     <tr>
-      <th>Pt</th>
-      <td><p>edges probabilty threshold</p></td>
+      <th>nlambda</th>
+      <td><p>Number of probability thresholds to look at</p></td>
+    </tr>
+    <tr>
+      <th>stab.thresh</th>
+      <td><p>Stability threshold</p></td>
+    </tr>
+    <tr>
+      <th>plot</th>
+      <td><p>Optional graphic output</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>p x p matrix of edges selection frequency</p>
+    <p>a list containing</p><ul>
+<li><p>freqs_opt: A tibble with (number of possible edges) x nlambda rows, containing the computed selection frequency of each edge and stability measure for each threshold.</p></li>
+<li><p>lambda_opt: The probability threshold giving the desired stability of frequencies.</p></li>
+<li><p>plot: The optional graphic output.</p></li>
+</ul>
+
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='va'>n</span><span class='op'>=</span><span class='fl'>30</span>
-<span class='va'>p</span><span class='op'>=</span><span class='fl'>10</span>
-<span class='va'>S</span><span class='op'>=</span><span class='fl'>5</span>
-<span class='va'>Y</span><span class='op'>=</span><span class='fu'><a href='data_from_scratch.html'>data_from_scratch</a></span><span class='op'>(</span><span class='st'>"tree"</span>,p<span class='op'>=</span><span class='va'>p</span><span class='op'>)</span><span class='op'>$</span><span class='va'>data</span>
-<span class='va'>resample_prob</span><span class='op'>=</span><span class='fu'><a href='ResampleEMtree.html'>ResampleEMtree</a></span><span class='op'>(</span><span class='va'>Y</span>, S<span class='op'>=</span><span class='va'>S</span>,cores <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span><span class='op'>$</span><span class='va'>Pmat</span>
-</div><div class='output co'>#&gt; Computing 5 probability matrices with 1 core(s)... 
-#&gt; Convergence took 0.16 secs  and  24  iterations.
-#&gt; Convergence took 0.09 secs  and  7  iterations.
-#&gt; Convergence took 0.08 secs  and  9  iterations.
-#&gt; Convergence took 0.12 secs  and  17  iterations.
-#&gt; Convergence took 0.07 secs  and  6  iterations.0.55 secs </div><div class='input'><span class='va'>edges_freq</span><span class='op'>&lt;-</span><span class='fu'>freq_selec</span><span class='op'>(</span><span class='va'>resample_prob</span>,Pt<span class='op'>=</span><span class='fl'>0.3</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>edges_freq</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;  num [1:10, 1:10] 0 0 0 0 0 0 1 1 0 0 ...</div></pre>
+    <pre class="examples"><div class='input'><span class='va'>n</span><span class='op'>=</span><span class='fl'>100</span>
+<span class='va'>p</span><span class='op'>=</span><span class='fl'>15</span>
+<span class='va'>S</span><span class='op'>=</span><span class='fl'>15</span>
+<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span><span class='op'>(</span><span class='fl'>2021</span><span class='op'>)</span>
+<span class='va'>simu</span><span class='op'>=</span><span class='fu'><a href='data_from_scratch.html'>data_from_scratch</a></span><span class='op'>(</span><span class='st'>"erdos"</span>,p<span class='op'>=</span><span class='va'>p</span>,n<span class='op'>=</span><span class='va'>n</span><span class='op'>)</span>
+<span class='va'>G</span><span class='op'>=</span><span class='fl'>1</span><span class='op'>*</span><span class='op'>(</span><span class='va'>simu</span><span class='op'>$</span><span class='va'>omega</span><span class='op'>!=</span><span class='fl'>0</span><span class='op'>)</span> ; <span class='fu'><a href='https://rdrr.io/r/base/diag.html'>diag</a></span><span class='op'>(</span><span class='va'>G</span><span class='op'>)</span> <span class='op'>=</span> <span class='fl'>0</span>
+<span class='co'>#With default evaluation, using the PLNmodel paradigm:</span>
+<span class='va'>default_resample</span><span class='op'>=</span><span class='fu'><a href='ResampleEMtree.html'>ResampleEMtree</a></span><span class='op'>(</span><span class='va'>simu</span><span class='op'>$</span><span class='va'>data</span>, S<span class='op'>=</span><span class='va'>S</span>, cores <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; Computing 15 probability matrices with 1 core(s)... 
+#&gt; Convergence took 0.18 secs  and  30  iterations.
+#&gt; Convergence took 0.18 secs  and  21  iterations.
+#&gt; Convergence took 0.36 secs  and  30  iterations.
+#&gt; Convergence took 0.21 secs  and  30  iterations.
+#&gt; Convergence took 0.16 secs  and  18  iterations.
+#&gt; Convergence took 0.2 secs  and  30  iterations.
+#&gt; Convergence took 0.22 secs  and  30  iterations.
+#&gt; Convergence took 0.18 secs  and  30  iterations.
+#&gt; Convergence took 0.22 secs  and  30  iterations.
+#&gt; Convergence took 0.2 secs  and  30  iterations.
+#&gt; Convergence took 0.16 secs  and  15  iterations.
+#&gt; Convergence took 0.17 secs  and  30  iterations.
+#&gt; Convergence took 0.21 secs  and  30  iterations.
+#&gt; Convergence took 0.21 secs  and  30  iterations.
+#&gt; Convergence took 0.16 secs  and  23  iterations.3.15 secs </div><div class='input'><span class='va'>stab_selection</span><span class='op'>=</span><span class='fu'>StATS</span><span class='op'>(</span><span class='va'>default_resample</span><span class='op'>$</span><span class='va'>Pmat</span>, nlambda<span class='op'>=</span><span class='fl'>50</span>, stab.thresh<span class='op'>=</span><span class='fl'>0.9</span>,plot<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+</div><div class='img'><img src='StATS-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='co'>#Check quality of result</span>
+<span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span><span class='op'>(</span>pred<span class='op'>=</span><span class='fl'>1</span><span class='op'>*</span><span class='op'>(</span><span class='va'>stab_selection</span><span class='op'>$</span><span class='va'>freqs_opt</span><span class='op'>&gt;</span><span class='fl'>0.9</span><span class='op'>)</span>, truth<span class='op'>=</span><span class='fu'><a href='ToVec.html'>ToVec</a></span><span class='op'>(</span><span class='va'>G</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;     truth
+#&gt; pred  0  1
+#&gt;    0 91  2
+#&gt;    1  0 12</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

@@ -135,11 +135,11 @@
     <pre class="usage"><span class='fu'>draw_network</span><span class='op'>(</span>
   <span class='va'>adj_matrix</span>,
   title <span class='op'>=</span> <span class='st'>""</span>,
-  size <span class='op'>=</span> <span class='fl'>4</span>,
+  label_size <span class='op'>=</span> <span class='fl'>4</span>,
   curv <span class='op'>=</span> <span class='fl'>0</span>,
   width <span class='op'>=</span> <span class='fl'>1</span>,
   shade <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  filter_deg <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  remove_isolated <span class='op'>=</span> <span class='cn'>FALSE</span>,
   btw_rank <span class='op'>=</span> <span class='fl'>2</span>,
   layout <span class='op'>=</span> <span class='cn'>NULL</span>,
   stored_layout <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -147,7 +147,8 @@
   nodes_size <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2</span>, <span class='fl'>5</span><span class='op'>)</span>,
   pal_edges <span class='op'>=</span> <span class='cn'>NULL</span>,
   pal_nodes <span class='op'>=</span> <span class='cn'>NULL</span>,
-  groupes <span class='op'>=</span> <span class='cn'>NULL</span>,
+  node_groups <span class='op'>=</span> <span class='cn'>NULL</span>,
+  edge_groups <span class='op'>=</span> <span class='cn'>NULL</span>,
   legend <span class='op'>=</span> <span class='cn'>FALSE</span>,
   pos <span class='op'>=</span> <span class='st'>"bottom"</span>
 <span class='op'>)</span></pre>
@@ -164,8 +165,8 @@
       <td><p>graph title</p></td>
     </tr>
     <tr>
-      <th>size</th>
-      <td><p>size of nodes</p></td>
+      <th>label_size</th>
+      <td><p>size of labels</p></td>
     </tr>
     <tr>
       <th>curv</th>
@@ -180,8 +181,8 @@
       <td><p>if TRUE, shades the edges unlinked to nodes with high betweenness</p></td>
     </tr>
     <tr>
-      <th>filter_deg</th>
-      <td><p>selects nodes with a higher degree than filter_deg</p></td>
+      <th>remove_isolated</th>
+      <td><p>Removes isolated nodes if TRUE</p></td>
     </tr>
     <tr>
       <th>btw_rank</th>
@@ -212,8 +213,12 @@
       <td><p>optional palette for nodes</p></td>
     </tr>
     <tr>
-      <th>groupes</th>
-      <td><p>optional vector seperating the nodes into groupes</p></td>
+      <th>node_groups</th>
+      <td><p>optional vector separating the nodes into groups</p></td>
+    </tr>
+    <tr>
+      <th>edge_groups</th>
+      <td><p>optional matrix specifying groups of edges</p></td>
     </tr>
     <tr>
       <th>legend</th>
@@ -242,27 +247,27 @@
 #&gt; NULL
 #&gt; 
 #&gt; $graph_data
-#&gt; <span style='color: #555555;'># A tbl_graph: 20 nodes and 69 edges
+#&gt; <span style='color: #555555;'># A tbl_graph: 20 nodes and 64 edges
 #&gt; #
 #&gt; # An undirected simple graph with 1 component
 #&gt; #
-#&gt; # Edge Data: 69 x 6 (active)</span><span>
+#&gt; # Edge Data: 64 x 6 (active)</span><span>
 #&gt;    from    to weight btw.weights neibs title        
 #&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>        
-#&gt; </span><span style='color: #555555;'>1</span><span>     1     3      1       0.693 FALSE Cluster graph
-#&gt; </span><span style='color: #555555;'>2</span><span>     1     7      1       0.693 FALSE Cluster graph
-#&gt; </span><span style='color: #555555;'>3</span><span>     1     9      1       0.693 FALSE Cluster graph
-#&gt; </span><span style='color: #555555;'>4</span><span>     1    12      1       0.693 FALSE Cluster graph
-#&gt; </span><span style='color: #555555;'>5</span><span>     1    17      1       0.693 FALSE Cluster graph
-#&gt; </span><span style='color: #555555;'>6</span><span>     1    19      1       0.693 FALSE Cluster graph
-#&gt; </span><span style='color: #555555;'># … with 63 more rows</span><span>
+#&gt; </span><span style='color: #555555;'>1</span><span>     1    10      1       0.693 FALSE Cluster graph
+#&gt; </span><span style='color: #555555;'>2</span><span>     1    11      1       0.693 FALSE Cluster graph
+#&gt; </span><span style='color: #555555;'>3</span><span>     1    16      1       0.693 FALSE Cluster graph
+#&gt; </span><span style='color: #555555;'>4</span><span>     1    18      1       0.693 TRUE  Cluster graph
+#&gt; </span><span style='color: #555555;'>5</span><span>     2     4      1       0.693 FALSE Cluster graph
+#&gt; </span><span style='color: #555555;'>6</span><span>     2    10      1       0.693 FALSE Cluster graph
+#&gt; </span><span style='color: #555555;'># … with 58 more rows</span><span>
 #&gt; </span><span style='color: #555555;'>#
 #&gt; # Node Data: 20 x 7</span><span>
-#&gt;      btw bool_btw bool_deg   deg title          name label
-#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>
-#&gt; </span><span style='color: #555555;'>1</span><span> 10.9   FALSE    TRUE         7 Cluster graph     1 </span><span style='color: #555555;'>""</span><span>   
-#&gt; </span><span style='color: #555555;'>2</span><span>  0.655 FALSE    TRUE         5 Cluster graph     2 </span><span style='color: #555555;'>""</span><span>   
-#&gt; </span><span style='color: #555555;'>3</span><span>  0.5   FALSE    TRUE         4 Cluster graph     3 </span><span style='color: #555555;'>""</span><span>   
+#&gt;     btw bool_btw bool_deg   deg title          name label
+#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>
+#&gt; </span><span style='color: #555555;'>1</span><span>  71   FALSE    TRUE         4 Cluster graph     1 </span><span style='color: #555555;'>""</span><span>   
+#&gt; </span><span style='color: #555555;'>2</span><span>   1   FALSE    TRUE         3 Cluster graph     2 </span><span style='color: #555555;'>""</span><span>   
+#&gt; </span><span style='color: #555555;'>3</span><span>   0.4 FALSE    TRUE         5 Cluster graph     3 </span><span style='color: #555555;'>""</span><span>   
 #&gt; </span><span style='color: #555555;'># … with 17 more rows</span><span>
 #&gt; </div></span></pre>
   </div>
