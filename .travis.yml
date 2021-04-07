@@ -12,7 +12,7 @@ use_bioc: true
 matrix:
   include:
     - os: osx
-    - osx_image: xcode12.2
+      osx_image: xcode12.2
       r: bioc-release
       addons:
         homebrew:
