@@ -226,8 +226,7 @@ FitBeta <- function(beta.init, psi, maxIter=50, eps = 1e-6, unlinked=NULL,sum.we
 
 
 EMtree<-function(PLN.Cor, n=NULL,  maxIter=30, unlinked=NULL , random.init=FALSE,
-                 cond.tol=1e-10, eps = 1e-3,
-                 verbatim=TRUE, plot=FALSE){
+                 cond.tol=1e-10, eps = 1e-3, verbatim=TRUE, plot=FALSE){
   T1<-Sys.time()
   if(inherits(PLN.Cor, "PLNfit")){
     CorY=cov2cor(PLN.Cor$model_par$Sigma)
