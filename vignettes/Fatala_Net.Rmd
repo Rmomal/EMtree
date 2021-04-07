@@ -141,8 +141,8 @@ g1<-draw_network(weighted_net,title="Weighted", pal_edges="dodgerblue3",layout="
 g2<-draw_network(net_50,title="Selected > 50%", pal_edges="dodgerblue3",layout="kk",
                  shade = TRUE, btw_rank=3)$G
 g3<-draw_network(net_95,title="Selected > 95%", pal_edges="dodgerblue3",layout="fr",
-                 shade = FALSE, btw_rank=3)
-grid.arrange(g1, g2, g3$G, ncol=3)
+                 shade = FALSE, btw_rank=3)$G
+grid.arrange(g1, g2, g3, ncol=3)
 
 
 ```
