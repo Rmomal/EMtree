@@ -60,21 +60,23 @@ Resampling procedure for  edges probability
 
 n=100
 p=15
-S=15
+S=10
 set.seed(2021)
 simu=data_from_scratch("erdos",p=p,n=n)
 G=1*(simu$omega!=0) ; diag(G) = 0
 # With default evaluation, using the PLNmodel paradigm:
 default_resample=ResampleEMtree(simu$data, S=S,cores = 1)
-default_freqs=freq_selec(default_resample$Pmat, 2/p)
+
 # With provided correlation estimation function:
 estimSigma<-function(counts, covar_matrix, sample){
 Dum_Sigma = cov2cor(cov(counts[sample,]))
 }
-custom_resample=ResampleEMtree(simu$data,S=S,cores = 1,
-user_covariance_estimation=estimSigma)
+custom_resample=ResampleEMtree(simu$data,S=S,cores = 1,user_covariance_estimation=estimSigma)
+
+# We then run the stability selection to find the optimal selection frequencies, for a stability of 85\%:
 stab_default=StATS(default_resample$Pmat, nlambda=50, stab.thresh=0.85,plot=TRUE)
 stab_custom=StATS(custom_resample$Pmat, nlambda=50, stab.thresh=0.85,plot=TRUE)
+
 #Check quality of result
 table(pred=1*(stab_default$freqs_opt>0.9), truth=ToVec(G))
 table(pred=1*(stab_custom$freqs_opt>0.9), truth=ToVec(G))
