@@ -2,7 +2,7 @@
 % Please edit documentation in R/gener_data.R
 \name{data_from_scratch}
 \alias{data_from_scratch}
-\title{generates data under the PLN model with a certain type of dependency structure}
+\title{Simulates data under the PLN model with control on the dependency structure}
 \usage{
 data_from_scratch(
   type,
@@ -11,6 +11,7 @@ data_from_scratch(
   r = 5,
   covariates = NULL,
   dens = log(p)/p,
+  k = 3,
   norm = FALSE,
   signed = FALSE,
   v = 0.01,
@@ -30,6 +31,8 @@ data_from_scratch(
 
 \item{dens}{density of edges for cluster graphs or edge probability for erdos graphs}
 
+\item{k}{number of groups for the cluster structure.}
+
 \item{norm}{should the Gaussian parameters be normalized ?}
 
 \item{signed}{boolean: should the graph be composed of positive and negative partial correlations ?}
@@ -46,11 +49,12 @@ a list containing
 }
 }
 \description{
-generates data under the PLN model with a certain type of dependency structure
+Simulates data under the PLN model with control on the dependency structure
 }
 \examples{
 set.seed(1)
 p=30
-data_from_scratch("tree",p=p,draw=TRUE)
-data_from_scratch("cluster",p=p,r=10, dens=8/p,draw=TRUE)
+Y1<-data_from_scratch("tree",p=p,draw=TRUE)
+str(Y1)
+Y2<-data_from_scratch("cluster",p=p,r=10, dens=10/p, k=3,draw=TRUE)
 }

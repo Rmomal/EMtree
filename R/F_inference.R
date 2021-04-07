@@ -549,6 +549,6 @@ freq_selec<-function(Pmat,Pt){
 #'   return(allNets)
 #' }
 
-
+utils::globalVariables(c("rowid", "lambda", "freqs", "instab", "stability"))
 
 

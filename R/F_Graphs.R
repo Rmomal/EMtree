@@ -34,7 +34,7 @@
 #' @importFrom tibble as_tibble
 #' @importFrom gridExtra grid.arrange
 #' @examples adj_matrix= SimCluster(20,2,0.4, 10)
-#' draw_network(adj_matrix,"Cluster graph", layout="fr", shade=TRUE)
+#' draw_network(adj_matrix,"Cluster graph", layout="stress", shade=TRUE)
 draw_network<-function(adj_matrix,title="", label_size=4, curv=0,width=1, shade=FALSE, remove_isolated=FALSE,btw_rank=2,
                        layout=NULL,stored_layout=NULL,nodes_label=NULL,nodes_size=c(2,5),pal_edges=NULL, pal_nodes=NULL,
                        node_groups=NULL, edge_groups=NULL,legend=FALSE, pos="bottom"){
@@ -136,6 +136,8 @@ leg=NULL
   return(list(G=g,legend=leg,graph_data=res))
 }
 
+utils::globalVariables(c("edges", "weight", "nodes", "btw.weights", "btw",
+                         "bool_btw","name","deg","neibs","label","row1","row2"))
 
 
 # Deprecated

@@ -10,8 +10,6 @@
 #'
 #' @return The symmetric matrix with A.vec as off-diagonal terms.
 #' @export
-#'
-#' @examples
 ToSym <- function(A.vec){
    n = (1+sqrt(1+8*length(A.vec)))/2
    A.mat = matrix(0, n, n)
@@ -27,8 +25,6 @@ ToSym <- function(A.vec){
 #'
 #' @return The vector from the upper triangular part of A.mat.
 #' @export
-#'
-#' @examples
 ToVec <- function(A.mat){
    return(A.mat[upper.tri(A.mat)])
 }

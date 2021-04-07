@@ -184,7 +184,7 @@ generator_PLN<-function(Sigma,covariates=NULL, n=50, norm=FALSE){
 }
 #data_from_scratch:
 
-#' generates data under the PLN model with a certain type of dependency structure
+#' Simulates data under the PLN model with control on the dependency structure
 #'
 #' @param type type of graph, either "tree", "erdos", "cluster" or "scale-free"
 #' @param p wanted number of columns (species)
@@ -192,10 +192,11 @@ generator_PLN<-function(Sigma,covariates=NULL, n=50, norm=FALSE){
 #' @param r within/between connectiviy ratio for cluster graphs
 #' @param covariates a data.frame or matrix containing data covariates.
 #' @param dens density of edges for cluster graphs or edge probability for erdos graphs
-#' @param draw boolean, plots the graph if set to TRUE
+#' @param k number of groups for the cluster structure.
 #' @param norm should the Gaussian parameters be normalized ?
 #' @param signed boolean: should the graph be composed of positive and negative partial correlations ?
 #' @param v noise parameter of the precision matrix
+#' @param draw boolean, plots the graph if set to TRUE
 #' @return a list containing
 #' \itemize{
 #'  \item{data: }{simulated counts}
@@ -207,18 +208,19 @@ generator_PLN<-function(Sigma,covariates=NULL, n=50, norm=FALSE){
 #' @importFrom ggraph ggraph geom_edge_link geom_node_point theme_graph
 #' @examples set.seed(1)
 #' p=30
-#' data_from_scratch("tree",p=p,draw=TRUE)
-#' data_from_scratch("cluster",p=p,r=10, dens=8/p,draw=TRUE)
-data_from_scratch<-function(type, p=20,n=50, r=5, covariates=NULL,dens=log(p)/p,
+#' Y1<-data_from_scratch("tree",p=p,draw=TRUE)
+#' str(Y1)
+#' Y2<-data_from_scratch("cluster",p=p,r=10, dens=10/p, k=3,draw=TRUE)
+data_from_scratch<-function(type, p=20,n=50, r=5, covariates=NULL,dens=log(p)/p,k=3,
                             norm=FALSE, signed=FALSE,v=0.01,draw=FALSE){
   # make graph
-  graph<- generator_graph(graph=type,p=p,dens=dens,r=r)
+  graph<- generator_graph(graph=type,p=p,dens=dens,r=r, k=k)
   param<-generator_param(G=as.matrix(graph),signed=signed,v=v)
   data<-generator_PLN(param$sigma,covariates,n, norm=norm)
   if(draw){
     g=as_tbl_graph(as.matrix(graph)) %>%
-      ggraph(layout="nicely")+
-      geom_edge_link(color="#31374f")+
+      ggraph(layout="stress")+
+      geom_edge_link(color="gray70")+#"#31374f"
       geom_node_point(size=2, color="steelblue")+theme_graph()
     print(g)
   }

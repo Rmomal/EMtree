@@ -9,13 +9,18 @@ status](https://travis-ci.org/Rmomal/EMtree.svg?branch=master)](https://travis-c
 coverage](https://codecov.io/gh/Rmomal/EMtree/branch/master/graph/badge.svg)](https://codecov.io/gh/Rmomal/EMtree?branch=master)
 [![DOI](https://zenodo.org/badge/166967948.svg)](https://zenodo.org/badge/latestdoi/166967948)
 
-> `EMtree` infers interaction networks from abundance data, implementing
-> the procedure described in [Momal *et
+> `EMtree` infers direct species association networks, implementing the
+> procedure described in [Momal *et
 > al.*](https://besjournals.onlinelibrary.wiley.com/doi/abs/10.1111/2041-210X.13380).
-> This package uses averages over spanning trees within a Poisson
-> log-Normal Model
-> ([PLNmodels](https://github.com/jchiquet/PLNmodels%3E)), and involves
-> plotting funcitonalities (using `ggraph` and `tydigraph`).
+> This package uses averages over spanning trees within an
+> Expectation-Maximization algorithm to infer conditional dependence
+> networks, and involves plotting funcitonalities (using `ggraph` and
+> `tydigraph`). By default, it uses the Poisson log-Normal Model
+> ([PLNmodels](https://github.com/jchiquet/PLNmodels%3E)) to accomodate
+> abundance data. However, EMtree is an inference procedure which only
+> requires an estimate of a Gaussian covariance matrix, and can be used
+> with any model which either use Gaussian latent variables, Gaussian
+> copulas, or Gaussian data transformations.
 
 ## Installation
 

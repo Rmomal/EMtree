@@ -1,12 +1,10 @@
 Type: Package
 Package: EMtree
-Title: Infers Ecological Interaction Networks from Abundance
-    Data
+Title: Infers direct species association networks using tree averaging
 Version: 1.1.0
-Author: Raphaëlle Momal <raphaelle.momal@agroparistech.fr>
-Maintainer: Raphaëlle Momal <raphaelle.momal@agroparistech.fr>
-Description: Uses averages over spanning trees within a Poisson
-    log-Normal Model.  Involves plotting functionalities.
+Author: Raphaëlle Momal <raphaelle.momal@inrae.fr>
+Maintainer: Raphaëlle Momal <raphaelle.momal@inrae.fr>
+Description: Uses averages over spanning trees within an Expectation Maximization algorithm to infer conditional dependence networks. Involves plotting functionalities.
 License: GPL-3
 Imports: 
     dplyr,
@@ -31,7 +29,9 @@ Imports:
 Suggests: 
     testthat (>= 2.1.0),
     knitr,
-    rmarkdown
+    rmarkdown,
+    networkD3,
+    RColorBrewer
 Encoding: UTF-8
 LazyData: false
 RoxygenNote: 7.1.1

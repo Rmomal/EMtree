@@ -73,5 +73,5 @@ Plots a network
 }
 \examples{
 adj_matrix= SimCluster(20,2,0.4, 10)
-draw_network(adj_matrix,"Cluster graph", layout="fr", shade=TRUE)
+draw_network(adj_matrix,"Cluster graph", layout="stress", shade=TRUE)
 }

@@ -26,7 +26,7 @@ pkgdown::build_site()
 pkgdown::build_home()
 pkgdown::build_articles()
 pkgdown::build_reference()
-pkgdown::preview_site()
+pkgdown::preview_site(preview=TRUE)
 ##########
 # unitary tests
 usethis::use_testthat()
