@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">EMtree</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
       </span>
     </div>
 
@@ -80,7 +80,7 @@
       
 
       </header><script src="Fatala_Net_files/accessible-code-block-0.0.1/empty-anchor.js"></script><link href="Fatala_Net_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
-<script src="Fatala_Net_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
+<script src="Fatala_Net_files/anchor-sections-1.0/anchor-sections.js"></script><script src="Fatala_Net_files/htmlwidgets-1.5.2/htmlwidgets.js"></script><script src="Fatala_Net_files/d3-4.5.0/d3.min.js"></script><script src="Fatala_Net_files/forceNetwork-binding-0.4/forceNetwork.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Fatala fishes</h1>
@@ -93,7 +93,7 @@
 
     
     
-<p>This is a basic example detailing how to infer a network, using fishes counts from the Fatala River (Barans95 data from the <code>ade4</code> package).</p>
+<p>This vignette details how to infer a network, using fishes counts from the Fatala River (Barans95 data from the <code>ade4</code> package), and shows how to represent a network with the <code>EMtree</code> package.</p>
 <div id="fatala-fishes-dataset" class="section level2">
 <h2 class="hasAnchor">
 <a href="#fatala-fishes-dataset" class="anchor"></a>Fatala fishes dataset</h2>
@@ -140,7 +140,12 @@
 <div id="network-inference" class="section level2">
 <h2 class="hasAnchor">
 <a href="#network-inference" class="anchor"></a>Network inference</h2>
-<p>EMtree infers a network from either a correlation matrix of a multivariate Gaussian, or an object created by PLNmodels from count data. Therefore here we first create a <code>PLNmodels</code> object:</p>
+<div id="basic-model" class="section level3">
+<h3 class="hasAnchor">
+<a href="#basic-model" class="anchor"></a>Basic model</h3>
+<p>When dealing with abundance data, most modelling approaches switch back to the Gaussian space using different methods. EMtree is an inference procedure which only requires an estimate of a Gaussian covariance matrix, and can be used with any model which either use Gaussian latent variables, Gaussian copulas, or Gaussian data transformations.</p>
+<p>The Poisson log-normal model, implemented and estimated in the <code>PLNmodels</code> package, is easy to use and can handle both covariates and offsets efficiently. Details on covariates and offsets specification can be found <a href="https://pln-team.github.io/PLNmodels/articles/PLN.html">here</a>. For this example we use PLNmodels, however the user is free to provide a Gaussian correlation estimate as an input.</p>
+<p>We create a <code>PLNmodels</code> object:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://jchiquet.github.io/PLNmodels/">PLNmodels</a></span><span class="op">)</span>
 <span class="va">PLNfit</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/pkg/PLNmodels/man/PLN.html">PLN</a></span><span class="op">(</span><span class="va">Y</span> <span class="op">~</span> <span class="va">X</span><span class="op">$</span><span class="va">site</span><span class="op">)</span></code></pre></div>
@@ -149,116 +154,154 @@
 ##  Adjusting a PLN model with full covariance model
 ##  Post-treatments...
 ##  DONE!</code></pre>
-<p>And then run EMtree:</p>
+<p>And then run EMtree as follows:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">EMtree</span><span class="op">)</span>
 <span class="va">EMtreeFit</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/EMtree.html">EMtree</a></span><span class="op">(</span><span class="va">PLNfit</span>,  maxIter <span class="op">=</span> <span class="fl">20</span>, plot<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p><img src="Fatala_Net_files/figure-html/output-1.png" width="700"></p>
 <pre><code>## 
-## Convergence took 0.34 secs  and  14  iterations.</code></pre>
+## Convergence took 0.4 secs  and  14  iterations.</code></pre>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">EMtreeFit</span><span class="op">)</span></code></pre></div>
 <pre><code>## List of 6
 ##  $ edges_prob  : num [1:33, 1:33] 0.00 8.71e-10 3.50e-08 4.28e-05 3.85e-08 ...
 ##  $ norm.cst    : num 3.39e-12
-##  $ timeEM      : 'difftime' num 0.33595609664917
+##  $ timeEM      : 'difftime' num 0.403653144836426
 ##   ..- attr(*, "units")= chr "secs"
 ##  $ edges_weight: num [1:33, 1:33] 0.00 8.01e-06 4.31e-06 5.93e-04 1.15e-05 ...
 ##  $ logpY       : num [1:14] 195 227 236 240 242 ...
 ##  $ maxIter     : num 14</code></pre>
-<p>To get a network from a fit of <code><a href="../reference/EMtree.html">EMtree()</a></code>, the probabilities stored in <code>edges_prob</code> can be thresholded. We propose the <span class="math inline">\(2/p\)</span> threshold as follows:</p>
+<p>The output matrix <code>edges_prob</code> gathers the probabilities for each edge to be part of the latent random tree of the model. By construction, this matrix is constrained to sum to <span class="math inline">\((p-1)\)</span> (number of edges in a spanning tree), and to have an average value of <span class="math inline">\(2/p\)</span>.</p>
+<p>This package involves a lot of switching between symmetric matrices and the vector of their upper triangular part. The functions <code><a href="../reference/ToVec.html">ToVec()</a></code> and <code><a href="../reference/ToSym.html">ToSym()</a></code> help to transition from one representation to the other.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">probs</span><span class="op">&lt;-</span> <span class="va">EMtreeFit</span><span class="op">$</span><span class="va">edges_prob</span>
-<span class="va">net</span><span class="op">&lt;-</span><span class="fl">1</span><span class="op">*</span><span class="op">(</span><span class="va">probs</span><span class="op">&gt;</span><span class="fl">2</span><span class="op">/</span><span class="va">p</span><span class="op">)</span></code></pre></div>
-<p>To improve the robustness, the function <code><a href="../reference/ResampleEMtree.html">ResampleEMtree()</a></code> implements a stability selection of EMtree on S sub-samples. This function uses parallel computations with <code>mclapply()</code>. The <code>Pmat</code> output gathers all the inferred edges probabilities for each sub-sample.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">vec_of_proba</span><span class="op">=</span><span class="fu"><a href="../reference/ToVec.html">ToVec</a></span><span class="op">(</span><span class="va">EMtreeFit</span><span class="op">$</span><span class="va">edges_prob</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">vec_of_proba</span><span class="op">)</span><span class="op">-</span><span class="fl">2</span><span class="op">/</span><span class="va">p</span></code></pre></div>
+<pre><code>## [1] 6.758483e-15</code></pre>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">vec_of_proba</span><span class="op">)</span> <span class="op">-</span> <span class="op">(</span><span class="va">p</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span></code></pre></div>
+<pre><code>## [1] 3.566925e-12</code></pre>
+<p>To obtain a network and select edges, we resort to a stability selection strategy.</p>
+</div>
+<div id="stability-selection" class="section level3">
+<h3 class="hasAnchor">
+<a href="#stability-selection" class="anchor"></a>Stability selection</h3>
+<p>The function <code><a href="../reference/ResampleEMtree.html">ResampleEMtree()</a></code> implements a stability selection of EMtree on S sub-samples. This function uses parallel computations with <code>mclapply()</code>. The <code>Pmat</code> output gathers all the inferred edges probabilities for each sub-sample ; it is a stack of each <code><a href="../reference/ToVec.html">ToVec(EMtreeFit$edges_prob)</a></code>.</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">ResampEmtreeFit</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/ResampleEMtree.html">ResampleEMtree</a></span><span class="op">(</span>counts<span class="op">=</span><span class="va">Y</span>, covar_matrix <span class="op">=</span> <span class="va">X</span><span class="op">$</span><span class="va">site</span> , S<span class="op">=</span><span class="fl">5</span>, maxIter<span class="op">=</span><span class="fl">10</span>,cond.tol<span class="op">=</span><span class="fl">1e-8</span>, cores<span class="op">=</span><span class="fl">1</span><span class="op">)</span></code></pre></div>
 <pre><code>## Computing 5 probability matrices with 1 core(s)... 
-## Convergence took 0.42 secs  and  10  iterations.
-## Convergence took 0.27 secs  and  10  iterations.
-## Convergence took 0.3 secs  and  10  iterations.
-## Convergence took 0.29 secs  and  10  iterations.
-## Convergence took 0.3 secs  and  10  iterations.2.08 secs</code></pre>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+## Convergence took 0.55 secs  and  10  iterations.
+## Convergence took 0.34 secs  and  10  iterations.
+## Convergence took 0.32 secs  and  10  iterations.
+## Convergence took 0.31 secs  and  10  iterations.
+## Convergence took 0.36 secs  and  10  iterations.2.48 secs</code></pre>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">ResampEmtreeFit</span><span class="op">)</span></code></pre></div>
 <pre><code>## List of 3
-##  $ Pmat   : num [1:5, 1:528] 3.11e-07 1.02e-07 2.36e-09 5.38e-08 3.06e-08 ...
+##  $ Pmat   : num [1:5, 1:528] 6.59e-09 3.18e-08 3.35e-08 3.95e-09 1.58e-07 ...
 ##  $ maxIter: num [1:5] 10 10 10 10 10
-##  $ times  : 'difftime' num [1:5] 0.422957897186279 0.273238897323608 0.296163082122803 0.293855905532837 ...
+##  $ times  : 'difftime' num [1:5] 0.553413152694702 0.344007968902588 0.315392017364502 0.310241937637329 ...
 ##   ..- attr(*, "units")= chr "secs"</code></pre>
 <p>Another way to specify the covariates matrix is to use the model.matrix() function as follows:</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">built_covar_matrix</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html">model.matrix</a></span><span class="op">(</span><span class="op">~</span><span class="va">X</span><span class="op">$</span><span class="va">site</span><span class="op">+</span><span class="va">X</span><span class="op">$</span><span class="va">date</span><span class="op">)</span></code></pre></div>
 <p>Then <code>built_covar_matrix</code> would be the <code>covar_matrix</code> parameter.</p>
-<p>For the sake of the example we continue with the <span class="math inline">\(site\)</span> covariate only. Edges selection frequencies can be derived from the <code>Pmat</code> output with the function <code><a href="../reference/freq_selec.html">freq_selec()</a></code>. This function simply summarizes the number of times an edge has a probability above the threshold <code>Pt</code>. A network can then be obtained by thresholding the frequencies, to keep for example edges that are selected in more than <span class="math inline">\(80\%\)</span> of sub-samples:</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<p>The <code><a href="../reference/ResampleEMtree.html">ResampleEMtree()</a></code> function can be used with another model than PLN. To do this, simply provide a function which estimates a Gaussian correlation matrix from counts (using latent variables, copulas or transformations). The function should be passed to <code><a href="../reference/ResampleEMtree.html">ResampleEMtree()</a></code> through the <code>user_covariance_estimation</code> parameter. The covariate matrix will also be a parameter to the user’s function. An example using a dummy estimation is available in the help of <code><a href="../reference/ResampleEMtree.html">ResampleEMtree()</a></code>.</p>
+<p>For the sake of the example we continue with PLN and the “site” covariate only. Edges selection frequencies can be derived from the <code>Pmat</code> output with the function <code><a href="../reference/freq_selec.html">freq_selec()</a></code>. This function simply summarizes the number of times an edge has a probability above the threshold <code>Pt</code>. A network can then be obtained by thresholding the frequencies, to keep for example edges that are selected in more than <span class="math inline">\(80\%\)</span> of sub-samples:</p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">freqs</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/freq_selec.html">freq_selec</a></span><span class="op">(</span><span class="va">ResampEmtreeFit</span><span class="op">$</span><span class="va">Pmat</span>,Pt<span class="op">=</span><span class="fl">0.2</span><span class="op">)</span>
-<span class="va">resampNet</span><span class="op">&lt;-</span><span class="fl">1</span><span class="op">*</span><span class="op">(</span><span class="va">freqs</span><span class="op">&gt;</span><span class="fl">0.8</span><span class="op">)</span></code></pre></div>
-<p>The problem of course is that there is no rationale for the threshold on probabilities <code>Pt</code> ; the optimal threshold is unknown. A way to select the threshold is to compute the stability of the frequencies for any threshold, and select the desired stability. The function <code><a href="../reference/StATS.html">StATS()</a></code> adapts the well-known penalty selection strategy StARS in the context of threshold selection.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<span class="va">a_first_idea_of_network</span><span class="op">&lt;-</span><span class="fl">1</span><span class="op">*</span><span class="op">(</span><span class="va">freqs</span><span class="op">&gt;</span><span class="fl">0.8</span><span class="op">)</span></code></pre></div>
+<p>The problem of course is that there is no rationale for the threshold on probabilities <code>Pt</code> ; the optimal threshold is unknown. A way to select the threshold is to compute the stability of the frequencies for any threshold, and then select the desired stability. The function <code><a href="../reference/StATS.html">StATS()</a></code> adapts the well-known penalty selection strategy StARS in the context of threshold selection.</p>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">stab_selection</span><span class="op">=</span><span class="fu"><a href="../reference/StATS.html">StATS</a></span><span class="op">(</span><span class="va">ResampEmtreeFit</span><span class="op">$</span><span class="va">Pmat</span>, nlambda<span class="op">=</span><span class="fl">50</span>, stab.thresh<span class="op">=</span><span class="fl">0.9</span>,plot<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p><img src="Fatala_Net_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>
 <p>We then keep the frequencies corresponding to the optimal lambda value, which is here at about <span class="math inline">\(exp(-9.5)\)</span>. The optimal frequencies are stored in <code>stab_selection$freqs_opt</code>, the optimal threshold is <code>stab_selection$lambda_opt</code>.</p>
-<p>The optimal frequencies still need to be thresholded in order to obtain a network. However, the task is very much simpler and understandable now: the higher the frequency, the more stable the edge along the resamples.</p>
+<p>The optimal frequencies still need to be thresholded in order to obtain a network. However, the task is very much simpler to understand now: the higher the frequency, the more stable the edge along the resamples.</p>
+</div>
 </div>
 <div id="visualizations" class="section level2">
 <h2 class="hasAnchor">
 <a href="#visualizations" class="anchor"></a>Visualizations</h2>
-<p>The package <code>EMtree</code> has one general plotting function for network visualization: <code><a href="../reference/draw_network.html">draw_network()</a></code>. It builds from the <code>ggraph</code> and <code>tidygraph</code> packages, and provides with several interesting functionalities, among which</p>
+<p>The package <code>EMtree</code> has one general plotting function for network visualization: <code><a href="../reference/draw_network.html">draw_network()</a></code>. It builds from the <code>ggraph</code> and <code>tidygraph</code> packages, and provides with several interesting functionalities, among which:</p>
 <ul>
-<li>highlighting of important nodes ,</li>
+<li>highlighting of important nodes,</li>
 <li>shading of edges,</li>
-<li>defining groups of nodes and edges, with coloring possibilities,</li>
-<li>using a previously stored layout.</li>
+<li>using a previously stored layout,</li>
+<li>defining groups of nodes and edges,</li>
+<li>using the igraph output for further graphic purposes.</li>
 </ul>
 <div id="basic-usage" class="section level3">
 <h3 class="hasAnchor">
 <a href="#basic-usage" class="anchor"></a>Basic usage</h3>
-<p>It takes an adjacency matrix as input and represents a network with edges widths proportional to the input weights. Several layouts are available (see the <code>ggraph</code> documentation). Highlighting of nodes possessing among the highest betweenness centrality measure is done with the parameter <code>btw_rank</code>. To disable this functionality, just set <code>btw_rank=1</code>.</p>
-<p><code>shade=TRUE</code> lowers the opacity of edges not linked to a highlighted node. This allows to better see the direct neighborhood of important nodes.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<p>For this section we consider three networks from the previous inference: the weighted network with all edges selection frequencies, the network obtained when applying a 0.5 threshold on frequencies, and finally the one obtained with a threshold of 0.95.</p>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">weighted_net</span><span class="op">=</span><span class="fu"><a href="../reference/ToSym.html">ToSym</a></span><span class="op">(</span><span class="va">stab_selection</span><span class="op">$</span><span class="va">freqs_opt</span><span class="op">)</span>
 <span class="va">net_50</span><span class="op">=</span><span class="fu"><a href="../reference/ToSym.html">ToSym</a></span><span class="op">(</span><span class="fl">1</span><span class="op">*</span><span class="op">(</span><span class="va">stab_selection</span><span class="op">$</span><span class="va">freqs_opt</span><span class="op">&gt;</span><span class="fl">0.5</span><span class="op">)</span><span class="op">)</span>
-<span class="va">net_95</span><span class="op">=</span><span class="fu"><a href="../reference/ToSym.html">ToSym</a></span><span class="op">(</span><span class="fl">1</span><span class="op">*</span><span class="op">(</span><span class="va">stab_selection</span><span class="op">$</span><span class="va">freqs_opt</span><span class="op">&gt;</span><span class="fl">0.95</span><span class="op">)</span><span class="op">)</span>
-<span class="va">g1</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/draw_network.html">draw_network</a></span><span class="op">(</span><span class="va">weighted_net</span>,title<span class="op">=</span><span class="st">"Weighted"</span>, pal_edges<span class="op">=</span><span class="st">"dodgerblue3"</span>,layout<span class="op">=</span><span class="st">"nicely"</span>,
+<span class="va">net_95</span><span class="op">=</span><span class="fu"><a href="../reference/ToSym.html">ToSym</a></span><span class="op">(</span><span class="fl">1</span><span class="op">*</span><span class="op">(</span><span class="va">stab_selection</span><span class="op">$</span><span class="va">freqs_opt</span><span class="op">&gt;</span><span class="fl">0.95</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<p>The function <code><a href="../reference/draw_network.html">draw_network()</a></code> takes a possibly weighted adjacency matrix as input, and represents a network with edges widths proportional to the input weights. Several layouts are available (among which nicely, kk, fr, circle, stress… See igraph documentation or this <a href="https://cran.r-project.org/web/packages/ggraph/vignettes/Layouts.html">blogpost</a>). Highlighting of nodes possessing among the highest betweenness centrality measure is done with the parameter <code>btw_rank</code>. To disable this functionality, just set <code>btw_rank=1</code>.</p>
+<p><code>shade=TRUE</code> lowers the opacity of edges not linked to a highlighted node. This allows to better see the direct neighborhood of important nodes.</p>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">g1</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/draw_network.html">draw_network</a></span><span class="op">(</span><span class="va">weighted_net</span>,title<span class="op">=</span><span class="st">"Weighted"</span>, pal_edges<span class="op">=</span><span class="st">"dodgerblue3"</span>,layout<span class="op">=</span><span class="st">"stress"</span>,
                  shade <span class="op">=</span> <span class="cn">TRUE</span>, btw_rank<span class="op">=</span><span class="fl">3</span><span class="op">)</span><span class="op">$</span><span class="va">G</span>
-<span class="va">g2</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/draw_network.html">draw_network</a></span><span class="op">(</span><span class="va">net_50</span>,title<span class="op">=</span><span class="st">"Selected &gt; 50%"</span>, pal_edges<span class="op">=</span><span class="st">"dodgerblue3"</span>,layout<span class="op">=</span><span class="st">"nicely"</span>,
+<span class="va">g2</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/draw_network.html">draw_network</a></span><span class="op">(</span><span class="va">net_50</span>,title<span class="op">=</span><span class="st">"Selected &gt; 50%"</span>, pal_edges<span class="op">=</span><span class="st">"dodgerblue3"</span>,layout<span class="op">=</span><span class="st">"kk"</span>,
                  shade <span class="op">=</span> <span class="cn">TRUE</span>, btw_rank<span class="op">=</span><span class="fl">3</span><span class="op">)</span><span class="op">$</span><span class="va">G</span>
-<span class="va">g3</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/draw_network.html">draw_network</a></span><span class="op">(</span><span class="va">net_95</span>,title<span class="op">=</span><span class="st">"Selected &gt; 90%"</span>, pal_edges<span class="op">=</span><span class="st">"dodgerblue3"</span>,layout<span class="op">=</span><span class="st">"nicely"</span>,
-                 shade <span class="op">=</span> <span class="cn">FALSE</span>, btw_rank<span class="op">=</span><span class="fl">3</span><span class="op">)</span><span class="op">$</span><span class="va">G</span>
-<span class="fu">grid.arrange</span><span class="op">(</span><span class="va">g1</span>, <span class="va">g2</span>, <span class="va">g3</span>, ncol<span class="op">=</span><span class="fl">3</span><span class="op">)</span></code></pre></div>
-<p><img src="Fatala_Net_files/figure-html/unnamed-chunk-9-1.png" width="768"></p>
+<span class="va">g3</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/draw_network.html">draw_network</a></span><span class="op">(</span><span class="va">net_95</span>,title<span class="op">=</span><span class="st">"Selected &gt; 90%"</span>, pal_edges<span class="op">=</span><span class="st">"dodgerblue3"</span>,layout<span class="op">=</span><span class="st">"fr"</span>,
+                 shade <span class="op">=</span> <span class="cn">FALSE</span>, btw_rank<span class="op">=</span><span class="fl">3</span><span class="op">)</span>
+<span class="fu">grid.arrange</span><span class="op">(</span><span class="va">g1</span>, <span class="va">g2</span>, <span class="va">g3</span><span class="op">$</span><span class="va">G</span>, ncol<span class="op">=</span><span class="fl">3</span><span class="op">)</span></code></pre></div>
+<p><img src="Fatala_Net_files/figure-html/unnamed-chunk-10-1.png" width="768"></p>
 </div>
 <div id="storing-a-layout" class="section level3">
 <h3 class="hasAnchor">
 <a href="#storing-a-layout" class="anchor"></a>Storing a layout</h3>
-<p>To store a layout, we need to create it first, using the ggraph package for example. We only keep the columns corresponding to points coordinates.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">a_layout</span> <span class="op">=</span> <span class="fu">create_layout</span><span class="op">(</span><span class="va">net_95</span>, layout<span class="op">=</span><span class="st">"nicely"</span><span class="op">)</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<p>To store a layout, we need to create it first, using the ggraph package for example.</p>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">a_layout</span> <span class="op">=</span> <span class="fu">create_layout</span><span class="op">(</span><span class="va">net_95</span>, layout<span class="op">=</span><span class="st">"nicely"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p>Then the layout is taken as the <code>stored_layout</code> parameter of <code><a href="../reference/draw_network.html">draw_network()</a></code>, as follows:</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">args</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span> pal_edges<span class="op">=</span><span class="st">"dodgerblue3"</span><span class="op">)</span>
 <span class="va">g1</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/draw_network.html">draw_network</a></span><span class="op">(</span><span class="va">net_50</span>,title<span class="op">=</span><span class="st">"Selected &gt; 50%"</span>, pal_edges<span class="op">=</span><span class="st">"dodgerblue3"</span>,
                  stored_layout <span class="op">=</span> <span class="va">a_layout</span>, btw_rank<span class="op">=</span><span class="fl">3</span><span class="op">)</span><span class="op">$</span><span class="va">G</span>
 <span class="va">g2</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/draw_network.html">draw_network</a></span><span class="op">(</span><span class="va">net_95</span>,title<span class="op">=</span><span class="st">"Selected &gt; 95%"</span>, pal_edges<span class="op">=</span><span class="st">"dodgerblue3"</span>,
                  stored_layout <span class="op">=</span> <span class="va">a_layout</span>, btw_rank<span class="op">=</span><span class="fl">3</span><span class="op">)</span><span class="op">$</span><span class="va">G</span>
 <span class="fu">grid.arrange</span><span class="op">(</span><span class="va">g1</span>, <span class="va">g2</span>, ncol<span class="op">=</span><span class="fl">2</span><span class="op">)</span></code></pre></div>
-<p><img src="Fatala_Net_files/figure-html/unnamed-chunk-11-1.png" width="672"></p>
+<p><img src="Fatala_Net_files/figure-html/unnamed-chunk-12-1.png" width="672"></p>
 </div>
 <div id="grouping-of-nodes-and-edges" class="section level3">
 <h3 class="hasAnchor">
 <a href="#grouping-of-nodes-and-edges" class="anchor"></a>Grouping of nodes and edges</h3>
-<p>It is possible to define groups of nodes with <code>node_groups</code> and edges with <code>edge_groups</code>, and color them accordingly using <code>pal_nodes</code> and <code>pal_edges</code>. For example :</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<p>It is possible to define groups of nodes and edges with <code>node_groups</code> and <code>edge_groups</code> respectively, and color them accordingly using <code>pal_nodes</code> and <code>pal_edges</code>. For example :</p>
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/draw_network.html">draw_network</a></span><span class="op">(</span><span class="va">net_95</span>, title<span class="op">=</span><span class="st">"Groups of nodes"</span>, pal_edges<span class="op">=</span><span class="st">"gray70"</span>, 
              node_groups<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fl">3</span>,<span class="va">p</span>, replace<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>,
-             pal_nodes<span class="op">=</span><span class="fu">brewer.pal</span><span class="op">(</span><span class="fl">3</span>,<span class="st">"Dark2"</span><span class="op">)</span>,layout<span class="op">=</span><span class="st">"nicely"</span><span class="op">)</span><span class="op">$</span><span class="va">G</span></code></pre></div>
-<p><img src="Fatala_Net_files/figure-html/unnamed-chunk-12-1.png" width="384"></p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+             pal_nodes<span class="op">=</span><span class="fu">brewer.pal</span><span class="op">(</span><span class="fl">3</span>,<span class="st">"Dark2"</span><span class="op">)</span>,layout<span class="op">=</span><span class="st">"stress"</span><span class="op">)</span><span class="op">$</span><span class="va">G</span></code></pre></div>
+<p><img src="Fatala_Net_files/figure-html/unnamed-chunk-13-1.png" width="384"></p>
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/draw_network.html">draw_network</a></span><span class="op">(</span><span class="va">net_95</span>, title<span class="op">=</span><span class="st">"Groups of edges"</span>, pal_nodes<span class="op">=</span><span class="st">"gray70"</span>, 
              edge_groups<span class="op">=</span><span class="fu"><a href="../reference/ToSym.html">ToSym</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fl">3</span>,<span class="va">p</span><span class="op">*</span><span class="op">(</span><span class="va">p</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span>,replace<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>,
-             pal_edges<span class="op">=</span><span class="fu">brewer.pal</span><span class="op">(</span><span class="fl">3</span>,<span class="st">"Dark2"</span><span class="op">)</span>,layout<span class="op">=</span><span class="st">"nicely"</span>, btw_rank<span class="op">=</span><span class="fl">1</span><span class="op">)</span><span class="op">$</span><span class="va">G</span></code></pre></div>
-<p><img src="Fatala_Net_files/figure-html/unnamed-chunk-13-1.png" width="384"></p>
+             pal_edges<span class="op">=</span><span class="fu">brewer.pal</span><span class="op">(</span><span class="fl">3</span>,<span class="st">"Dark2"</span><span class="op">)</span>,layout<span class="op">=</span><span class="st">"stress"</span>, btw_rank<span class="op">=</span><span class="fl">1</span><span class="op">)</span><span class="op">$</span><span class="va">G</span></code></pre></div>
+<p><img src="Fatala_Net_files/figure-html/unnamed-chunk-14-1.png" width="384"></p>
+</div>
+<div id="usage-example-of-the-non-graphic-output" class="section level3">
+<h3 class="hasAnchor">
+<a href="#usage-example-of-the-non-graphic-output" class="anchor"></a>Usage example of the non-graphic output</h3>
+<p>The <code><a href="../reference/draw_network.html">draw_network()</a></code> function outputs the graph <code>G</code>, but also <code>graph_data</code>, which is in igraph format and thus useful if you would like to use your own graphic representation, or another package like <code>networkD3</code> for example.</p>
+<p>In the example below, we first create a graph object with nodes labels as the species names. We then extract the edges and nodes information following the tidygraph grammar, and store them in data frames. Edges information are modified so that they are zero-indexed, which is necessary for JavaScript. Finally we use the <code><a href="https://rdrr.io/pkg/networkD3/man/forceNetwork.html">networkD3::forceNetwork()</a></code> function to obtain an interactive network, where we colored nodes according to their degree.</p>
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://CRAN.R-project.org/package=networkD3">networkD3</a></span><span class="op">)</span>
+<span class="va">graph</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/draw_network.html">draw_network</a></span><span class="op">(</span><span class="va">net_95</span>,nodes_label <span class="op">=</span> <span class="va">baran95</span><span class="op">$</span><span class="va">species.names</span><span class="op">)</span>
+<span class="va">edges_data</span><span class="op">=</span><span class="va">graph</span><span class="op">$</span><span class="va">graph_data</span> <span class="op">%&gt;%</span> <span class="fu">activate</span><span class="op">(</span><span class="va">edges</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/as_tibble.html">as_tibble</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">mutate</span><span class="op">(</span>from<span class="op">=</span><span class="va">from</span><span class="op">-</span><span class="fl">1</span>, to <span class="op">=</span> <span class="va">to</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>  <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="op">)</span>
+<span class="va">nodes_data</span><span class="op">=</span><span class="va">graph</span><span class="op">$</span><span class="va">graph_data</span> <span class="op">%&gt;%</span> <span class="fu">activate</span><span class="op">(</span><span class="va">nodes</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/networkD3/man/forceNetwork.html">forceNetwork</a></span><span class="op">(</span>Links <span class="op">=</span> <span class="va">edges_data</span>, Nodes <span class="op">=</span><span class="va">nodes_data</span>, 
+             Source <span class="op">=</span> <span class="st">'from'</span>, Target <span class="op">=</span> <span class="st">'to'</span>, 
+             NodeID <span class="op">=</span> <span class="st">'name'</span>, Group <span class="op">=</span> <span class="st">'deg'</span>,opacity <span class="op">=</span> <span class="fl">1</span>,fontSize <span class="op">=</span> <span class="fl">15</span>, legend<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<div id="htmlwidget-4460a73989698615d595" style="width:480px;height:480px;" class="forceNetwork html-widget"></div>
+<script type="application/json" data-for="htmlwidget-4460a73989698615d595">{"x":{"links":{"source":[0,0,0,0,1,1,1,1,1,2,3,3,3,4,4,5,6,6,7,7,7,8,8,9,10,10,10,11,11,12,12,12,12,13,14,14,15,15,15,15,16,16,16,16,17,18,18,18,19,19,21,21,22,22,22,24,24,24,24],"target":[6,10,16,30,15,19,21,24,29,22,10,16,30,16,20,21,16,30,12,16,31,17,18,22,13,16,30,18,26,16,19,20,31,23,16,21,16,19,20,21,19,20,31,32,18,22,23,26,21,24,27,28,26,29,31,25,26,28,30],"colour":["#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666","#666"]},"nodes":{"name":["Brycinus macrolepidotus","Caranx senegallus","Caranx hippos","Chloroscombrus chrysurus","Chrysichthys johnelsi","Citarichthys stampflii","Scomberomorus tritor","Chrysichthys maurus","Cynoglossus senegalensis","Drepane africana","Ethmalosa fimbriata","Elops lacerta","Galeoides decadactylus","Eucinostomus melanopterus","Hemichromis fasciatus","Hydrocynus forskalii","Ilisha africana","Liza falcipinnis","Liza grandisquamis","Lates niloticus","Papyrocranus afer","Pseudotolithus brachygnatus","Pseudotolithus elongatus","Pomadasys jubelini","Pellonula leonensis","Pseudotolithus hostia moori","Polydactylus quadrifilis","Periophtalmus barbarus","Pentanemus quinquarius","Pseudotolithus typus","Sardinella maderensis","Tylochromis intermedius","Trichiurus lepturus"],"group":[4,5,1,3,2,1,3,3,2,1,5,2,5,2,2,5,13,2,6,6,4,7,6,2,6,1,4,1,2,2,5,4,1]},"options":{"NodeID":"name","Group":"deg","colourScale":"d3.scaleOrdinal(d3.schemeCategory20);","fontSize":15,"fontFamily":"serif","clickTextSize":37.5,"linkDistance":50,"linkWidth":"function(d) { return Math.sqrt(d.value); }","charge":-30,"opacity":1,"zoom":false,"legend":true,"arrows":false,"nodesize":false,"radiusCalculation":" Math.sqrt(d.nodesize)+6","bounded":false,"opacityNoHover":0,"clickAction":null}},"evals":[],"jsHooks":[]}</script><p>Another way to do this is to use the <code><a href="https://rdrr.io/pkg/networkD3/man/igraph_to_networkD3.html">networkD3::igraph_to_networkD3()</a></code>, which takes advantage of the igraph nature of the <code>graph_data</code> output. It gives the right format and automatically re-index the edges, but requires to manually add the degrees or any other information on node and edges.</p>
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">degrees</span><span class="op">=</span><span class="va">graph</span><span class="op">$</span><span class="va">graph_data</span> <span class="op">%&gt;%</span> <span class="fu">activate</span><span class="op">(</span><span class="va">nodes</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">deg</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">pull</span><span class="op">(</span><span class="op">)</span>
+<span class="va">graph_d3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/networkD3/man/igraph_to_networkD3.html">igraph_to_networkD3</a></span><span class="op">(</span><span class="va">graph</span><span class="op">$</span><span class="va">graph_data</span>, group<span class="op">=</span><span class="va">degrees</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/networkD3/man/forceNetwork.html">forceNetwork</a></span><span class="op">(</span>Links <span class="op">=</span> <span class="va">graph_d3</span><span class="op">$</span><span class="va">links</span>, Nodes <span class="op">=</span><span class="va">graph_d3</span><span class="op">$</span><span class="va">nodes</span>, 
+             Source <span class="op">=</span> <span class="st">'source'</span>, Target <span class="op">=</span> <span class="st">'target'</span>, 
+             NodeID <span class="op">=</span> <span class="st">'name'</span>, Group <span class="op">=</span> <span class="st">'group'</span>,opacity <span class="op">=</span> <span class="fl">1</span>,fontSize <span class="op">=</span> <span class="fl">15</span>, legend<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 </div>
 </div>
   </div>
