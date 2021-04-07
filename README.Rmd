@@ -17,7 +17,9 @@ knitr::opts_chunk$set(
 [![Codecov test coverage](https://codecov.io/gh/Rmomal/EMtree/branch/master/graph/badge.svg)](https://codecov.io/gh/Rmomal/EMtree?branch=master)
 [![DOI](https://zenodo.org/badge/166967948.svg)](https://zenodo.org/badge/latestdoi/166967948)
 
-> `EMtree` infers direct species association networks, implementing the procedure described in [Momal *et al.*](https://besjournals.onlinelibrary.wiley.com/doi/abs/10.1111/2041-210X.13380). This package uses averages over spanning trees within an Expectation-Maximization algorithm to infer conditional dependence networks, and involves plotting funcitonalities (using `ggraph` and `tydigraph`). By default, it uses the Poisson log-Normal Model ([PLNmodels](https://github.com/jchiquet/PLNmodels>)) to accomodate abundance data. However, EMtree is an inference procedure which only requires an estimate of a Gaussian covariance matrix, and can be used with any model which either use Gaussian latent variables, Gaussian copulas, or Gaussian data transformations.
+> `EMtree` infers direct species association networks, implementing the procedure described in [Momal *et al.*](https://besjournals.onlinelibrary.wiley.com/doi/abs/10.1111/2041-210X.13380). This package uses averages over spanning trees within an Expectation-Maximization algorithm to infer conditional dependence networks, and involves plotting funcitonalities (using `ggraph` and `tydigraph`). 
+
+By default, it uses the Poisson log-Normal Model ([PLNmodels](https://github.com/jchiquet/PLNmodels>)) to accommodate abundance data. However, EMtree is an inference method which only requires an estimate of a Gaussian covariance matrix, and can be used with any model which either use Gaussian latent variables, Gaussian copulas, or Gaussian data transformations.
 
 ## Installation
 
@@ -28,7 +30,7 @@ knitr::opts_chunk$set(
 ```{r,eval=FALSE}
 required_CRAN <- c("Matrix", "purrr","parallel",  "mvtnorm", "vegan","huge",
                    "ggplot2", "magrittr", "dplyr","tidyr", "tibble",
-                   "PLNmodels","ggraph", "tidygraph", "ade4", "viridisLite")
+                   "PLNmodels","ggraph", "tidygraph", "ade4")
 not_installed_CRAN <- setdiff(required_CRAN, rownames(installed.packages()))
 if (length(not_installed_CRAN) > 0) install.packages(not_installed_CRAN)
 ```

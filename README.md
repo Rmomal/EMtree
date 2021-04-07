@@ -15,12 +15,14 @@ coverage](https://codecov.io/gh/Rmomal/EMtree/branch/master/graph/badge.svg)](ht
 > This package uses averages over spanning trees within an
 > Expectation-Maximization algorithm to infer conditional dependence
 > networks, and involves plotting funcitonalities (using `ggraph` and
-> `tydigraph`). By default, it uses the Poisson log-Normal Model
-> ([PLNmodels](https://github.com/jchiquet/PLNmodels%3E)) to accomodate
-> abundance data. However, EMtree is an inference procedure which only
-> requires an estimate of a Gaussian covariance matrix, and can be used
-> with any model which either use Gaussian latent variables, Gaussian
-> copulas, or Gaussian data transformations.
+> `tydigraph`).
+
+By default, it uses the Poisson log-Normal Model
+([PLNmodels](https://github.com/jchiquet/PLNmodels%3E)) to accommodate
+abundance data. However, EMtree is an inference method which only
+requires an estimate of a Gaussian covariance matrix, and can be used
+with any model which either use Gaussian latent variables, Gaussian
+copulas, or Gaussian data transformations.
 
 ## Installation
 
@@ -31,7 +33,7 @@ coverage](https://codecov.io/gh/Rmomal/EMtree/branch/master/graph/badge.svg)](ht
 ``` r
 required_CRAN <- c("Matrix", "purrr","parallel",  "mvtnorm", "vegan","huge",
                    "ggplot2", "magrittr", "dplyr","tidyr", "tibble",
-                   "PLNmodels","ggraph", "tidygraph", "ade4", "viridisLite")
+                   "PLNmodels","ggraph", "tidygraph", "ade4")
 not_installed_CRAN <- setdiff(required_CRAN, rownames(installed.packages()))
 if (length(not_installed_CRAN) > 0) install.packages(not_installed_CRAN)
 ```

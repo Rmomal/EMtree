@@ -10,7 +10,6 @@ vignette: >
 library(parallel)
 library(ggraph)
 library(tidygraph)
-library(viridis)
 library(tidyr)
 library(gridExtra)
 library(RColorBrewer)
@@ -173,7 +172,7 @@ It is possible to define groups of nodes and edges with `node_groups` and `edge_
 ```{r,fig.height=4, fig.width=4}
 draw_network(net_95, title="Groups of nodes", pal_edges="gray70", 
              node_groups=sample(3,p, replace=TRUE),
-             pal_nodes=brewer.pal(3,"Dark2"),layout="stress")$G
+             pal_nodes=brewer.pal(3,"Dark2"),layout="stress", legend=TRUE)$G
 ```
 
 ```{r,fig.height=4, fig.width=4}

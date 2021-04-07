@@ -40,11 +40,12 @@ wase be deduced from the correlation matrix.}
 Update the beta weights according to the gradient ascent
 }
 \examples{
-n=30
+set.seed(1)
+n=50
 p=10
-S=5
 Y=data_from_scratch("tree",p=p,n=n)$data
-beta = matrix(1/10,10,10)
+mean.val=exp((-(p-2)*log(p))/(p-1))
+beta = matrix(mean.val, p, p);  diag(beta)=0
 psi=Psi_alpha(cor(Y), n)$psi
 FitEM = FitBeta(beta.init=beta, psi=psi, maxIter = 6, sum.weights=sum(beta))
 }

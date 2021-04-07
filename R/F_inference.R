@@ -141,11 +141,13 @@ Psi_alpha <- function(CorY, n, cond.tol=1e-10){
 #' @importFrom tibble tibble rowid_to_column
 #' @importFrom ggplot2 ggplot geom_point geom_line theme_minimal labs aes
 #' @importFrom stats optim
-#' @examples n=30
+#' @examples
+#' set.seed(1)
+#' n=50
 #' p=10
-#' S=5
 #' Y=data_from_scratch("tree",p=p,n=n)$data
-#' beta = matrix(1/10,10,10)
+#' mean.val=exp((-(p-2)*log(p))/(p-1))
+#' beta = matrix(mean.val, p, p);  diag(beta)=0
 #' psi=Psi_alpha(cor(Y), n)$psi
 #' FitEM = FitBeta(beta.init=beta, psi=psi, maxIter = 6, sum.weights=sum(beta))
 FitBeta <- function(beta.init, psi, maxIter=50, eps = 1e-6, unlinked=NULL,sum.weights){
@@ -394,7 +396,8 @@ StATS<-function(Pmat, nlambda=100, stab.thresh=0.9,plot=FALSE){
 #'}
 #'custom_resample=ResampleEMtree(simu$data,S=S,cores = 1,user_covariance_estimation=estimSigma)
 #'
-#'# We then run the stability selection to find the optimal selection frequencies, for a stability of 85%:
+#'# We then run the stability selection to find the optimal selection frequencies,
+#'# for a stability of 85%:
 #'stab_default=StATS(default_resample$Pmat, nlambda=50, stab.thresh=0.85,plot=TRUE)
 #'stab_custom=StATS(custom_resample$Pmat, nlambda=50, stab.thresh=0.85,plot=TRUE)
 #'

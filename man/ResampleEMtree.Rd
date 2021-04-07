@@ -73,7 +73,8 @@ Dum_Sigma = cov2cor(cov(counts[sample,]))
 }
 custom_resample=ResampleEMtree(simu$data,S=S,cores = 1,user_covariance_estimation=estimSigma)
 
-# We then run the stability selection to find the optimal selection frequencies, for a stability of 85\%:
+# We then run the stability selection to find the optimal selection frequencies,
+# for a stability of 85\%:
 stab_default=StATS(default_resample$Pmat, nlambda=50, stab.thresh=0.85,plot=TRUE)
 stab_custom=StATS(custom_resample$Pmat, nlambda=50, stab.thresh=0.85,plot=TRUE)
 

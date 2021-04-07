@@ -22,9 +22,7 @@ Imports:
     tidygraph,
     tidyr,
     vegan,
-    viridisLite,
     ade4,
-    viridis,
     gridExtra
 Suggests: 
     testthat (>= 2.1.0),

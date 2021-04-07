@@ -22,7 +22,9 @@ draw_network(
   node_groups = NULL,
   edge_groups = NULL,
   legend = FALSE,
-  pos = "bottom"
+  leg.pos = "bottom",
+  title.family = "sans",
+  title.size = 12
 )
 }
 \arguments{
@@ -60,18 +62,27 @@ draw_network(
 
 \item{legend}{optional boolean for generating a legend when groups are provided}
 
-\item{pos}{optional legend position ("bottom", "top", "right" or "left")}
+\item{leg.pos}{optional legend position ("bottom", "top", "right" or "left")}
+
+\item{title.family}{font family of the title}
+
+\item{title.size}{font size of the title}
 }
 \value{
 \itemize{
 \item{G} {the network as a ggplot2 object, with highlighted high betweenness nodes}
 \item{graph_data}{ data needed for plotting the network}
+\item{legend}{ ggplot2 information about the legend}
 }
 }
 \description{
 Plots a network
 }
 \examples{
-adj_matrix= SimCluster(20,2,0.4, 10)
-draw_network(adj_matrix,"Cluster graph", layout="stress", shade=TRUE)
+set.seed(1)
+adj_matrix= SimCluster(p=20,k=2,dens=0.5, r=10)
+groups=sample(3,20, replace=TRUE)
+draw_network(adj_matrix,"Cluster graph", layout="stress", shade=TRUE, btw_rank=3)$G
+draw_network(adj_matrix,"Cluster with groups of nodes", layout="stress", shade=TRUE, btw_rank=3,
+node_groups=groups, legend=TRUE,title.family="mono",title.size=12)$G
 }

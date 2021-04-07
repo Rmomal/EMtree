@@ -19,10 +19,13 @@
 #' @param node_groups optional vector separating the nodes into groups
 #' @param edge_groups optional matrix specifying groups of edges
 #' @param legend optional boolean for generating a legend when groups are provided
-#' @param pos optional legend position ("bottom", "top", "right" or "left")
+#' @param leg.pos optional legend position ("bottom", "top", "right" or "left")
+#' @param title.family font family of the title
+#' @param title.size font size of the title
 #' @return \itemize{
 #' \item{G} {the network as a ggplot2 object, with highlighted high betweenness nodes}
 #' \item{graph_data}{ data needed for plotting the network}
+#' \item{legend}{ ggplot2 information about the legend}
 #' }
 #' @export
 #' @importFrom tidygraph .N as_tbl_graph activate centrality_betweenness centrality_degree edge_is_incident
@@ -30,14 +33,19 @@
 #' @importFrom tibble tibble rownames_to_column
 #' @importFrom ggplot2 aes theme labs scale_color_manual scale_size_manual ggplot_gtable ggplot_build element_text
 #' @importFrom dplyr mutate filter
-#' @importFrom viridisLite viridis
 #' @importFrom tibble as_tibble
 #' @importFrom gridExtra grid.arrange
-#' @examples adj_matrix= SimCluster(20,2,0.4, 10)
-#' draw_network(adj_matrix,"Cluster graph", layout="stress", shade=TRUE)
+#' @examples
+#' set.seed(1)
+#' adj_matrix= SimCluster(p=20,k=2,dens=0.5, r=10)
+#' groups=sample(3,20, replace=TRUE)
+#' draw_network(adj_matrix,"Cluster graph", layout="stress", shade=TRUE, btw_rank=3)$G
+#' draw_network(adj_matrix,"Cluster with groups of nodes", layout="stress", shade=TRUE, btw_rank=3,
+#' node_groups=groups, legend=TRUE,title.family="mono",title.size=12)$G
 draw_network<-function(adj_matrix,title="", label_size=4, curv=0,width=1, shade=FALSE, remove_isolated=FALSE,btw_rank=2,
                        layout=NULL,stored_layout=NULL,nodes_label=NULL,nodes_size=c(2,5),pal_edges=NULL, pal_nodes=NULL,
-                       node_groups=NULL, edge_groups=NULL,legend=FALSE, pos="bottom"){
+                       node_groups=NULL, edge_groups=NULL,legend=FALSE, leg.pos="bottom",
+                       title.family="sans",title.size=12){
   adj_matrix=as.matrix(adj_matrix)
   p=nrow(adj_matrix) ; binary=FALSE
 
@@ -53,7 +61,11 @@ draw_network<-function(adj_matrix,title="", label_size=4, curv=0,width=1, shade=
   min.width=ifelse(binary,0,0.1)
   #edges colour
 if(is.null(pal_edges)){
-  pal_edges=viridisLite::viridis(5, option = "C")[c(3,2,4,1)][1:length(unique(edge_groups))]
+  ncol_e=length(unique(edge_groups))
+  if(ncol_e<5){
+    pal_edges=c("#31374f","#1F968BFF","#B8DE29FF","de7065ff")[1:ncol_e]
+  }else{stop("Please fill the pal_edges parameter")}
+
 }
   #betweenness computations
 
@@ -90,8 +102,8 @@ if(is.null(pal_edges)){
   }
 
   #draw graph
-  set_graph_style(family="sans")
-  layout = ifelse(is.null(layout), "circle", layout)
+  set_graph_style(title.family)
+  layout = ifelse(is.null(layout), "nicely", layout)
 
   if(is.null(stored_layout)){
     finallayout=create_layout(res,layout=layout)
@@ -120,20 +132,21 @@ if(is.null(pal_edges)){
     geom_node_text(aes(label = label), color = "black", size = label_size) +#,nudge_x = 0.3
     labs(title = title) + theme(plot.title = ggplot2::element_text(
       hjust=0.5,
-      family = "Helvetica",
-      size = 12 ))+
+      family = title.family,
+      size = title.size ),
+      legend.position=leg.pos)+
     scale_edge_width_continuous(range=c(min.width,width))
 leg=NULL
   if(!is.null(node_groups) & legend ){#add legend if groups provided
     tmp=ggplot(data.frame(node_groups=as.factor(node_groups), row1=adj_matrix[1,], row2=adj_matrix[2,]),
                aes(row1, row2, color=node_groups))+
-      geom_point()+scale_color_manual("",values=pal_nodes)+theme(legend.position=pos)
+      geom_point()+scale_color_manual("",values=pal_nodes)+theme(legend.position=leg.pos)
     tmp <- ggplot_gtable(ggplot_build(tmp))
     leg <- tmp$grobs[[which(sapply(tmp$grobs, function(x) x$name) == "guide-box")]]
 
   }
 
-  return(list(G=g,legend=leg,graph_data=res))
+  return(list(G=g,graph_data=res,legend=leg))
 }
 
 utils::globalVariables(c("edges", "weight", "nodes", "btw.weights", "btw",

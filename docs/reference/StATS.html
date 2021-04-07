@@ -174,21 +174,21 @@
 <span class='co'>#With default evaluation, using the PLNmodel paradigm:</span>
 <span class='va'>default_resample</span><span class='op'>=</span><span class='fu'><a href='ResampleEMtree.html'>ResampleEMtree</a></span><span class='op'>(</span><span class='va'>simu</span><span class='op'>$</span><span class='va'>data</span>, S<span class='op'>=</span><span class='va'>S</span>, cores <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; Computing 15 probability matrices with 1 core(s)... 
-#&gt; Convergence took 0.25 secs  and  30  iterations.
+#&gt; Convergence took 0.17 secs  and  30  iterations.
 #&gt; Convergence took 0.18 secs  and  21  iterations.
+#&gt; Convergence took 0.2 secs  and  30  iterations.
+#&gt; Convergence took 0.2 secs  and  30  iterations.
+#&gt; Convergence took 0.27 secs  and  18  iterations.
+#&gt; Convergence took 0.18 secs  and  30  iterations.
 #&gt; Convergence took 0.27 secs  and  30  iterations.
-#&gt; Convergence took 0.22 secs  and  30  iterations.
-#&gt; Convergence took 0.16 secs  and  18  iterations.
-#&gt; Convergence took 0.21 secs  and  30  iterations.
 #&gt; Convergence took 0.2 secs  and  30  iterations.
+#&gt; Convergence took 0.18 secs  and  30  iterations.
 #&gt; Convergence took 0.19 secs  and  30  iterations.
-#&gt; Convergence took 0.21 secs  and  30  iterations.
+#&gt; Convergence took 0.18 secs  and  15  iterations.
+#&gt; Convergence took 0.17 secs  and  30  iterations.
+#&gt; Convergence took 0.25 secs  and  30  iterations.
 #&gt; Convergence took 0.2 secs  and  30  iterations.
-#&gt; Convergence took 0.14 secs  and  15  iterations.
-#&gt; Convergence took 0.16 secs  and  30  iterations.
-#&gt; Convergence took 0.22 secs  and  30  iterations.
-#&gt; Convergence took 0.2 secs  and  30  iterations.
-#&gt; Convergence took 0.15 secs  and  23  iterations.3.08 secs </div><div class='input'><span class='va'>stab_selection</span><span class='op'>=</span><span class='fu'>StATS</span><span class='op'>(</span><span class='va'>default_resample</span><span class='op'>$</span><span class='va'>Pmat</span>, nlambda<span class='op'>=</span><span class='fl'>50</span>, stab.thresh<span class='op'>=</span><span class='fl'>0.9</span>,plot<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+#&gt; Convergence took 0.15 secs  and  23  iterations.3.12 secs </div><div class='input'><span class='va'>stab_selection</span><span class='op'>=</span><span class='fu'>StATS</span><span class='op'>(</span><span class='va'>default_resample</span><span class='op'>$</span><span class='va'>Pmat</span>, nlambda<span class='op'>=</span><span class='fl'>50</span>, stab.thresh<span class='op'>=</span><span class='fl'>0.9</span>,plot<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
 </div><div class='img'><img src='StATS-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='co'>#Check quality of result</span>
 <span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span><span class='op'>(</span>pred<span class='op'>=</span><span class='fl'>1</span><span class='op'>*</span><span class='op'>(</span><span class='va'>stab_selection</span><span class='op'>$</span><span class='va'>freqs_opt</span><span class='op'>&gt;</span><span class='fl'>0.9</span><span class='op'>)</span>, truth<span class='op'>=</span><span class='fu'><a href='ToVec.html'>ToVec</a></span><span class='op'>(</span><span class='va'>G</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;     truth
