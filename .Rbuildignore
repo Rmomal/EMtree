@@ -1,7 +1,6 @@
 ^README\.Rmd$
 ^.*\.Rproj$
 ^\.Rproj\.user$
-^\.travis\.yml$
 ^renv$
 ^renv\.lock$
 ^_pkgdown\.yml$
@@ -9,3 +8,4 @@
 ^pkgdown$
 ^codecov\.yml$
 ^dev_history\.R$
+^\.github$

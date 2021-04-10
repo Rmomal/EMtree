@@ -25,11 +25,11 @@ data_from_scratch(
 
 \item{n}{wanted number of rows (samples/observations)}
 
-\item{r}{within/between connectiviy ratio for cluster graphs}
+\item{r}{within/between connectivity ratio for cluster graphs}
 
 \item{covariates}{a data.frame or matrix containing data covariates.}
 
-\item{dens}{density of edges for cluster graphs or edge probability for erdos graphs}
+\item{dens}{density of edges for cluster graphs or edge probability for Erdös graphs}
 
 \item{k}{number of groups for the cluster structure.}
 
@@ -53,7 +53,7 @@ Simulates data under the PLN model with control on the dependency structure
 }
 \examples{
 set.seed(1)
-p=30
+p<-30
 Y1<-data_from_scratch("tree",p=p,draw=TRUE)
 str(Y1)
 Y2<-data_from_scratch("cluster",p=p,r=10, dens=10/p, k=3,draw=TRUE)

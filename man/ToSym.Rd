@@ -7,7 +7,7 @@
 ToSym(A.vec)
 }
 \arguments{
-\item{A.vec}{Vector obtain with ToVec or the upper.tri() function.}
+\item{A.vec}{Vector obtain with ToVec or the `upper.tri()` function.}
 }
 \value{
 The symmetric matrix with A.vec as off-diagonal terms.

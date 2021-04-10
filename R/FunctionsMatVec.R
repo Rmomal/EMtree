@@ -6,15 +6,15 @@
 
 #' Makes a symmetric matrix from the vector made of its upper triangular part
 #'
-#' @param A.vec Vector obtain with ToVec or the upper.tri() function.
+#' @param A.vec Vector obtain with ToVec or the `upper.tri()` function.
 #'
 #' @return The symmetric matrix with A.vec as off-diagonal terms.
 #' @export
 ToSym <- function(A.vec){
-   n = (1+sqrt(1+8*length(A.vec)))/2
-   A.mat = matrix(0, n, n)
-   A.mat[upper.tri(A.mat)] = A.vec
-   A.mat = A.mat + t(A.mat)
+   n <- (1+sqrt(1+8*length(A.vec)))/2
+   A.mat <- matrix(0, n, n)
+   A.mat[upper.tri(A.mat)] <- A.vec
+   A.mat <- A.mat + t(A.mat)
    return(A.mat)
 }
 
@@ -26,7 +26,7 @@ ToSym <- function(A.vec){
 #' @return The vector from the upper triangular part of A.mat.
 #' @export
 ToVec <- function(A.mat){
-   return(A.mat[upper.tri(A.mat)])
+   return(suppressMessages(A.mat[upper.tri(A.mat)]))
 }
 
 

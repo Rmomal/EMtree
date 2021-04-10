@@ -7,11 +7,11 @@
 Psi_alpha(CorY, n, cond.tol = 1e-10)
 }
 \arguments{
-\item{CorY}{Correlation matrix of dimensoins p x p with p the number of species for example.}
+\item{CorY}{Correlation matrix of dimensions p x p with p the number of species for example.}
 
 \item{n}{number of samples}
 
-\item{cond.tol}{tolerance for the matrix conditionment, which is here the ratio of the absolute values of minimal eigen value on maximal eigen value}
+\item{cond.tol}{tolerance for the matrix condition number.}
 }
 \value{
 \itemize{

@@ -13,7 +13,7 @@ Laplacian <- function(W){
 }
 
 
-#' Summing over trees (Matrix-tree thm)
+#' Summing over trees (Matrix Tree Theorem)
 #'
 #' @param W Squared weight matrix
 #'
@@ -38,16 +38,16 @@ SumTree <- function(W){
 #' Meila(W)
 Meila <- function(W){
   if(!isSymmetric(W)){cat('Pb: W non symmetric!')}
-  p = nrow(W) ; index=1
-  L = Laplacian(W)[-index,-index]
-  Mei =solve(L)
-  Mei = rbind(c(0, diag(Mei)),
+  p <- nrow(W) ; index<-1
+  L <- Laplacian(W)[-index,-index]
+  Mei <-solve(L)
+  Mei <- rbind(c(0, diag(Mei)),
               cbind(diag(Mei),
-                    (diag(Mei) %o% rep(1, p - 1) + rep(1, p - 1) %o% diag(Mei) - 2 * Mei)
+                    (diag(Mei) %o% rep(1, p - 1) +
+                       rep(1, p - 1) %o% diag(Mei) - 2 * Mei)
               )
   )
-  Mei = 0.5 * (Mei + t(Mei))
-
+  Mei<- 0.5 * (Mei + t(Mei))
   return(Mei)
 }
 
@@ -62,15 +62,17 @@ Meila <- function(W){
 Kirshner<-function(W){
   # W = squared weight matrix
   # Kirshner (07) formulas
-  p = nrow(W)
-  L = Laplacian(W)[-1,-1]
-  #no need for gmp improved capacity thanks to the adaptive conditioning of psi and beta
-  Q=solve(L)
-  Q = rbind(c(0, diag(Q)),
-            cbind(diag(Q), (diag(Q)%o%rep(1, p-1) + rep(1, p-1)%o%diag(Q) - 2*Q)))
-  Q = .5*(Q + t(Q))
-  P = W * Q
-  P = .5*(P + t(P))
+  p <- nrow(W)
+  L <- Laplacian(W)[-1,-1]
+  #no need for gmp improved capacity thanks to the adaptive
+  # conditioning of psi and beta
+  Q<-solve(L)
+  Q <- rbind(c(0, diag(Q)),
+            cbind(diag(Q), (diag(Q)%o%rep(1, p-1) +
+                              rep(1, p-1)%o%diag(Q) - 2*Q)))
+  Q <- .5*(Q + t(Q))
+  P <- W * Q
+  P <- .5*(P + t(P))
   return(P)
 }
 
@@ -80,42 +82,42 @@ Kirshner<-function(W){
 #' @param W squared weight matrix
 #' @param verbatim controls verbosity
 #'
-#' @return Edges conditional probabilities computed directly, without using the Kirshner function.
+#' @return Edges conditional probabilities computed directly,
+#' without using the Kirshner function.
 #' @export
 #'
 #' @examples W = matrix(c(1,1,3,1,1,1,3,1,1),3,3,byrow=TRUE)
 #' EdgeProba(W)
 EdgeProba <- function(W, verbatim=FALSE){
-  it=-1
-  Wcum = SumTree(W)
+  it<--1
+  Wcum <- SumTree(W)
   if(!isSymmetric(W)){cat('Pb: W non symmpetric!')}
   while(!is.finite(Wcum)){
     #handles numerical issues with matrix tree theorem
-    it=it+1
-    borne=30-it
+    it<-it+1
+    borne<-30-it
    if(verbatim) message(cat("W corrected, bound=",borne))
-
-    W.log=log(ToVec(W))
-    W.center=W.log-mean(W.log)
-    W.center[which(W.center<(-borne))]=-borne
-    W=ToSym(exp(W.center))
-    Wcum = SumTree(W)
+    W.log<-log(ToVec(W))
+    W.center<-W.log-mean(W.log)
+    W.center[which(W.center<(-borne))]<--borne
+    W<-ToSym(exp(W.center))
+    Wcum <- SumTree(W)
   }
 
-  p = nrow(W); P = matrix(0, p, p)
+  p <- nrow(W); P <- matrix(0, p, p)
   #core of computation
-  sapply(1:(p-1),
+  invisible(lapply(1:(p-1),
          function(j){
-           sapply((j+1):p,
-                  function(k){
-                    W_jk = W; W_jk[j, k] = W_jk[k, j] = 0 #kills kj edge in W_kj
+          invisible(lapply((j+1):p,
+                  function(k){#kills kj edge in W_kj
+                    W_jk <- W; W_jk[j, k] <- W_jk[k, j] <- 0
                     P[k, j] <<- 1 - SumTree(W_jk) / Wcum
                     P[j, k] <<- P[k, j]
                   }
-           )
+           ))
          }
-  )
-  P[which(P<1e-10)]=1e-10
-  diag(P)=0
+  ))
+  P[which(P<1e-10)]<-1e-10
+  diag(P)<-0
   return(P)
 }

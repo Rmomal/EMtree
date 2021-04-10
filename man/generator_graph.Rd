@@ -11,7 +11,7 @@ generator_graph(p = 20, graph = "tree", dens = 0.3, r = 2, k = 3)
 
 \item{graph}{type of graph, among "tree","scale-free","cluster" and "erdos"}
 
-\item{dens}{graph density (for cluster graphs) or edges probability (for erdös-renyi graphs)}
+\item{dens}{graph density (for cluster graphs) or edges probability (for Erdös-Renyi graphs)}
 
 \item{r}{within/between ratio connection probability (needed for cluster graphs)}
 

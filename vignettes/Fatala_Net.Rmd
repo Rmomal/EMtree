@@ -43,7 +43,7 @@ table(X$date, X$site)
 
 ### Basic model
 
-When dealing with abundance data, most modelling approaches switch back to the Gaussian space using different methods. EMtree is an inference procedure which only requires an estimate of a Gaussian covariance matrix, and can be used with any model which either use Gaussian latent variables, Gaussian copulas, or Gaussian data transformations.
+When dealing with abundance data, most modeling approaches switch back to the Gaussian space using different methods. EMtree is an inference procedure which only requires an estimate of a Gaussian covariance matrix, and can be used with any model which either use Gaussian latent variables, Gaussian copulas, or Gaussian data transformations.
 
 The Poisson log-normal model, implemented and estimated in the `PLNmodels` package, is easy to use and can handle both covariates and offsets efficiently. Details on covariates and offsets specification can be found [here](https://pln-team.github.io/PLNmodels/articles/PLN.html). For this example we use PLNmodels, however the user is free to provide a Gaussian correlation estimate as an input.
 
@@ -56,7 +56,7 @@ PLNfit<-PLN(Y ~ X$site)
 
 
 
-And then run EMtree as follows:
+And then run `EMtree()` as follows:
 
 ```{r output}
 library(EMtree)
@@ -78,7 +78,7 @@ To obtain a network and select edges, we resort to a stability selection strateg
 
 ### Stability selection
 
-The function `ResampleEMtree()` implements a stability selection of EMtree on S sub-samples. This function uses parallel computations with `mclapply()`.  The `Pmat` output gathers all the inferred edges probabilities for each sub-sample ; it is a stack of each `ToVec(EMtreeFit$edges_prob)`.
+The function `ResampleEMtree()` implements a stability selection of `EMtree()` on S sub-samples. This function uses parallel computations with `mclapply()`.  The `Pmat` output gathers all the inferred edges probabilities for each sub-sample ; it is a stack of each `ToVec(EMtreeFit$edges_prob)`.
 ```{r, cache=TRUE}
 ResampEmtreeFit<-ResampleEMtree(counts=Y, covar_matrix = X$site , S=5, maxIter=10,cond.tol=1e-8, cores=1)
 str(ResampEmtreeFit)
@@ -129,7 +129,7 @@ net_50=ToSym(1*(stab_selection$freqs_opt>0.5))
 net_95=ToSym(1*(stab_selection$freqs_opt>0.95))
 ```
 
-The function `draw_network()` takes a possibly weighted adjacency matrix as input, and represents a network with edges widths proportional to the input weights. Several layouts are available (among which nicely, kk, fr, circle, stress... See igraph documentation or this [blogpost](https://cran.r-project.org/web/packages/ggraph/vignettes/Layouts.html)). Highlighting of nodes possessing among the highest betweenness centrality measure is done with the parameter `btw_rank`. To disable this functionality, just set `btw_rank=1`.
+The function `draw_network()` takes a possibly weighted adjacency matrix as input, and represents a network with edges widths proportional to the input weights. Several layouts are available (among which nicely, kk, fr, circle, stress... See igraph documentation or this [blog post](https://cran.r-project.org/web/packages/ggraph/vignettes/Layouts.html)). Highlighting of nodes possessing among the highest betweenness centrality measure is done with the parameter `btw_rank`. To disable this functionality, just set `btw_rank=1`.
 
 `shade=TRUE` lowers the opacity of edges not linked to a highlighted node. This allows to better see the direct neighborhood of important nodes.
 

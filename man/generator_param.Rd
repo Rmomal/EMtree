@@ -18,14 +18,14 @@ a list containing
 \itemize{
  \item{sigma: }{the covariance matrix}
  \item{omega: }{the precision matrix}
- \item{cste: }{the constant that was needed to load the diagonal of omega and esure its positive definitiveness}
+ \item{lambda: }{the constant that was needed to load the diagonal of omega and ensure its positive definiteness}
 }
 }
 \description{
 Generate simulation parameters from a graph adjacency matrix
 }
 \examples{
-G=generator_graph(p=10,graph="tree")
+G<-generator_graph(p=10,graph="tree")
 generator_param(G=G)
 
 }

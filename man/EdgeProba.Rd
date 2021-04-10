@@ -12,7 +12,8 @@ EdgeProba(W, verbatim = FALSE)
 \item{verbatim}{controls verbosity}
 }
 \value{
-Edges conditional probabilities computed directly, without using the Kirshner function.
+Edges conditional probabilities computed directly,
+without using the Kirshner function.
 }
 \description{
 Computing edge probabilities

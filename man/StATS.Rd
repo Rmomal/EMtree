@@ -7,7 +7,7 @@
 StATS(Pmat, nlambda = 100, stab.thresh = 0.9, plot = FALSE)
 }
 \arguments{
-\item{Pmat}{Pmat output from the ResampleEmtree() function}
+\item{Pmat}{Pmat output from the `ResampleEMtree()` function}
 
 \item{nlambda}{Number of probability thresholds to look at}
 

@@ -3,8 +3,8 @@
 
 # EMtree
 
-[![Travis build
-status](https://travis-ci.org/Rmomal/EMtree.svg?branch=master)](https://travis-ci.org/Rmomal/EMtree)
+[![R build
+status](https://github.com/Rmomal/EMtree/workflows/R-CMD-check/badge.svg)](https://github.com/Rmomal/EMtree/actions)
 [![Codecov test
 coverage](https://codecov.io/gh/Rmomal/EMtree/branch/master/graph/badge.svg)](https://codecov.io/gh/Rmomal/EMtree?branch=master)
 [![DOI](https://zenodo.org/badge/166967948.svg)](https://zenodo.org/badge/latestdoi/166967948)
@@ -14,7 +14,7 @@ coverage](https://codecov.io/gh/Rmomal/EMtree/branch/master/graph/badge.svg)](ht
 > al.*](https://besjournals.onlinelibrary.wiley.com/doi/abs/10.1111/2041-210X.13380).
 > This package uses averages over spanning trees within an
 > Expectation-Maximization algorithm to infer conditional dependence
-> networks, and involves plotting funcitonalities (using `ggraph` and
+> networks, and involves plotting functionalities (using `ggraph` and
 > `tydigraph`).
 
 By default, it uses the Poisson log-Normal Model
@@ -50,7 +50,6 @@ devtools::install_github("Rmomal/EMtree")
 
 Please cite our work using the following reference:
 
-  - Momal, Raphaëlle, Stéphane Robin, and Christophe Ambroise.
-    “Tree‐based inference of species interaction networks from
-    abundance data.” *Methods in Ecology and Evolution* 11.5 (2020):
-    621-632.
+  - Momal, R., Robin, S., & Ambroise, C. (2020). Tree‐based inference of
+    species interaction networks from abundance data. *Methods in
+    Ecology and Evolution*, 11(5), 621-632.

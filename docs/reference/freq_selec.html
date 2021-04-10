@@ -124,7 +124,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Computes edges selection frequency after resampling procedure</h1>
-    
+    <small class="dont-index">Source: <a href='https://github.com/Rmomal/EMtree/blob/master/R/F_inference.R'><code>R/F_inference.R</code></a></small>
     <div class="hidden name"><code>freq_selec.Rd</code></div>
     </div>
 
@@ -139,11 +139,11 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>Pmat</th>
-      <td><p>matrix gathering edgges probability, with dimensions number of resamples x number of possible edges. Typically the Pmat output of ResampleEMtree()</p></td>
+      <td><p>matrix gathering edges probability, with dimensions number of resamples x number of possible edges. Typically the Pmat output of `ResampleEMtree()`.</p></td>
     </tr>
     <tr>
       <th>Pt</th>
-      <td><p>edges probabilty threshold</p></td>
+      <td><p>edges probability threshold</p></td>
     </tr>
     </table>
 
@@ -158,11 +158,11 @@
 <span class='va'>Y</span><span class='op'>=</span><span class='fu'><a href='data_from_scratch.html'>data_from_scratch</a></span><span class='op'>(</span><span class='st'>"tree"</span>,p<span class='op'>=</span><span class='va'>p</span><span class='op'>)</span><span class='op'>$</span><span class='va'>data</span>
 <span class='va'>resample_prob</span><span class='op'>=</span><span class='fu'><a href='ResampleEMtree.html'>ResampleEMtree</a></span><span class='op'>(</span><span class='va'>Y</span>, S<span class='op'>=</span><span class='va'>S</span>,cores <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span><span class='op'>$</span><span class='va'>Pmat</span>
 </div><div class='output co'>#&gt; Computing 5 probability matrices with 1 core(s)... 
-#&gt; Convergence took 0.15 secs  and  25  iterations.
-#&gt; Convergence took 0.07 secs  and  11  iterations.
-#&gt; Convergence took 0.13 secs  and  26  iterations.
-#&gt; Convergence took 0.09 secs  and  12  iterations.
-#&gt; Convergence took 0.04 secs  and  5  iterations.0.5 secs </div><div class='input'><span class='va'>edges_freq</span><span class='op'>&lt;-</span><span class='fu'>freq_selec</span><span class='op'>(</span><span class='va'>resample_prob</span>,Pt<span class='op'>=</span><span class='fl'>0.3</span><span class='op'>)</span>
+#&gt; Convergence took 0.24 secs  and  25  iterations.
+#&gt; Convergence took 0.11 secs  and  11  iterations.
+#&gt; Convergence took 0.16 secs  and  26  iterations.
+#&gt; Convergence took 0.1 secs  and  12  iterations.
+#&gt; Convergence took 0.05 secs  and  5  iterations.0.69 secs </div><div class='input'><span class='va'>edges_freq</span><span class='op'>&lt;-</span><span class='fu'>freq_selec</span><span class='op'>(</span><span class='va'>resample_prob</span>,Pt<span class='op'>=</span><span class='fl'>0.3</span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>edges_freq</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;  num [1:10, 1:10] 0 0.2 1 0 1 0 0.2 0 0.2 0 ...</div></pre>
   </div>
@@ -176,7 +176,7 @@
 
       <footer>
       <div class="copyright">
-  <p>Developed by Raphaëlle Momal.</p>
+  <p>Developed by Raphaelle Momal.</p>
 </div>
 
 <div class="pkgdown">

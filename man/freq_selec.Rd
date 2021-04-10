@@ -7,9 +7,9 @@
 freq_selec(Pmat, Pt)
 }
 \arguments{
-\item{Pmat}{matrix gathering edgges probability, with dimensions number of resamples x number of possible edges. Typically the Pmat output of ResampleEMtree()}
+\item{Pmat}{matrix gathering edges probability, with dimensions number of resamples x number of possible edges. Typically the Pmat output of `ResampleEMtree()`.}
 
-\item{Pt}{edges probabilty threshold}
+\item{Pt}{edges probability threshold}
 }
 \value{
 p x p matrix of edges selection frequency

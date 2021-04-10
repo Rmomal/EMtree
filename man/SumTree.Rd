@@ -2,7 +2,7 @@
 % Please edit documentation in R/FunctionsTree.R
 \name{SumTree}
 \alias{SumTree}
-\title{Summing over trees (Matrix-tree thm)}
+\title{Summing over trees (Matrix Tree Theorem)}
 \usage{
 SumTree(W)
 }
@@ -13,7 +13,7 @@ SumTree(W)
 The number of total possible spanning trees
 }
 \description{
-Summing over trees (Matrix-tree thm)
+Summing over trees (Matrix Tree Theorem)
 }
 \examples{
 uniformeW=matrix(1,3,3)

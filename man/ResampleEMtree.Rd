@@ -42,7 +42,7 @@ ResampleEMtree(
 
 \item{cores}{Number of cores, can be greater than 1 if data involves less than about 32 species.}
 
-\item{init}{boolean: should the resmapling be carried out with different initial points (TRUE), or with different initial data (FALSE)}
+\item{init}{boolean: should the resampling be carried out with different initial points (TRUE), or with different initial data (FALSE)}
 }
 \value{
 Returns a list which contains the Pmat data.frame, and vectors of EMtree maximum iterations and running times in each
@@ -57,10 +57,9 @@ resampling.
 Resampling procedure for  edges probability
 }
 \examples{
-
 n=100
-p=15
-S=10
+p=12
+S=5
 set.seed(2021)
 simu=data_from_scratch("erdos",p=p,n=n)
 G=1*(simu$omega!=0) ; diag(G) = 0
@@ -75,8 +74,8 @@ custom_resample=ResampleEMtree(simu$data,S=S,cores = 1,user_covariance_estimatio
 
 # We then run the stability selection to find the optimal selection frequencies,
 # for a stability of 85\%:
-stab_default=StATS(default_resample$Pmat, nlambda=50, stab.thresh=0.85,plot=TRUE)
-stab_custom=StATS(custom_resample$Pmat, nlambda=50, stab.thresh=0.85,plot=TRUE)
+stab_default=StATS(default_resample$Pmat, nlambda=50, stab.thresh=0.8,plot=TRUE)
+stab_custom=StATS(custom_resample$Pmat, nlambda=50, stab.thresh=0.8,plot=TRUE)
 
 #Check quality of result
 table(pred=1*(stab_default$freqs_opt>0.9), truth=ToVec(G))

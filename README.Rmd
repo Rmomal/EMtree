@@ -13,11 +13,11 @@ knitr::opts_chunk$set(
 ```
 # EMtree
 
-[![Travis build status](https://travis-ci.org/Rmomal/EMtree.svg?branch=master)](https://travis-ci.org/Rmomal/EMtree)
+[![R build status](https://github.com/Rmomal/EMtree/workflows/R-CMD-check/badge.svg)](https://github.com/Rmomal/EMtree/actions)
 [![Codecov test coverage](https://codecov.io/gh/Rmomal/EMtree/branch/master/graph/badge.svg)](https://codecov.io/gh/Rmomal/EMtree?branch=master)
 [![DOI](https://zenodo.org/badge/166967948.svg)](https://zenodo.org/badge/latestdoi/166967948)
 
-> `EMtree` infers direct species association networks, implementing the procedure described in [Momal *et al.*](https://besjournals.onlinelibrary.wiley.com/doi/abs/10.1111/2041-210X.13380). This package uses averages over spanning trees within an Expectation-Maximization algorithm to infer conditional dependence networks, and involves plotting funcitonalities (using `ggraph` and `tydigraph`). 
+> `EMtree` infers direct species association networks, implementing the procedure described in [Momal *et al.*](https://besjournals.onlinelibrary.wiley.com/doi/abs/10.1111/2041-210X.13380). This package uses averages over spanning trees within an Expectation-Maximization algorithm to infer conditional dependence networks, and involves plotting functionalities (using `ggraph` and `tydigraph`). 
 
 By default, it uses the Poisson log-Normal Model ([PLNmodels](https://github.com/jchiquet/PLNmodels>)) to accommodate abundance data. However, EMtree is an inference method which only requires an estimate of a Gaussian covariance matrix, and can be used with any model which either use Gaussian latent variables, Gaussian copulas, or Gaussian data transformations.
 
@@ -45,5 +45,5 @@ devtools::install_github("Rmomal/EMtree")
 ## Reference
 Please cite our work using the following reference:
 
-- Momal, Raphaëlle, Stéphane Robin, and Christophe Ambroise. "Tree‐based inference of species interaction networks from abundance data." *Methods in Ecology and Evolution* 11.5 (2020): 621-632.
+- Momal, R., Robin, S., & Ambroise, C. (2020). Tree‐based inference of species interaction networks from abundance data. *Methods in Ecology and Evolution*, 11(5), 621-632.
 

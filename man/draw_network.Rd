@@ -44,7 +44,7 @@ draw_network(
 
 \item{btw_rank}{betweenness rank +1 of highlighted nodes. If set to 1, none are highlighted.}
 
-\item{layout}{optional ggraph layout.}
+\item{layout}{optional layout from `ggraph` or `ìgraph` package.}
 
 \item{stored_layout}{optional data.frame of point positions from a previous graph, possibly created using ggraph::create_layout()}
 
@@ -82,7 +82,9 @@ Plots a network
 set.seed(1)
 adj_matrix= SimCluster(p=20,k=2,dens=0.5, r=10)
 groups=sample(3,20, replace=TRUE)
-draw_network(adj_matrix,"Cluster graph", layout="stress", shade=TRUE, btw_rank=3)$G
-draw_network(adj_matrix,"Cluster with groups of nodes", layout="stress", shade=TRUE, btw_rank=3,
+draw_network(adj_matrix,"Cluster graph", layout="stress",
+shade=TRUE, btw_rank=3)$G
+draw_network(adj_matrix,"Cluster with groups of nodes",
+layout="stress", shade=TRUE, btw_rank=3,
 node_groups=groups, legend=TRUE,title.family="mono",title.size=12)$G
 }

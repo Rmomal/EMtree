@@ -17,7 +17,7 @@ FitBeta(
 \item{beta.init}{Initial beta weight matrix}
 
 \item{psi}{Psi matrix, filled with ratios of bivariate probabilities over marginals, which can in the Gaussian
-wase be deduced from the correlation matrix.}
+case be deduced from the correlation matrix.}
 
 \item{maxIter}{Maximum number of iterations}
 
