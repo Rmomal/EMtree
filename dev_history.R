@@ -52,3 +52,4 @@ results$cran_summary()
 usethis::use_cran_comments()
 
 devtools::check_win_devel()
+usethis::use_news_md(open = rlang::is_interactive())
