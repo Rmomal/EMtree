@@ -80,7 +80,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a>
-    <span class="fa fa-home"></span>
+    <span class="fas fa-home"></span>
      
   </a>
 </li>
@@ -106,7 +106,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/Rmomal/EMtree">
-    <span class="fa fa-github"></span>
+    <span class="fas fa-github"></span>
      
   </a>
 </li>
@@ -124,7 +124,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Plots a network</h1>
-    
+    <small class="dont-index">Source: <a href='https://github.com/Rmomal/EMtree/blob/master/R/F_Graphs.R'><code>R/F_Graphs.R</code></a></small>
     <div class="hidden name"><code>draw_network.Rd</code></div>
     </div>
 
@@ -192,7 +192,7 @@
     </tr>
     <tr>
       <th>layout</th>
-      <td><p>optional ggraph layout.</p></td>
+      <td><p>optional layout from `ggraph` or `ìgraph` package.</p></td>
     </tr>
     <tr>
       <th>stored_layout</th>
@@ -254,8 +254,10 @@
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>)</span>
 <span class='va'>adj_matrix</span><span class='op'>=</span> <span class='fu'><a href='SimCluster.html'>SimCluster</a></span><span class='op'>(</span>p<span class='op'>=</span><span class='fl'>20</span>,k<span class='op'>=</span><span class='fl'>2</span>,dens<span class='op'>=</span><span class='fl'>0.5</span>, r<span class='op'>=</span><span class='fl'>10</span><span class='op'>)</span>
 <span class='va'>groups</span><span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='fl'>3</span>,<span class='fl'>20</span>, replace<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
-<span class='fu'>draw_network</span><span class='op'>(</span><span class='va'>adj_matrix</span>,<span class='st'>"Cluster graph"</span>, layout<span class='op'>=</span><span class='st'>"stress"</span>, shade<span class='op'>=</span><span class='cn'>TRUE</span>, btw_rank<span class='op'>=</span><span class='fl'>3</span><span class='op'>)</span><span class='op'>$</span><span class='va'>G</span>
-</div><div class='img'><img src='draw_network-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>draw_network</span><span class='op'>(</span><span class='va'>adj_matrix</span>,<span class='st'>"Cluster with groups of nodes"</span>, layout<span class='op'>=</span><span class='st'>"stress"</span>, shade<span class='op'>=</span><span class='cn'>TRUE</span>, btw_rank<span class='op'>=</span><span class='fl'>3</span>,
+<span class='fu'>draw_network</span><span class='op'>(</span><span class='va'>adj_matrix</span>,<span class='st'>"Cluster graph"</span>, layout<span class='op'>=</span><span class='st'>"stress"</span>,
+shade<span class='op'>=</span><span class='cn'>TRUE</span>, btw_rank<span class='op'>=</span><span class='fl'>3</span><span class='op'>)</span><span class='op'>$</span><span class='va'>G</span>
+</div><div class='img'><img src='draw_network-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>draw_network</span><span class='op'>(</span><span class='va'>adj_matrix</span>,<span class='st'>"Cluster with groups of nodes"</span>,
+layout<span class='op'>=</span><span class='st'>"stress"</span>, shade<span class='op'>=</span><span class='cn'>TRUE</span>, btw_rank<span class='op'>=</span><span class='fl'>3</span>,
 node_groups<span class='op'>=</span><span class='va'>groups</span>, legend<span class='op'>=</span><span class='cn'>TRUE</span>,title.family<span class='op'>=</span><span class='st'>"mono"</span>,title.size<span class='op'>=</span><span class='fl'>12</span><span class='op'>)</span><span class='op'>$</span><span class='va'>G</span>
 </div><div class='img'><img src='draw_network-2.png' alt='' width='700' height='433' /></div></pre>
   </div>
@@ -269,7 +271,7 @@ node_groups<span class='op'>=</span><span class='va'>groups</span>, legend<span 
 
       <footer>
       <div class="copyright">
-  <p>Developed by Raphaëlle Momal.</p>
+  <p>Developed by Raphaelle Momal.</p>
 </div>
 
 <div class="pkgdown">
