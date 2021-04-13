@@ -9,3 +9,4 @@
 ^codecov\.yml$
 ^dev_history\.R$
 ^\.github$
+^cran-comments\.md$

@@ -43,8 +43,7 @@ covr::report()
 # objects
 results <- rhub::check_for_cran(platforms=c("fedora-clang-devel",
                                             "windows-x86_64-devel",
-                                            "macos-highsierra-release",
-                                            "ubuntu-gcc-release"))
+                                            "macos-highsierra-release"))
 
 # Get the summary of your results
 results$cran_summary()
