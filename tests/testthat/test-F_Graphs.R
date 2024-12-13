@@ -4,9 +4,7 @@ library(PLNmodels)
 library(parallel)
 library(tidygraph)
 library(ggraph)
-library(purrr)
 library(dplyr)
-library(tidyr)
 library(gridExtra)
 ##########################
 n<-30

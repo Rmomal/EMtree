@@ -6,7 +6,6 @@ library(dplyr)
 library(vegan)
 library(Matrix)
 library(mvtnorm)
-library(tidyr)
 library(EMtree)
 ##########################
 n<-100

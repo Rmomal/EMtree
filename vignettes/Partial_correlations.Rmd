@@ -1,0 +1,65 @@
+---
+title: "Partial correlations"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Partial correlations}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  cache=TRUE
+)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(magrittr)
+```
+
+```{r setup}
+library(EMtree)
+```
+
+# Partial correlations simulation
+
+```{r}
+set.seed(1)
+p=300
+n=400
+simulation<-data_from_scratch(type="erdos",p=p,n=n,signed=TRUE, dens=3/p)
+G=1*(simulation$omega!=0) ; diag(G) = 0
+draw_network(G, remove_isolated = TRUE, pal_edges = "gray70",pal_nodes = "steelblue",btw_rank = 1)$G
+```
+simulated partial correlation matrix :
+```{r}
+ParCor <- - cov2cor(simulation$omega)
+```
+
+```{r}
+ParCor %>% ToVec() %>% as_tibble() %>% filter(value!=0) %>% 
+  ggplot(aes(value))+geom_histogram(alpha=0.8)+
+  theme_light()+labs(title="Repartition of non-nul partial correlations",
+                     x="Partial correlation values")
+  
+```
+
+
+# Inference
+
+```{r}
+EMtreefit<-ResampleEMtree(simulation$data,S = 30,cores = 3)
+stab_selection=StATS(EMtreefit$Pmat, nlambda=50, stab.thresh=0.8,plot=TRUE)
+```
+
+```{r}
+net90=ToSym(1*(stab_selection$freqs_opt>0.95))
+table(net90, G)
+library(PRROC)
+pr<-pr.curve(scores.class0 = stab_selection$freqs_opt,
+             scores.class1 = ToVec(G))
+pr
+```
+

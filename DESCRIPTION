@@ -2,37 +2,45 @@ Type: Package
 Package: EMtree
 Title: Infers Direct Species Association Networks using Tree Averaging
 Version: 1.1.0
-Author: Raphaelle Momal <rmomaleisenring@gmail.com>
-Maintainer: Raphaelle Momal <rmomaleisenring@gmail.com>
-Description: Uses averages over spanning trees within an Expectation Maximization algorithm to infer conditional dependence networks. Involves plotting functionalities.
+Authors@R: c(
+  person("Raphaëlle", "Momal", role = c("aut", "cre","cph"), email = "rmomaleisenring@gmail.com",
+      comment = c(ORCID = "0000-0002-1550-4530"))) 
+Description: The spanning tree averaging within an Expectation-Maximization algorithm 
+    (Momal, Robin and Ambroise, 2020 <doi:10.1111/2041-210X.13380>) leverages the 
+        Matrix Tree Theorem to infer conditional dependence networks, such as direct species association 
+            networks.
 License: GPL-3
 Imports: 
     dplyr,
     ggplot2,
     ggraph,
     huge,
-    influenceR,
     magrittr,
     Matrix,
     mvtnorm,
     parallel,
     PLNmodels,
-    purrr,
     tibble,
     tidygraph,
-    tidyr,
     vegan,
+    gridExtra,
+    pillar,
     ade4,
-    gridExtra
+    viridis,
+    gmp
 Suggests: 
     testthat (>= 2.1.0),
     knitr,
     rmarkdown,
     networkD3,
+    pROC,
+    tidyr,
     RColorBrewer
 Encoding: UTF-8
-LazyData: false
-RoxygenNote: 7.1.1
+LazyData: true
+RoxygenNote: 7.3.2
+Depends: R (>= 3.5)
 VignetteBuilder: knitr
 URL: https://rmomal.github.io/EMtree/
 BugReports: https://github.com/Rmomal/EMtree/issues
+Language: en-US

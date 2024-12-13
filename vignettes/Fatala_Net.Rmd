@@ -208,6 +208,3 @@ forceNetwork(Links = graph_d3$links, Nodes =graph_d3$nodes,
              Source = 'source', Target = 'target', 
              NodeID = 'name', Group = 'group',opacity = 1,fontSize = 15, legend=TRUE)
 ```
-
-
-

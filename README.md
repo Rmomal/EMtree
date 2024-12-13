@@ -31,9 +31,9 @@ copulas, or Gaussian data transformations.
 ### CRAN dependencies
 
 ``` r
-required_CRAN <- c("Matrix", "purrr","parallel",  "mvtnorm", "vegan","huge",
-                   "ggplot2", "magrittr", "dplyr","tidyr", "tibble",
-                   "PLNmodels","ggraph", "tidygraph", "ade4")
+required_CRAN <- c("Matrix", "parallel",  "mvtnorm", "vegan",
+                   "ggplot2", "magrittr", "dplyr", "tibble",
+                   "PLNmodels","ggraph", "tidygraph","huge")
 not_installed_CRAN <- setdiff(required_CRAN, rownames(installed.packages()))
 if (length(not_installed_CRAN) > 0) install.packages(not_installed_CRAN)
 ```

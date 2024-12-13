@@ -1,10 +1,13 @@
 ## Test environments
-* local R installation, R 4.0.2
-* ubuntu 16.04 (on travis-ci), R 4.0.2
-* win-builder (devel)
+- R-hub fedora-clang-devel (r-devel)
+- R-hub windows-x86_64-devel (r-devel)
+- R-hub macos-highsierra-release (r-release)
 
 ## R CMD check results
+> On fedora-clang-devel (r-devel), windows-x86_64-devel (r-devel)
+  checking CRAN incoming feasibility ... NOTE
+  Maintainer: ‘Raphaelle Momal <rmomaleisenring@gmail.com>’
+  
+  New submission
 
-0 errors | 0 warnings | 1 note
-
-* This is a new release.
+0 errors ✓ | 0 warnings ✓ | 1 note x

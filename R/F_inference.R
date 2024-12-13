@@ -410,8 +410,8 @@ ResampleEMtree <- function(counts,covar_matrix=NULL, unlinked=NULL,
   #- parallel computation of S fits of new_EMtree
   if(is.null(user_covariance_estimation)){
     suppressWarnings(
-      PLNfit <- PLNmodels::PLN(counts ~ -1  + offset(log(O)) + .,
-                               data=data.frame(X),control=list("trace"=0))
+      PLNfit <- PLNmodels::PLN(formula=counts ~ -1  + offset(log(O)) + .,
+                               data=data.frame(X),control=PLN_param(trace=0))
     )}
   obj<-parallel::mclapply(1:S,function(b){
     if(init){

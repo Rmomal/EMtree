@@ -13,6 +13,7 @@ attachment::att_to_description()
 use_build_ignore("dev_history.R")
 
 usethis::use_vignette("Fatala_Net","Fatala fishes")
+usethis::use_vignette("Partial_correlations","Partial correlations")
 pkgdown::build_site()
 
 # workflow
@@ -44,14 +45,14 @@ covr::report()
 results <- rhub::check_for_cran(platforms=c("fedora-clang-devel",
                                             "windows-x86_64-devel",
                                             "macos-highsierra-release"))
-
+results2 <- rhub::check_for_cran()
 # Get the summary of your results
-results$cran_summary()
+results2$cran_summary()
 # Generate your cran-comments.md, then you copy-paste the output from the function above
 usethis::use_cran_comments()
 
 devtools::check_win_devel()
 usethis::use_news_md(open = rlang::is_interactive())
 
-
+devtools::release()
 
